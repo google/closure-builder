@@ -57,8 +57,8 @@ var BuildConfig = function(config) {
 
   /** @type {progressBar} */
   this.bar = new progressBar(this.name + ' ' + '[:bar] :percent :elapsed sec',
-    {complete: '=', incomplete: ' ', renderThrottle: 100,
-    width: 32, total: 10});
+    {complete: '=', incomplete: ' ', renderThrottle: 100, width: 32,
+     total: 10});
 
   /** @type {!boolean} */
   this.compress = false;

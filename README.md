@@ -1,6 +1,9 @@
 Closure Builder - Closure build system
 ======================================
 
+[![Code Climate](https://codeclimate.com/github/google/closure-builder/badges/gpa.svg)](https://codeclimate.com/github/google/closure-builder)
+[![NPM version](https://img.shields.io/npm/v/closure-builder.svg)](https://www.npmjs.org/package/closure-builder)
+
 Closure build system to easily compile Soy template files together with
 Closure JavaScript files without the need to configure anything.
 The Google Closure library will be included automatically if needed.
