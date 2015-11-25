@@ -1,0 +1,28 @@
+body {
+ margin: 0; 
+ padding: 0;
+ background: #e4e9ec;
+}
+
+#container1 {
+ width: 900px;
+}
+
+#container2 {
+ width: 900px;
+}
+
+#container3 {
+ width: 900px;
+}
+
+#content {
+ background: red;
+ margin: 0 5px 0 5px;
+ min-height: 1050px;
+}
+
+#menu {
+ margin: 50px auto;
+ border:1px solid #000000;
+}

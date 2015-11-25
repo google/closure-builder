@@ -1,0 +1,277 @@
+/**
+ * @fileoverview Closure Builder - Build compilers
+ * 
+ * @license Copyright 2015 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * @author mbordihn@google.com (Markus Bordihn)
+ */
+var closureCompiler = require('closurecompiler');
+var cleanCss = require('clean-css');
+var log = require('loglevel');
+var path = require('path');
+var fs = require('fs-extra');
+var glob = require('glob');
+var soyCompiler = require('soynode');
+
+var buildTools = require('./build_tools.js');
+
+
+
+/**
+ * Build Compilers.
+ * @constructor
+ * @struct
+ * @final
+ */
+var BuildCompilers = function() {};
+
+
+/**
+ * Copy file from src to dest.
+ * @param {!string} src
+ * @param {!string} dest
+ * @param {function=} opt_callback
+ */
+BuildCompilers.copyFile = function(src, dest, opt_callback) {
+  var destFile = path.join(dest, buildTools.getFileBase(src));
+  var fileEvent = function(error) {
+    if (error) {
+      log.error('Resource', src, 'failed to copy to', destFile);
+      throw error;
+    } else {
+      if (opt_callback) {
+        opt_callback(destFile);
+      }
+      log.debug('Resource', src, 'copied to', destFile);
+    }
+  };
+  fs.copy(src, destFile, fileEvent.bind(this));
+};
+
+
+/**
+ * Copy files from srcs to dest.
+ * @param {!string} srcs
+ * @param {!string} dest
+ * @param {function=} opt_callback
+ */
+BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
+  for (var i = srcs.length - 1; i >= 0; i--) {
+    BuildCompilers.copyFile(srcs[i], dest, opt_callback);
+  }
+};
+
+
+/**
+ * @param {Array} files
+ * @param {string=} out
+ * @param {object=} opt_options Additional options for the compiler.
+ *   opt_options.config = BuildConfig
+ *   opt_options.options = Additional compiler options
+ * @param {function=} opt_callback
+ */
+BuildCompilers.compileSoyTemplates = function(files, out,
+    opt_options, opt_callback) {
+  log.debug('Compiling', files.length, 'soy files to', out);
+  log.trace(files);
+  var options = {
+    shouldProvideRequireSoyNamespaces: true
+  };
+  if (opt_options && opt_options.options) {
+    options = opt_options.options;
+  }
+  options.uniqueDir = false;
+  options.outputDir = out;
+  var compilerEvent = function(errors) {
+    var buildConfig = (opt_options && opt_options.config) ?
+      opt_options.config : false;
+    if (errors) {
+      this.errorSoyCompiler('Failed for ' + out);
+      throw errors;
+    } else {
+      var soyFiles = glob.sync(path.join(out, '**/*.soy.js'));
+      if (buildConfig) {
+        if (opt_callback) {
+          buildConfig.bar.tick(2);
+        } else {
+          buildConfig.bar.tick(10);
+          log.info(buildConfig.name, ':', out);
+        }
+      } else {
+        this.infoSoyCompiler('Compiled ' + soyFiles.length + ' soy files to ' +
+           out);
+      }
+      if (opt_callback) {
+        opt_callback(soyFiles);
+      }
+    }
+  }.bind(this);
+  soyCompiler.setOptions(options);
+  soyCompiler.compileTemplateFiles(files, compilerEvent);
+};
+
+
+/**
+ * @param {Array} files
+ * @param {string=} output
+ * @param {function=} opt_callback
+ * @param {BuildConfig=} opt_config
+ */
+BuildCompilers.compileCssFiles = function(files, out, opt_callback,
+    opt_config) {
+  var compilerEvent = function (errors, minified) {
+    if (errors) {
+      this.errorCssCompiler('Failed for ' + out);
+      throw errors;
+    } else if (minified) {
+      if (opt_config) {
+        opt_config.bar.tick(1);
+      }
+      var content = minified.styles;
+      fs.outputFile(out, content, function(error) {
+        if (error) {
+          this.errorCssCompiler('Was not able to write file ' + out + '!');
+          throw error;
+        } else {
+          if (opt_config) {
+            opt_config.bar.tick(10);
+            log.info(opt_config.name + ':', out, '(', content.length, ')');
+          } else {
+            this.infoCssCompiler('Saved file ' + out + ' ( ' +
+                content.length + ' )');
+          }
+          if (opt_callback) {
+            opt_callback(out, content);
+          }
+        }
+      }.bind(this));
+    }
+  }.bind(this);
+  new cleanCss().minify(files, compilerEvent);
+};
+
+
+/**
+ * @param {Array} files
+ * @param {string=} output
+ * @param {string=} opt_func
+ * @param {object=} opt_options
+ * @param {function=} opt_callback
+ * @param {BuildConfig=} opt_config
+ */
+BuildCompilers.compileJsFiles = function(files, out, opt_func,
+    opt_options, opt_callback, opt_config) {
+  log.debug('Compiling', ((opt_func) ? opt_func + 'with' : ''), files.length,
+    'files to', out, '...');
+  log.trace(files);
+  var options = opt_options || {
+    compilation_level: 'SIMPLE_OPTIMIZATIONS'
+  };
+  if (opt_func) {
+    options.only_closure_dependencies = true;
+    options.manage_closure_dependencies = true;
+    options.closure_entry_point = opt_func;
+  }
+  var compilerEvent = function(errors, result) {
+    if (errors) {
+      this.errorClosureCompiler('Failed for ' + out);
+      throw errors;
+    } else if (result) {
+      var content = result;
+      if (opt_config) {
+        opt_config.bar.tick(1);
+        if (opt_config.license) {
+          var license = fs.readFileSync(opt_config.license, 'utf8');
+          content = license + '\n\n' + result;
+        }
+      }
+      fs.outputFile(out, content, function(error) {
+        if (error) {
+          this.errorClosureCompiler('Was not able to write file ' + out + '!');
+          throw error;
+        } else {
+          if (opt_config) {
+            opt_config.bar.tick(10);
+            log.info(opt_config.name + ':', out, '(', content.length, ')');
+          } else {
+            this.infoClosureCompiler('Saved file ' + out + ' ( ' +
+                content.length + ' )');
+          }
+          if (opt_callback) {
+            opt_callback(out, content);
+          }
+        }
+      }.bind(this));
+    }
+  }.bind(this);
+  closureCompiler.compile(files, options, compilerEvent);
+};
+
+
+/**
+ * @param {string} msg
+ */
+BuildCompilers.infoSoyCompiler = function(msg) {
+  if (msg) {
+    log.info('[Soy Compiler]', msg);
+  }
+};
+
+
+/**
+ * @param {string} msg
+ */
+BuildCompilers.infoClosureCompiler = function(msg) {
+  if (msg) {
+    log.info('[Closure Compiler]', msg);
+  }
+};
+
+
+/**
+ * @param {string} msg
+ */
+BuildCompilers.infoCssCompiler = function(msg) {
+  if (msg) {
+    log.info('[Css Compiler]', msg);
+  }
+};
+
+
+/**
+ * @param {string} msg
+ */
+BuildCompilers.errorSoyCompiler = function(msg) {
+  log.error('[Soy Compiler Error]', msg);
+};
+
+
+/**
+ * @param {string} msg
+ */
+BuildCompilers.errorClosureCompiler = function(msg) {
+  log.error('[Closure Compiler Error]', msg);
+};
+
+
+/**
+ * @param {string} msg
+ */
+BuildCompilers.errorCssCompiler = function(msg) {
+  log.error('[Css Compiler Error]', msg);
+};
+
+
+module.exports = BuildCompilers;

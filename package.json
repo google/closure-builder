@@ -1,0 +1,62 @@
+{
+  "name": "closure-builder",
+  "version": "0.1.4",
+  "description": "Simple Closure, Soy and JavaScript Build system",
+  "keywords": [
+    "soy",
+    "closure",
+    "compiler",
+    "build",
+    "minifier",
+    "js",
+    "css",
+    "resources",
+    "compressor",
+    "javascript",
+    "stylesheet"
+  ],
+  "main": "closure-builder.js",
+  "scripts": {
+    "lint": "eslint .",
+    "test": "mocha",
+    "test-build_config": "mocha test/build_config_test.js",
+    "test-build_tools": "mocha test/build_tools_test.js",
+    "test-build_types": "mocha test/build_types_test.js",
+    "test-compiler": "mocha test/compiler_test.js",
+    "pretest": "npm run lint",
+    "predeploy": "npm test",
+    "deploy": "npm version patch && git add package.json",
+    "postdeploy": "git push && git push --tags"
+  },
+  "author": {
+    "name": "Markus Bordihn",
+    "email": "Markus@Bordihn.de",
+    "url": "https://github.com/MarkusBordihn"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Google/closure-builder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Google/closure-builder/issues"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "adm-zip": "latest",
+    "clean-css": "latest",
+    "closurecompiler": "https://github.com/dcodeIO/ClosureCompiler.js/tarball/master",
+    "fs-extra": "latest",
+    "glob": "latest",
+    "google-closure-library": "latest",
+    "loglevel": "latest",
+    "path-parse": "latest",
+    "progress": "latest",
+    "random-string": "latest",
+    "soynode": "latest"
+  },
+  "devDependencies": {
+    "assert": "latest",
+    "eslint": "latest",
+    "mocha": "latest"
+  }
+}
