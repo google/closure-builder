@@ -1,9 +1,9 @@
 language: node_js
 node_js:
-  - stable
-  - '0.12'
-  - '0.11'
-  - '0.10'
+- stable
+- '0.12'
+- '0.11'
+- '0.10'
 addons:
   code_climate:
     repo_token: 90c156a6a494992a51296ea1e1a549680b84a0864608eab3029455a9bd3b6e9d
@@ -11,7 +11,7 @@ deploy:
   provider: npm
   email: Markus@Bordihn.de
   api_key:
-    secure: DmR8eDK/ZjeQSCX5MIf4NZ2E32CXk1PdG7NJUttMxoQcQ9zGZodmfh3DCjAowRviCRDTYbt5MJT5XczOchpEObQ3RXW9xTqbTg6/77/NlIHiXiy3AtkjDXQGIuE3C75duL+8hcEVs3eBNlCxLDEiOcPGw49KGozMFPNliWY5dv0/mLr0eQs2858QAl6hZm+kUPekOi/ed28Tl5/O8GGKusWETbSjYtz1lpddqwzFspoPti/QDli75lNXBTVNlScdeGUTjRMGj1ETNS9y3fdtspBpw1BNd9qvELSr3o2QE2H1X3aOifsBkfC/KP3WIMtzQVEFypo+orAv9B1sgmAH+iTmxYPYS9VKOZa+SyqFHdRCJVXYt/X0M0EHZYbmk+RZQlarC0+oYgpTQC22FkkMNwvkf5B4gSNJI0q2MG2nBarZXU4vBCsMAfvU+BpBUmv/Ha4lJPox9MCX1SoLpmbLG0M+Qf75ah7g1u4NaIFc9dxml6sLlJgOLMfGSHcq1eflf6xAluZYsAAw0XTNX5FvzYYEEdzBADNF8mTuqAUmsyQ4TEfGYPoRJuHakeb95lRd979J9hCB4j2Uth4f5cVaHwgkUX4mkLTIQ76Ot4gYC2T7wjLJPMyQfe5RptG0v9R80nb2BENVdm0Pav35xcvyYUi7MhhDl/a4RZiF4k2wGLU=
+    secure: Zvhlz6Lbzj+4WgRhdCqFsWHFGUw5pAcSSmU5Xu2JRmpTCPbtpa4vOyCdp/uIUV0ntw952EyCFEbpNthPL1ypb+hsuFRbrKxf0PlqvK1W9EgxztsbyTc0O6H6uOWdjK8aJwG16PipJLWlWccEhracE3dwXZogtt8tKDgrr6zqU/AD9YuaEoUyOMLUu2u8v9JjmaSMS/3u3rM/pkLt1s0O599PWimdckRVOMfLcPvsAX8qRj75Ib+tl0RkAq942+1oPHZgECLfd0n4chH07za/E+t3whQMbGfhXWKrnfKyN72BXjNAy1QaAF3Fgeym3S/yatj7thCSQHo8DpiWwy1lHCPXb2BqATEAZY0mNr35tTuwIqhwaRg9LNaNyyNc+c3Y3RnmA0dAALOzqHdoIMzZoWONMo2/L615fkPooBYQab9aRWzPNPyvHdtOjYXu0A9TKI3Ls9SePiL9oNjP71Re86VN2rck8ONzMlzaigz0zNPp80yrzQRx3b2/fzZNNkxzmFkQAvbd+J/tYVSmSYUohVSfDC6TNVvVItVPpVumhz/v9NcPhNYudyYqJdtoUxmWnWqQ6OhGxd3P2Dw/hoU03chX7jt1IrG7DaOEtQ6vM0OVXtpwV2u7iVqCTjHs44d2S+x2iz97Tw03q8ny58N1FfjZJL4gunc3WPwaT710FFM=
   on:
     tags: true
     repo: google/closure-builder
