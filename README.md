@@ -1,6 +1,7 @@
 Closure Builder - Closure build system
 ======================================
 
+[![Build status](https://travis-ci.org/google/closure-builder.svg?branch=master)](http://travis-ci.org/google/closure-builder)
 [![Code Climate](https://codeclimate.com/github/google/closure-builder/badges/gpa.svg)](https://codeclimate.com/github/google/closure-builder)
 [![NPM version](https://img.shields.io/npm/v/closure-builder.svg)](https://www.npmjs.org/package/closure-builder)
 

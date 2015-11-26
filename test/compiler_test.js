@@ -21,6 +21,9 @@ var assert = require('assert');
 var closureBuilder = require('../closure-builder');
 var fs = require('fs-extra');
 var glob = closureBuilder.globSupport();
+var os = require('os');
+var memoryLimit = 600 * 100000000; // 600 MB
+var largeMemoryTest = (os.freemem() >= memoryLimit);
 
 var closureLibraryConfig = {
   name: 'closure_library_test',
@@ -104,7 +107,10 @@ describe('ClosureBuilder', function() {
   });
   describe('Closure library', function() {
     it('compile', function(done) {
-      this.timeout(50000);
+      this.timeout(60000);
+      if (!largeMemoryTest) {
+        return done();
+      }
       closureBuilder.build(closureLibraryConfig, function() {
         done();
       });

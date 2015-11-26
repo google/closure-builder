@@ -1,0 +1,17 @@
+language: node_js
+node_js:
+  - stable
+  - '0.12'
+  - '0.11'
+  - '0.10'
+addons:
+  code_climate:
+    repo_token: 90c156a6a494992a51296ea1e1a549680b84a0864608eab3029455a9bd3b6e9d
+deploy:
+  provider: npm
+  email: Markus@Bordihn.de
+  api_key:
+    secure: DmR8eDK/ZjeQSCX5MIf4NZ2E32CXk1PdG7NJUttMxoQcQ9zGZodmfh3DCjAowRviCRDTYbt5MJT5XczOchpEObQ3RXW9xTqbTg6/77/NlIHiXiy3AtkjDXQGIuE3C75duL+8hcEVs3eBNlCxLDEiOcPGw49KGozMFPNliWY5dv0/mLr0eQs2858QAl6hZm+kUPekOi/ed28Tl5/O8GGKusWETbSjYtz1lpddqwzFspoPti/QDli75lNXBTVNlScdeGUTjRMGj1ETNS9y3fdtspBpw1BNd9qvELSr3o2QE2H1X3aOifsBkfC/KP3WIMtzQVEFypo+orAv9B1sgmAH+iTmxYPYS9VKOZa+SyqFHdRCJVXYt/X0M0EHZYbmk+RZQlarC0+oYgpTQC22FkkMNwvkf5B4gSNJI0q2MG2nBarZXU4vBCsMAfvU+BpBUmv/Ha4lJPox9MCX1SoLpmbLG0M+Qf75ah7g1u4NaIFc9dxml6sLlJgOLMfGSHcq1eflf6xAluZYsAAw0XTNX5FvzYYEEdzBADNF8mTuqAUmsyQ4TEfGYPoRJuHakeb95lRd979J9hCB4j2Uth4f5cVaHwgkUX4mkLTIQ76Ot4gYC2T7wjLJPMyQfe5RptG0v9R80nb2BENVdm0Pav35xcvyYUi7MhhDl/a4RZiF4k2wGLU=
+  on:
+    tags: true
+    repo: google/closure-builder
