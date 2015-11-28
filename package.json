@@ -50,6 +50,7 @@
     "glob": "latest",
     "google-closure-library": "latest",
     "loglevel": "latest",
+    "mkdirp": "latest",
     "path-parse": "latest",
     "progress": "latest",
     "random-string": "latest",

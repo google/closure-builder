@@ -111,9 +111,7 @@ BuildCompilers.copyRemoteFile = function(src, dest, opt_callback) {
  * @param {function=} opt_callback
  */
 BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
-  if (!buildTools.existDirectory(dest)) {
-    fs.mkdirSync(dest);
-  }
+  buildTools.mkdir(dest);
   for (var i = srcs.length - 1; i >= 0; i--) {
     if (validator.isURL(srcs)) {
       BuildCompilers.copyRemoteFile(srcs[i], dest, opt_callback);
@@ -144,6 +142,7 @@ BuildCompilers.compileSoyTemplates = function(files, out,
   }
   options.uniqueDir = false;
   options.outputDir = out;
+  buildTools.mkdir(out);
   var compilerEvent = function(errors) {
     var buildConfig = (opt_options && opt_options.config) ?
       opt_options.config : false;

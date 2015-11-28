@@ -23,6 +23,7 @@ var path = require('path');
 var pathParse = require('path-parse');
 var fs = require('fs-extra');
 var glob = require('glob');
+var mkdirp = require('mkdirp');
 
 var BuildType = require('./build_types.js');
 
@@ -247,9 +248,7 @@ BuildTools.getUrlFile = function(file_url) {
  */
 BuildTools.getTempPath = function(opt_name) {
   var tempPath = path.join(os.tmpdir(), opt_name || '');
-  if (!BuildTools.existDirectory(tempPath)) {
-    fs.mkdirSync(tempPath);
-  }
+  BuildTools.mkdir(tempPath);
   return tempPath;
 };
 
@@ -263,6 +262,16 @@ BuildTools.existDirectory = function(file_path) {
     return fs.statSync(file_path).isDirectory();
   } catch (err) {
     return false;
+  }
+};
+
+
+/**
+ * @param {string} file_path
+ */
+BuildTools.mkdir = function(file_path) {
+  if (!BuildTools.existDirectory(file_path)) {
+    mkdirp.sync(file_path);
   }
 };
 
