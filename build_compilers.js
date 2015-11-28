@@ -1,6 +1,6 @@
 /**
  * @fileoverview Closure Builder - Build compilers
- * 
+ *
  * @license Copyright 2015 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * @author mbordihn@google.com (Markus Bordihn)
  */
 var closureCompiler = require('closurecompiler');
@@ -23,7 +23,10 @@ var log = require('loglevel');
 var path = require('path');
 var fs = require('fs-extra');
 var glob = require('glob');
+var http = require('follow-redirects').http;
+var https = require('follow-redirects').https;
 var soyCompiler = require('soynode');
+var validator = require('validator');
 
 var buildTools = require('./build_tools.js');
 
@@ -62,14 +65,61 @@ BuildCompilers.copyFile = function(src, dest, opt_callback) {
 
 
 /**
+ * Copy file from remote to dest.
+ * @param {!string} src
+ * @param {!string} dest
+ * @param {function=} opt_callback
+ */
+BuildCompilers.copyRemoteFile = function(src, dest, opt_callback) {
+  var destFile = path.join(dest, buildTools.getUrlFile(src));
+  var httpCheck = { protocols: ['http'], require_protocol: true };
+  var httpsCheck = { protocols: ['https'], require_protocol: true };
+  var completeEvent = function(response) {
+    if (response.statusCode !== 200) {
+      log.error('Remote Resource', src, 'failed to download');
+      throw 'HTTP Error: ' + response.statusCode;
+    }
+    var file = fs.createWriteStream(destFile);
+    response.pipe(file);
+    file.on('finish', function() {
+      file.close();
+    });
+    if (opt_callback) {
+      opt_callback(destFile);
+    }
+    log.debug('Remote Resource', src, 'copied to', destFile);
+  };
+  var errorEvent = function(error) {
+    log.error('Remote resource', src, 'failed to copy to', destFile);
+    throw error;
+  };
+
+  if (validator.isURL(src, httpCheck)) {
+    http.get(src, completeEvent).on('error', errorEvent);
+  } else if (validator.isURL(src, httpsCheck)) {
+    https.get(src, completeEvent).on('error', errorEvent);
+  } else {
+    log.error('Invalid remote file:', src);
+  }
+};
+
+
+/**
  * Copy files from srcs to dest.
  * @param {!string} srcs
  * @param {!string} dest
  * @param {function=} opt_callback
  */
 BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
+  if (!buildTools.existDirectory(dest)) {
+    fs.mkdirSync(dest);
+  }
   for (var i = srcs.length - 1; i >= 0; i--) {
-    BuildCompilers.copyFile(srcs[i], dest, opt_callback);
+    if (validator.isURL(srcs)) {
+      BuildCompilers.copyRemoteFile(srcs[i], dest, opt_callback);
+    } else {
+      BuildCompilers.copyFile(srcs[i], dest, opt_callback);
+    }
   }
 };
 
@@ -173,7 +223,7 @@ BuildCompilers.compileCssFiles = function(files, out, opt_callback,
  */
 BuildCompilers.compileJsFiles = function(files, out, opt_func,
     opt_options, opt_callback, opt_config) {
-  log.debug('Compiling', ((opt_func) ? opt_func + 'with' : ''), files.length,
+  log.debug('Compiling', ((opt_func) ? opt_func + ' with' : ''), files.length,
     'files to', out, '...');
   log.trace(files);
   var options = opt_options || {

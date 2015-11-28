@@ -46,13 +46,15 @@
     "clean-css": "latest",
     "closurecompiler": "https://github.com/dcodeIO/ClosureCompiler.js/tarball/master",
     "fs-extra": "latest",
+    "follow-redirects": "latest",
     "glob": "latest",
     "google-closure-library": "latest",
     "loglevel": "latest",
     "path-parse": "latest",
     "progress": "latest",
     "random-string": "latest",
-    "soynode": "latest"
+    "soynode": "latest",
+    "validator": "latest"
   },
   "devDependencies": {
     "assert": "latest",

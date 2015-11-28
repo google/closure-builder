@@ -14,36 +14,44 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * @author mbordihn@google.com (Markus Bordihn)
  */
 var assert = require('assert');
-var closureBuilder = require('../closure-builder');
 var fs = require('fs-extra');
-var glob = closureBuilder.globSupport();
 var os = require('os');
+var path = require('path');
+
+var buildTools = require('../build_tools.js');
+var closureBuilder = require('../closure-builder');
+var glob = closureBuilder.globSupport();
+
 var memoryLimit = 600; // min. MB
 var largeMemoryTest = (os.freemem()/10000000 >= memoryLimit);
+var testDirectory = buildTools.getTempPath('closure-builder-test');
 
 var closureLibraryConfig = {
   name: 'closure_library_test',
   srcs: [
     'test_files/closure_library_test.js'
-  ]
+  ],
+  out: path.join(testDirectory, 'closure-library')
 };
 var optionLicenseConfig = {
   name: 'option_license',
   srcs: [
     'test_files/test1.js'
   ],
-  license: 'test_files/license-header.md'
+  license: 'test_files/license-header.md',
+  out: path.join(testDirectory, 'license-files')
 };
 var cssConfig = {
   name: 'css_files',
   srcs: glob([
     'test_files/*.css',
     'test_files/*.htm'
-  ])
+  ]),
+  out: path.join(testDirectory, 'css-files')
 };
 var resourcesConfig = {
   name: 'resources',
@@ -55,7 +63,21 @@ var resourcesConfig = {
     'test_files/resources/**/*.gif',
     'test_files/resources/**/*.png',
     'test_files/resources/**/*.xml'
-  ])
+  ]),
+  out: path.join(testDirectory, 'local-resources')
+};
+var resourcesRemoteConfig = {
+  name: 'remote_resources',
+  resources: [
+    'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.js?test=1&test=2',
+    'http://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.html?test=1&test=2',
+    'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.jpg?test=1&test=2',
+    'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.gif#test',
+    'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.png?test=1&test=2',
+    'http://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.xml?test=1&test=2',
+    'http://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.css#test'
+  ],
+  out: path.join(testDirectory, 'remote-resources')
 };
 
 describe('ClosureBuilder', function() {
@@ -101,6 +123,14 @@ describe('ClosureBuilder', function() {
     it('compile', function(done) {
       this.timeout(20000);
       closureBuilder.build(resourcesConfig, function() {
+        done();
+      });
+    });
+  });
+  describe('Remote resources files', function() {
+    it('compile', function(done) {
+      this.timeout(20000);
+      closureBuilder.build(resourcesRemoteConfig, function() {
         done();
       });
     });

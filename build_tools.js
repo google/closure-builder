@@ -14,10 +14,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * @author mbordihn@google.com (Markus Bordihn)
  */
 var os = require('os');
+var url = require('url');
 var path = require('path');
 var pathParse = require('path-parse');
 var fs = require('fs-extra');
@@ -181,11 +182,6 @@ BuildTools.filterTestFiles = function(files) {
 };
 
 
-BuildTools.uniqueList = function() {
-  
-};
-
-
 /**
  * @param {string|array} Files to glob
  * @return {array}
@@ -237,11 +233,37 @@ BuildTools.getFileBase = function(file) {
 
 
 /**
+ * @param {string} file_url
+ * @return {string} file
+ */
+BuildTools.getUrlFile = function(file_url) {
+  return path.basename(url.parse(file_url).pathname);
+};
+
+
+/**
  * @param {string=} opt_name
  * @return {string} Temp dir path.
  */
 BuildTools.getTempPath = function(opt_name) {
-  return path.join(os.tmpdir(), opt_name || '');
+  var tempPath = path.join(os.tmpdir(), opt_name || '');
+  if (!BuildTools.existDirectory(tempPath)) {
+    fs.mkdirSync(tempPath);
+  }
+  return tempPath;
+};
+
+
+/**
+ * @param {string} file_path
+ * @return {boolean} Directory exists.
+ */
+BuildTools.existDirectory = function(file_path) {
+  try {
+    return fs.statSync(file_path).isDirectory();
+  } catch (err) {
+    return false;
+  }
 };
 
 

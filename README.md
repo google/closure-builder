@@ -22,6 +22,7 @@ static files as well.
   * [Compile soy files](#compile-soy-files)
   * [Compile JavaScript files](#compile-javascript-files)
   * [Copy Resources](#copy-resources)
+  * [Copy Remote Resources](#copy-remote-resources)
   * [Compile css files](#compile-css-files)
 * [Disclaimer](#disclaimer)
 * [Author](#author)
@@ -59,7 +60,7 @@ But there is not limit of BUILD rules which could be setup for your needs.
 
 #### Required ####
 These basic options are required:
-- `name` Closure name space to compiler or unique name of your build rule 
+- `name` Closure name space to compiler or unique name of your build rule
 - `srcs` List of (Soy, Closure or JavaScript files) which should be compiled
 - `out` Output path / output file for the compiled Soy, Closure or JavaScript files
 - `resources` Resource files which will be copied to the out folder
@@ -168,6 +169,26 @@ closureBuilder.build({
   out: 'genfiles/static-folder/'
 });
 ```
+
+
+#### Copy remote resources ####
+Copy resources from an remote location to the target directory.
+```javascript
+closureBuilder.build({
+  name: 'static_resources',
+  resources: [
+    'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.js',
+    'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.html',
+    'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.jpg',
+    'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.gif',
+    'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.png',
+    'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.xml',
+    'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.css'
+  ],
+  out: 'genfiles/static-folder/'
+});
+```
+
 
 #### Compile CSS files ####
 Combine and minified several CSS files to an single CSS file.

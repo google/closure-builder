@@ -25,7 +25,10 @@ var pathWin = 'C:\\path\\dir\\subdir';
 var pathUnix = '/home/user/dir/subdir';
 var fileWin = 'C:\\path\\dir\\index.html';
 var fileUnix = '/home/user/dir/file.txt';
+var fileRemote = 'http://www.example.com:80/dir/subdir/file.xml?test=1&test=2';
+var fileRemoteHash = 'https://www.example.com:80/dir/subdir/file.xml#dummy';
 var testFilesPath = 'test_files/resources/';
+
 
 describe('BuildTools', function() {
 
@@ -51,6 +54,13 @@ describe('BuildTools', function() {
     it('getTempPath', function() {
       assert.equal(BuildTools.getTempPath(), os.tmpdir());
       assert(BuildTools.getTempPath('test123').indexOf('test123') != -1);
+    });
+  });
+
+  describe('Url', function() {
+    it('getUrlFile', function() {
+      assert.equal(BuildTools.getUrlFile(fileRemote), 'file.xml');
+      assert.equal(BuildTools.getUrlFile(fileRemoteHash), 'file.xml');
     });
   });
 
