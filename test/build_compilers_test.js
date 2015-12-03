@@ -37,6 +37,28 @@ var closureLibraryConfig = {
   ],
   out: path.join(testDirectory, 'closure-library')
 };
+var closureTest1Config = {
+  name: 'closure_test_1',
+  srcs: [
+    'test_files/closure_test_1.js'
+  ],
+  out: path.join(testDirectory, 'closure-test-1')
+};
+var closureTest2Config = {
+  name: 'closure_test_2',
+  srcs: [
+    'test_files/closure_test_1.js',
+    'test_files/closure_test_2.js'
+  ],
+  out: path.join(testDirectory, 'closure-test-2')
+};
+var closureTest3Config = {
+  name: 'closure_test_3',
+  srcs: glob([
+    'test_files/closure_test_*.js'
+  ]),
+  out: path.join(testDirectory, 'closure-test-3')
+};
 var optionLicenseConfig = {
   name: 'option_license',
   srcs: [
@@ -89,7 +111,7 @@ describe('ClosureBuilder', function() {
   });
   describe('Options', function() {
     it('license', function(done) {
-      this.timeout(20000);
+      this.timeout(30000);
       closureBuilder.build(optionLicenseConfig, function(out, content) {
         var license = fs.readFileSync(optionLicenseConfig.license, 'utf8');
         assert(content.indexOf(license) != -1);
@@ -131,6 +153,26 @@ describe('ClosureBuilder', function() {
     it('compile', function(done) {
       this.timeout(20000);
       closureBuilder.build(resourcesRemoteConfig, function() {
+        done();
+      });
+    });
+  });
+  describe('Closure files', function() {
+    it('Single file', function(done) {
+      this.timeout(20000);
+      closureBuilder.build(closureTest1Config, function() {
+        done();
+      });
+    });
+    it('Two files', function(done) {
+      this.timeout(20000);
+      closureBuilder.build(closureTest2Config, function() {
+        done();
+      });
+    });
+    it('Group of files', function(done) {
+      this.timeout(20000);
+      closureBuilder.build(closureTest3Config, function() {
         done();
       });
     });
