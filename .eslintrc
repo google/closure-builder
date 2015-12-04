@@ -30,14 +30,8 @@ env:
   node: true
 
 globals:
-  Blockly: true
-  CodeMirror: true
   describe: true
   it: true
   goog: true
-  chrome: true
-  cwc: true
-  opt_event: true
-  var_args: true
 
 extends: 'eslint:recommended'
