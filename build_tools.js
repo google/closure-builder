@@ -254,6 +254,31 @@ BuildTools.getTempPath = function(opt_name) {
 
 
 /**
+ * @param {number} sizei in megabyte.
+ * @return {boolean}
+ */
+BuildTools.checkAvailableMemory = function(size) {
+  return size >= BuildTools.getMemory();
+};
+
+
+/**
+ * @return {number} Avalible memory in megabyte.
+ */
+BuildTools.getMemory = function() {
+  return Math.floor(os.freemem() / 10000000);
+};
+
+
+/**
+ * @return {number} 90% of the avalible memory in megabyte.
+ */
+BuildTools.getSafeMemory = function() {
+  return Math.floor(BuildTools.getMemory() * 0.9);
+};
+
+
+/**
  * @param {string} file_path
  * @return {boolean} Directory exists.
  */

@@ -14,7 +14,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * @author mbordihn@google.com (Markus Bordihn)
  */
 var log = require('loglevel');
@@ -26,12 +26,14 @@ var buildType = require('./build_types.js');
 var buildCompilers = require('./build_compilers.js');
 
 
-
 /**
  * @constructor
  */
 var ClosureBuilder = function() {
-  log.info('Prepare Closure Builder');
+  log.info('Loading Closure Builder ...');
+  log.info('Avalible memory in MB:', buildTools.getMemory(), '(',
+    buildTools.getSafeMemory(), ')');
+  log.info('JAVA_HOME:', process.env['JAVA_HOME'] ? 'found' : 'not found');
   this.logLevel = 'info';
   this.modulePath = buildTools.getModulePath();
   this.nameCache = {};
@@ -68,11 +70,13 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
     this.setLogLevel('trace');
   } else if (build_config.debug) {
     this.setLogLevel('debug');
+  } else {
+    this.setLogLevel(this.logLevel);
   }
 
   var config = this.getBuildConfig(build_config);
   this.showConfigInformation(config);
- 
+
   // Compiler type handling
   var type = config.getType();
   if (type === buildType.SOY) {
@@ -169,7 +173,8 @@ ClosureBuilder.prototype.compileClosureFiles = function(config, opt_files,
  * @param {!buildConfig} config
  * @param {function=} opt_callback
  */
-ClosureBuilder.prototype.compileJavaScriptFiles = function(config, opt_callback) {
+ClosureBuilder.prototype.compileJavaScriptFiles = function(config,
+    opt_callback) {
   config.bar.tick(1);
   var files = config.getJavaScriptFiles();
   buildCompilers.compileJsFiles(files, config.getOutFilePath(), null,

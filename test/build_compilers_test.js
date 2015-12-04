@@ -19,15 +19,13 @@
  */
 var assert = require('assert');
 var fs = require('fs-extra');
-var os = require('os');
 var path = require('path');
 
 var buildTools = require('../build_tools.js');
 var closureBuilder = require('../closure-builder');
 var glob = closureBuilder.globSupport();
+var largeMemoryTest = !buildTools.checkAvailableMemory(600);
 
-var memoryLimit = 600; // min. MB
-var largeMemoryTest = (os.freemem()/10000000 >= memoryLimit);
 var testDirectory = buildTools.getTempPath('closure-builder-test');
 
 var closureLibraryConfig = {
@@ -36,6 +34,13 @@ var closureLibraryConfig = {
     'test_files/closure_library_test.js'
   ],
   out: path.join(testDirectory, 'closure-library')
+};
+var soyTestConfig = {
+  name: 'soy_test',
+  srcs: [
+    'test_files/test.soy'
+  ],
+  out: path.join(testDirectory, 'soy')
 };
 var closureTest1Config = {
   name: 'closure_test_1',
@@ -88,16 +93,18 @@ var resourcesConfig = {
   ]),
   out: path.join(testDirectory, 'local-resources')
 };
+var resourceUrl= 'raw.githubusercontent.com/google/closure-builder/master/' +
+  'test_files/resources/';
 var resourcesRemoteConfig = {
   name: 'remote_resources',
   resources: [
-    'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.js?test=1&test=2',
-    'http://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.html?test=1&test=2',
-    'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.jpg?test=1&test=2',
-    'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.gif#test',
-    'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.png?test=1&test=2',
-    'http://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.xml?test=1&test=2',
-    'http://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.css#test'
+    'https://' + resourceUrl + 'file.js?test=1&test=2',
+    'http://' + resourceUrl + 'file.html?test=1&test=2',
+    'https://' + resourceUrl + 'file.jpg?test=1&test=2',
+    'https://' + resourceUrl + 'file.gif#test',
+    'https://' + resourceUrl + 'file.png?test=1&test=2',
+    'http://' + resourceUrl + 'file.xml?test=1&test=2',
+    'http://' + resourceUrl + 'file.css#test'
   ],
   out: path.join(testDirectory, 'remote-resources')
 };
@@ -157,6 +164,14 @@ describe('ClosureBuilder', function() {
       });
     });
   });
+  describe('Soy file', function() {
+    it('compile', function(done) {
+      this.timeout(20000);
+      closureBuilder.build(soyTestConfig, function() {
+        done();
+      });
+    });
+  });
   describe('Closure files', function() {
     it('Single file', function(done) {
       this.timeout(20000);
@@ -179,7 +194,7 @@ describe('ClosureBuilder', function() {
   });
   describe('Closure library', function() {
     it('compile', function(done) {
-      this.timeout(60000);
+      this.timeout(120000);
       if (!largeMemoryTest) {
         return done();
       }

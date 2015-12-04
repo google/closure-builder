@@ -42,6 +42,13 @@ var BuildCompilers = function() {};
 
 
 /**
+ * Avalible memory to avoid "Out of mememory" issues.
+ * @type {number}
+ */
+BuildCompilers.SAFE_MEMORY = buildTools.getSafeMemory() || 512;
+
+
+/**
  * Copy file from src to dest.
  * @param {!string} src
  * @param {!string} dest
@@ -180,7 +187,7 @@ BuildCompilers.compileSoyTemplates = function(files, out,
  */
 BuildCompilers.compileCssFiles = function(files, out, opt_callback,
     opt_config) {
-  var compilerEvent = function (errors, minified) {
+  var compilerEvent = function(errors, minified) {
     if (errors) {
       this.errorCssCompiler('Failed for ' + out);
       throw errors;
@@ -226,7 +233,9 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
     'files to', out, '...');
   log.trace(files);
   var options = opt_options || {
-    compilation_level: 'SIMPLE_OPTIMIZATIONS'
+    compilation_level: 'SIMPLE_OPTIMIZATIONS',
+    Xmx: BuildCompilers.SAFE_MEMORY + 'm',
+    Xms: '64m'
   };
   if (opt_func) {
     options.only_closure_dependencies = true;
