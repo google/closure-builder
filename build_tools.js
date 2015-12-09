@@ -115,7 +115,9 @@ BuildTools.getBuildRequirements = function(config) {
     requireClosureLibrary: (depsConfig.requireClosureLibrary ||
       srcsConfig.requireClosureLibrary),
     requireSoyLibrary: (depsConfig.requireSoyLibrary ||
-      srcsConfig.requireSoyLibrary || soyConfig.requireSoyLibrary)
+      srcsConfig.requireSoyLibrary || soyConfig.requireSoyLibrary),
+    requireECMAScript6: (depsConfig.requireECMAScript6 ||
+      srcsConfig.requireECMAScript6)
   };
 };
 
@@ -132,6 +134,7 @@ BuildTools.scanFiles = function(files) {
   var soyFiles = [];
   var requireClosureLibrary = false;
   var requireSoyLibrary = false;
+  var requireECMAScript6 = false;
 
   for (var i = files.length - 1; i >= 0; i--) {
     var file = files[i];
@@ -150,6 +153,9 @@ BuildTools.scanFiles = function(files) {
           fileContent.indexOf('goog.require("goog.') !== -1) {
         requireClosureLibrary = true;
       }
+      if (/(let|const)\s+\w+\s?=/.test(fileContent)) {
+        requireECMAScript6 = true;
+      }
     } else if (file.indexOf('.css') !== -1) {
       cssFiles.push(file);
     }
@@ -160,7 +166,8 @@ BuildTools.scanFiles = function(files) {
     cssFiles: cssFiles,
     soyFiles: soyFiles,
     requireClosureLibrary: requireClosureLibrary,
-    requireSoyLibrary: requireSoyLibrary
+    requireSoyLibrary: requireSoyLibrary,
+    requireECMAScript6: requireECMAScript6
   };
 };
 

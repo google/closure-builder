@@ -242,6 +242,12 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
     options.manage_closure_dependencies = true;
     options.closure_entry_point = opt_func;
   }
+  if (opt_config) {
+    if (opt_config.requireECMAScript6) {
+      options.language_in = 'ECMASCRIPT6';
+      options.language_out = 'ES5';
+    }
+  }
   var compilerEvent = function(errors, result) {
     if (errors) {
       this.errorClosureCompiler('Failed for ' + out);

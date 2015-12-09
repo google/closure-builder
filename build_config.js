@@ -120,6 +120,9 @@ var BuildConfig = function(config) {
   this.requireClosureLibrary = requirements.requireClosureLibrary;
 
   /** @type {boolean} */
+  this.requireECMAScript6 = requirements.requireECMAScript6;
+
+  /** @type {boolean} */
   this.requireSoyLibrary = requirements.requireSoyLibrary;
 
   /** @private {!array} */

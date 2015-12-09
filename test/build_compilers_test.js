@@ -64,6 +64,22 @@ var closureTest3Config = {
   ]),
   out: path.join(testDirectory, 'closure-test-3')
 };
+var closureECMAScript6Config = {
+  name: 'closure_test_ecma6',
+  srcs: glob([
+    'test_files/closure_test_*.js'
+  ]),
+  out: path.join(testDirectory, 'closure-test-ecma6')
+};
+var closureNoECMAScript6Config = {
+  name: 'closure_test_no_ecma6',
+  srcs: glob([
+    'test_files/closure_test_1.js',
+    'test_files/closure_test_2.js',
+    'test_files/closure_test_no_ecma6.js'
+  ]),
+  out: path.join(testDirectory, 'closure-test-no-ecma6')
+};
 var optionLicenseConfig = {
   name: 'option_license',
   srcs: [
@@ -182,6 +198,18 @@ describe('ClosureBuilder', function() {
     it('Two files', function(done) {
       this.timeout(20000);
       closureBuilder.build(closureTest2Config, function() {
+        done();
+      });
+    });
+    it('ECMA Script 6', function(done) {
+      this.timeout(20000);
+      closureBuilder.build(closureECMAScript6Config, function() {
+        done();
+      });
+    });
+    it('No ECMA Script 6', function(done) {
+      this.timeout(20000);
+      closureBuilder.build(closureNoECMAScript6Config, function() {
         done();
       });
     });

@@ -22,11 +22,11 @@
     "test-build_config": "mocha test/build_config_test.js",
     "test-build_tools": "mocha test/build_tools_test.js",
     "test-build_types": "mocha test/build_types_test.js",
-    "test-compiler": "mocha test/compiler_test.js",
+    "test-build-compilers": "mocha test/build_compilers_test.js",
     "pretest": "npm run lint",
     "predeploy": "npm test",
     "deploy": "npm version patch && git add package.json",
-    "postdeploy": "git push && git push --tags"
+    "postdeploy": "git push --follow-tags"
   },
   "author": {
     "name": "Markus Bordihn",
