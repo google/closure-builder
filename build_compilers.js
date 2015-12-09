@@ -248,11 +248,26 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
       options.language_out = 'ES5';
     }
   }
-  var compilerEvent = function(errors, result) {
-    if (errors) {
-      this.errorClosureCompiler('Failed for ' + out);
-      throw errors;
-    } else if (result) {
+  var compilerEvent = function(message, result) {
+    if (message) {
+      var errors = 0;
+      var warnings = 0;
+      var message_reg = /([0-9]+) error\(s\), ([0-9]+) warning\(s\)/;
+      var message_info = message.match(message_reg);
+      if (message_info) {
+        errors = message_info[1];
+        warnings = message_info[2];
+      }
+      if (errors == 0 && warnings > 0) {
+        this.warnClosureCompiler(warnings + ' warnings for ' + out);
+        this.warnClosureCompiler(message);
+      } else {
+        this.errorClosureCompiler(errors + ' errors for ' + out);
+        this.errorClosureCompiler(message);
+        throw message;
+      }
+    }
+    if (result) {
       var content = result;
       if (opt_config) {
         opt_config.bar.tick(1);
@@ -311,6 +326,14 @@ BuildCompilers.infoCssCompiler = function(msg) {
   if (msg) {
     log.info('[Css Compiler]', msg);
   }
+};
+
+
+/**
+ * @param {string} msg
+ */
+BuildCompilers.warnClosureCompiler = function(msg) {
+  log.error('[Closure Compiler Warn]', msg);
 };
 
 
