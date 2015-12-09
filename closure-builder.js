@@ -38,8 +38,9 @@ var ClosureBuilder = function() {
   this.modulePath = buildTools.getModulePath();
   this.nameCache = {};
   this.soyLimit = false;
-  this.closureLibFiles = path.join(this.modulePath, 'google-closure-library',
-      '**.js');
+  this.closureLibPath = path.join(this.modulePath, 'google-closure-library');
+  this.closureLibFiles = path.join(this.closureLibPath, '**.js');
+  this.closureLibTests = path.join(this.closureLibPath, '**_test.js');
   this.soyLibFile = path.join(this.modulePath, 'soynode', 'node_modules',
       'closure-templates', 'soyutils_usegoog.js');
 };
@@ -159,6 +160,7 @@ ClosureBuilder.prototype.compileClosureFiles = function(config, opt_files,
   config.bar.tick(1);
   if (config.requireClosureLibrary) {
     jsLibs.push('"' + this.closureLibFiles + '"');
+    jsLibs.push('"!' + this.closureLibTests + '"');
   }
   if (config.requireSoyLibrary) {
     jsLibs.push('"' + this.soyLibFile + '"');
