@@ -191,7 +191,7 @@ BuildTools.filterTestFiles = function(files) {
 
 
 /**
- * @param {string|array} Files to glob
+ * @param {string|array} Files with glob syntax.
  * @return {array}
  */
 BuildTools.getGlobFiles = function(files) {
@@ -253,6 +253,17 @@ BuildTools.getUrlFile = function(file_url) {
  * @param {string=} opt_name
  * @return {string} Temp dir path.
  */
+BuildTools.getRandomTempPath = function(opt_name) {
+  var name = (opt_name || 'closure-builder') + Math.floor(
+      Date.now() / (Math.random() * 10000));
+  return BuildTools.getTempPath(name);
+};
+
+
+/**
+ * @param {string=} opt_name
+ * @return {string} Temp dir path.
+ */
 BuildTools.getTempPath = function(opt_name) {
   var tempPath = path.join(os.tmpdir(), opt_name || '');
   BuildTools.mkdir(tempPath);
@@ -261,7 +272,7 @@ BuildTools.getTempPath = function(opt_name) {
 
 
 /**
- * @param {number} sizei in megabyte.
+ * @param {number} size in megabyte.
  * @return {boolean}
  */
 BuildTools.checkAvailableMemory = function(size) {
@@ -270,7 +281,7 @@ BuildTools.checkAvailableMemory = function(size) {
 
 
 /**
- * @return {number} Avalible memory in megabyte.
+ * @return {number} Available memory in megabyte.
  */
 BuildTools.getMemory = function() {
   return Math.floor(os.freemem() / 10000000);
@@ -278,7 +289,7 @@ BuildTools.getMemory = function() {
 
 
 /**
- * @return {number} 90% of the avalible memory in megabyte.
+ * @return {number} 90% of the available memory in megabyte.
  */
 BuildTools.getSafeMemory = function() {
   return Math.floor(BuildTools.getMemory() * 0.9);
@@ -310,12 +321,13 @@ BuildTools.mkdir = function(file_path) {
 
 /**
  * Trucate a text in the middle.
- * @param {string} text
- * @param {number} max_length
- * @param {string} opt_seperator
- * @return {string}
+ * @param {!string} text
+ * @param {number=} opt_max_length
+ * @param {string=} opt_seperator
+ * @return {!string}
  */
-BuildTools.getTruncateText = function(text, max_length, opt_seperator) {
+BuildTools.getTruncateText = function(text, opt_max_length, opt_seperator) {
+  var max_length = opt_max_length || 40;
   if (text.length <= max_length) {
     return text;
   }

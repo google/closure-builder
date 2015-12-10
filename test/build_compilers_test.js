@@ -182,7 +182,7 @@ describe('ClosureBuilder', function() {
   });
   describe('Soy file', function() {
     it('compile', function(done) {
-      this.timeout(20000);
+      this.timeout(30000);
       closureBuilder.build(soyTestConfig, function() {
         done();
       });
@@ -190,31 +190,31 @@ describe('ClosureBuilder', function() {
   });
   describe('Closure files', function() {
     it('Single file', function(done) {
-      this.timeout(20000);
+      this.timeout(25000);
       closureBuilder.build(closureTest1Config, function() {
         done();
       });
     });
     it('Two files', function(done) {
-      this.timeout(20000);
+      this.timeout(25000);
       closureBuilder.build(closureTest2Config, function() {
         done();
       });
     });
     it('ECMA Script 6', function(done) {
-      this.timeout(20000);
+      this.timeout(25000);
       closureBuilder.build(closureECMAScript6Config, function() {
         done();
       });
     });
     it('No ECMA Script 6', function(done) {
-      this.timeout(20000);
+      this.timeout(25000);
       closureBuilder.build(closureNoECMAScript6Config, function() {
         done();
       });
     });
     it('Group of files', function(done) {
-      this.timeout(20000);
+      this.timeout(25000);
       closureBuilder.build(closureTest3Config, function() {
         done();
       });

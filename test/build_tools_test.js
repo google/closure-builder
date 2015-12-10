@@ -55,6 +55,13 @@ describe('BuildTools', function() {
       assert.equal(BuildTools.getTempPath(), os.tmpdir());
       assert(BuildTools.getTempPath('test123').indexOf('test123') != -1);
     });
+    it('getRandomTempPath', function() {
+      var path1 = BuildTools.getRandomTempPath();
+      var path2 = BuildTools.getRandomTempPath();
+      assert(path1 !== path2);
+      assert(path1.indexOf(os.tmpdir()) !== -1);
+      assert(path2.indexOf(os.tmpdir()) !== -1);
+    });
   });
 
   describe('Url', function() {

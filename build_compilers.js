@@ -158,16 +158,16 @@ BuildCompilers.compileSoyTemplates = function(files, out,
       throw errors;
     } else {
       var soyFiles = glob.sync(path.join(out, '**/*.soy.js'));
-      if (buildConfig) {
-        if (opt_callback) {
-          buildConfig.bar.tick(2);
+      var message = 'Compiled ' + soyFiles.length + ' soy files to ' +
+        buildTools.getTruncateText(out);
+      if (buildConfig && false) {
+        if (!opt_callback) {
+          buildConfig.setMessage(message, 100);
         } else {
-          buildConfig.bar.tick(10);
-          log.info(buildConfig.name, ':', out);
+          buildConfig.setMessage(message, 50);
         }
       } else {
-        this.infoSoyCompiler('Compiled ' + soyFiles.length + ' soy files to ' +
-           out);
+        this.infoSoyCompiler(message);
       }
       if (opt_callback) {
         opt_callback(soyFiles);
@@ -193,7 +193,7 @@ BuildCompilers.compileCssFiles = function(files, out, opt_callback,
       throw errors;
     } else if (minified) {
       if (opt_config) {
-        opt_config.bar.tick(1);
+        opt_config.setMessage('Saving output to ' + out);
       }
       var content = minified.styles;
       fs.outputFile(out, content, function(error) {
@@ -201,12 +201,15 @@ BuildCompilers.compileCssFiles = function(files, out, opt_callback,
           this.errorCssCompiler('Was not able to write file ' + out + '!');
           throw error;
         } else {
+          var message = 'Saved file ' + buildTools.getTruncateText(out) +
+            ' ( ' + content.length + ' )';
           if (opt_config) {
-            opt_config.bar.tick(10);
-            log.info(opt_config.name + ':', out, '(', content.length, ')');
+            opt_config.setMessage(message);
+            if (!opt_callback) {
+              opt_config.setMessage(message, 100);
+            }
           } else {
-            this.infoCssCompiler('Saved file ' + out + ' ( ' +
-                content.length + ' )');
+            this.infoCssCompiler(message);
           }
           if (opt_callback) {
             opt_callback(out, content);
@@ -245,7 +248,7 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
   if (opt_config) {
     if (opt_config.requireECMAScript6) {
       options.language_in = 'ECMASCRIPT6';
-      options.language_out = 'ES5';
+      options.language_out = 'ES5_STRICT';
     }
   }
   var compilerEvent = function(message, result) {
@@ -270,7 +273,7 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
     if (result) {
       var content = result;
       if (opt_config) {
-        opt_config.bar.tick(1);
+        opt_config.setMessage('Saving output to ' + out);
         if (opt_config.license) {
           var license = fs.readFileSync(opt_config.license, 'utf8');
           content = license + '\n\n' + result;
@@ -281,12 +284,16 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
           this.errorClosureCompiler('Was not able to write file ' + out + '!');
           throw error;
         } else {
+          var message = 'Saved file ' + buildTools.getTruncateText(out) +
+            ' ( ' + content.length + ' )';
           if (opt_config) {
-            opt_config.bar.tick(10);
-            log.info(opt_config.name + ':', out, '(', content.length, ')');
+            if (!opt_callback) {
+              opt_config.setMessage(message, 100);
+            } else {
+              opt_config.setMessage(message, 50);
+            }
           } else {
-            this.infoClosureCompiler('Saved file ' + out + ' ( ' +
-                content.length + ' )');
+            this.infoClosureCompiler(message);
           }
           if (opt_callback) {
             opt_callback(out, content);

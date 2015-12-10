@@ -76,26 +76,34 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
   }
 
   var config = this.getBuildConfig(build_config);
+  config.setMessage('Collecting file informations ...');
   this.showConfigInformation(config);
 
   // Compiler type handling
   var type = config.getType();
+  config.setMessage('Compiler Type: ' + type);
+  var callback = function(out, opt_content) {
+    if (opt_callback) {
+      opt_callback(out, opt_content);
+    }
+    config.setMessage('Done.', 100);
+  }.bind(this);
+  config.setMessage('Working ...', 10);
   if (type === buildType.SOY) {
-    this.compileSoyTemplates(config, opt_callback);
+    this.compileSoyTemplates(config, callback);
   } else if (type === buildType.CLOSURE) {
-    this.compileClosureFiles(config, [], opt_callback);
+    this.compileClosureFiles(config, [], callback);
   } else if (type === buildType.SOY_CLOSURE) {
-    this.compileClosureWithSoyFiles(config, opt_callback);
+    this.compileClosureWithSoyFiles(config, callback);
   } else if (type === buildType.JAVASCRIPT) {
-    this.compileJavaScriptFiles(config, opt_callback);
+    this.compileJavaScriptFiles(config, callback);
   } else if (type === buildType.CSS) {
-    this.compileCssFiles(config, opt_callback);
+    this.compileCssFiles(config, callback);
   } else if (type === buildType.RESOURCES) {
-    this.copyResources(config, opt_callback);
+    this.copyResources(config, callback);
   } else {
     log.error('Type', type, 'is unsupported!');
   }
-  config.bar.tick(1);
 };
 
 
@@ -123,7 +131,6 @@ ClosureBuilder.prototype.showConfigInformation = function(config) {
 
   log.debug('Found', config.hasResourceFiles(), 'resources files.');
   log.trace(config.getResourceFiles());
-  config.bar.tick(1);
 };
 
 
@@ -138,7 +145,7 @@ ClosureBuilder.prototype.compileSoyTemplates = function(config, opt_callback) {
     config.bar.terminate();
     return;
   }
-  config.bar.tick(1);
+  config.setMessage('Compiling soy templates');
   var soyPath = (config.getType() === buildType.SOY_CLOSURE) ?
     config.tempPath : config.outPath;
   this.soyLimit = true;
@@ -157,7 +164,7 @@ ClosureBuilder.prototype.compileSoyTemplates = function(config, opt_callback) {
 ClosureBuilder.prototype.compileClosureFiles = function(config, opt_files,
     opt_callback) {
   var jsLibs = [];
-  config.bar.tick(1);
+  config.setMessage('Compiling Closure Files');
   if (config.requireClosureLibrary) {
     jsLibs.push('"' + this.closureLibFiles + '"');
     jsLibs.push('"!' + this.closureLibTests + '"');
@@ -177,7 +184,7 @@ ClosureBuilder.prototype.compileClosureFiles = function(config, opt_files,
  */
 ClosureBuilder.prototype.compileJavaScriptFiles = function(config,
     opt_callback) {
-  config.bar.tick(1);
+  config.setMessage('Compiling JavaScript files ...');
   var files = config.getJavaScriptFiles();
   buildCompilers.compileJsFiles(files, config.getOutFilePath(), null,
     config.closureCompilerOptions, opt_callback, config);
@@ -190,9 +197,7 @@ ClosureBuilder.prototype.compileJavaScriptFiles = function(config,
  */
 ClosureBuilder.prototype.compileClosureWithSoyFiles = function(config,
     opt_callback) {
-  config.bar.tick(1);
   var compilerEvent = function(files) {
-    config.bar.tick(1);
     this.compileClosureFiles(config, files, opt_callback);
   };
   this.compileSoyTemplates(config, compilerEvent.bind(this));
@@ -204,7 +209,7 @@ ClosureBuilder.prototype.compileClosureWithSoyFiles = function(config,
  * @param {function=} opt_callback
  */
 ClosureBuilder.prototype.compileCssFiles = function(config, opt_callback) {
-  config.bar.tick(1);
+  config.setMessage('Compiling CSS files ...');
   var files = config.getCssFiles();
   buildCompilers.compileCssFiles(files, config.getOutFilePath(), opt_callback,
       config);
@@ -226,11 +231,10 @@ ClosureBuilder.prototype.getBuildConfig = function(config) {
  * @param {function=} opt_callback
  */
 ClosureBuilder.prototype.copyResources = function(config, opt_callback) {
-  config.bar.tick(1);
+  config.setMessage('Copying resources ...');
   var files = config.getResourceFiles();
   buildCompilers.copyFiles(files, config.outPath);
-  config.bar.tick(10);
-  log.info(config.name, ':', config.outPath);
+  config.setMessage('Copied resources files to ' + config.outPath);
   if (opt_callback) {
     opt_callback();
   }

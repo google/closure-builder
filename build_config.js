@@ -55,16 +55,20 @@ var BuildConfig = function(config) {
   /** @type {!boolean} */
   this.excludeTest = this.options.exclude_test || false;
 
-  /** @type {progressBar} */
-  this.bar = new progressBar(this.name + ' ' + '[:bar] :percent :elapsed sec',
-    {complete: '=', incomplete: ' ', renderThrottle: 100, width: 32,
-     total: 10});
+  /** @private */
+  this.bar_ = new progressBar('[:percent] ' + '\u001b[32m' + this.name +
+      '\u001b[0m :message \u001b[37m(:elapsed sec)\u001b[0m', {
+        renderThrottle: 100, total: 100
+      });
+
+  /** @private */
+  this.runTime_ = Date.now();
 
   /** @type {!boolean} */
   this.compress = false;
 
   /** @type {!string} */
-  this.tempPath = BuildTools.getTempPath('closure-builder');
+  this.tempPath = BuildTools.getRandomTempPath();
 
   /** @type {!array} */
   this.data = this.config.data || [];
@@ -242,5 +246,21 @@ BuildConfig.prototype.getOutFilePath = function() {
 BuildConfig.prototype.getType = function() {
   return this.type;
 };
+
+/**
+ * @param {!string} message
+ * @param {number=} opt_percent
+ */
+BuildConfig.prototype.setMessage = function(message, opt_percent) {
+  var messageBlock = {
+    'message': message
+  };
+  if (opt_percent) {
+    this.bar_.tick(opt_percent, messageBlock);
+  } else {
+    this.bar_.tick(messageBlock);
+  }
+};
+
 
 module.exports = BuildConfig;
