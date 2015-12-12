@@ -215,8 +215,10 @@ ClosureBuilder.prototype.compileJavaScriptFiles = function(config,
  */
 ClosureBuilder.prototype.compileClosureWithSoyFiles = function(config,
     opt_callback) {
-  var compilerEvent = function(files) {
-    this.compileClosureFiles(config, files, opt_callback);
+  var compilerEvent = function(errors, warnings, files) {
+    if (files) {
+      this.compileClosureFiles(config, files, opt_callback);
+    }
   };
   this.compileSoyTemplates(config, compilerEvent.bind(this));
 };

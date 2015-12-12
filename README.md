@@ -89,12 +89,11 @@ The following options are partial implemented and should not be used:
 - `data`
 - `compress`
 - `type`
--
 
 
 Function Callback
 -----------------
-For performance reasons the tasks will be executed asynchrone when every it
+For performance reasons the tasks will be executed asynchrone when ever it
 is possible.
 
 If you need to know exactly if an tasks has finished you could add an callback
