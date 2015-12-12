@@ -24,6 +24,7 @@ var pathParse = require('path-parse');
 var fs = require('fs-extra');
 var glob = require('glob');
 var mkdirp = require('mkdirp');
+var randomstring = require('randomstring');
 
 var BuildType = require('./build_types.js');
 
@@ -254,8 +255,7 @@ BuildTools.getUrlFile = function(file_url) {
  * @return {string} Temp dir path.
  */
 BuildTools.getRandomTempPath = function(opt_name) {
-  var name = (opt_name || 'closure-builder') + Math.floor(
-      Date.now() / (Math.random() * 10000));
+  var name = (opt_name || 'closure-builder') + randomstring.generate(7);
   return BuildTools.getTempPath(name);
 };
 

@@ -19,7 +19,7 @@
  */
 var path = require('path');
 var progressBar = require('progress');
-var randomString = require('random-string');
+var randomString = require('randomstring');
 
 var BuildType = require('./build_types.js');
 var BuildTools = require('./build_tools.js');
@@ -96,7 +96,7 @@ var BuildConfig = function(config) {
   this.outPath = BuildTools.getFilePath(this.out) || this.tempPath;
 
   /** @type {!string} */
-  this.outFile = BuildTools.getPathFile(this.out) || randomString();
+  this.outFile = BuildTools.getPathFile(this.out) || randomString.generate();
 
   /** @type {!object} */
   this.soyCompilerOptions = this.options.soy || {

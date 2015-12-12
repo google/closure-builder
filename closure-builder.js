@@ -63,7 +63,13 @@ ClosureBuilder.prototype.setLogLevel = function(loglevel) {
  * @param {function=} opt_callback
  */
 ClosureBuilder.prototype.build = function(build_config, opt_callback) {
+  if (!build_config) {
+    log.error('Empty Closure Builder config!');
+    return;
+  }
+
   if (build_config.enabled === false) {
+    log.warn('Closure Builder config is disabled!');
     return;
   }
 
@@ -76,18 +82,23 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
   }
 
   var config = this.getBuildConfig(build_config);
+  var type = config.getType();
+  if (!type) {
+    log.error('Invalid Closure Builder config!');
+    return;
+  }
+
   config.setMessage('Collecting file informations ...');
   this.showConfigInformation(config);
 
-  // Compiler type handling
-  var type = config.getType();
   config.setMessage('Compiler Type: ' + type);
   var callback = function(out, opt_content) {
     if (opt_callback) {
       opt_callback(out, opt_content);
     }
-    config.setMessage('Done.', 100);
+    config.setMessage('\u001b[32mDone.\u001b[0m', 100);
   }.bind(this);
+
   config.setMessage('Working ...', 10);
   if (type === buildType.SOY) {
     this.compileSoyTemplates(config, callback);

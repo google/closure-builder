@@ -53,13 +53,14 @@
     "mkdirp": "latest",
     "path-parse": "latest",
     "progress": "latest",
-    "random-string": "latest",
+    "randomstring": "latest",
     "soynode": "latest",
     "validator": "latest"
   },
   "devDependencies": {
     "assert": "latest",
     "eslint": "latest",
-    "mocha": "latest"
+    "mocha": "latest",
+    "grunt": "latest"
   }
 }
