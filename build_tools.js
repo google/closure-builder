@@ -272,19 +272,24 @@ BuildTools.getTempPath = function(opt_name) {
 
 
 /**
- * @param {number} size in megabyte.
- * @return {boolean}
+ * @param {!number} size in megabyte.
+ * @return {!boolean}
  */
 BuildTools.checkAvailableMemory = function(size) {
-  return size >= BuildTools.getMemory();
+  return size <= BuildTools.getMemory();
 };
 
 
 /**
- * @return {number} Available memory in megabyte.
+ * @param {boolean=} opt_raw
+ * @return {!number} Available memory in megabyte.
  */
-BuildTools.getMemory = function() {
-  return Math.floor(os.freemem() / 10000000);
+BuildTools.getMemory = function(opt_raw) {
+  var memory = os.freemem() / 10000000;
+  if (opt_raw) {
+    return memory;
+  }
+  return Math.floor(memory);
 };
 
 

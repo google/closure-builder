@@ -15,7 +15,7 @@ static files as well.
 * [Installation](#installation)
 * [Basic Usage](#basic-usage)
 * [Options](#options)
-* [Installation](#installation)
+* [Function callback](#function-callback)
 * [Example build configurations](#example-build-configurations)
   * [Compile closure JavaScript files](#compile-closure-javascript-files)
   * [Compile closure Javascript files with soy files](#compile-closure-javascript-files-with-soy-files)
@@ -24,6 +24,7 @@ static files as well.
   * [Copy Resources](#copy-resources)
   * [Copy Remote Resources](#copy-remote-resources)
   * [Compile css files](#compile-css-files)
+* [Development](#development)
 * [Disclaimer](#disclaimer)
 * [Author](#author)
 * [License](#license)
@@ -59,11 +60,16 @@ All of the options will be defined inside the BUILD rule.
 But there is not limit of BUILD rules which could be setup for your needs.
 
 #### Required ####
-These basic options are required:
+These basic required options for compiling are:
 - `name` Closure name space to compiler or unique name of your build rule
-- `srcs` List of (Soy, Closure or JavaScript files) which should be compiled
+- `srcs` List of (Soy, CSS, Closure or JavaScript files) which should be compiled
 - `out` Output path / output file for the compiled Soy, Closure or JavaScript files
+
+For copying files the required options are:
+- `name` Unique name of your build rule
 - `resources` Resource files which will be copied to the out folder
+- `out` Output path / output file for the compiled Soy, Closure or JavaScript files
+
 
 #### Additional ####
 These options could be used for adding additional information:
@@ -83,6 +89,33 @@ The following options are partial implemented and should not be used:
 - `data`
 - `compress`
 - `type`
+-
+
+
+Function Callback
+-----------------
+For performance reasons the tasks will be executed asynchrone when every it
+is possible.
+
+If you need to know exactly if an tasks has finished you could add an callback
+as well.
+
+```javascript
+var closureBuilder = require('closure-builder');
+var callbackExample = function(errors, warnings, files, results) {
+  ...
+};
+
+closureBuilder.build({
+  ...
+}, callbackExample.bind(this));
+```
+
+The callback will be called with the following parameters:
+- `errors` Errors if any
+- `warnings` Warnings if any
+- `files` Single output file or list of output files if any
+- `results` Result if any
 
 
 Example build configurations
@@ -201,6 +234,28 @@ closureBuilder.build({
   out: 'genfiles/merged-and-minified.css'
 });
 ```
+
+Development
+-----------
+There are some automated scripts which will help you for deveopment on the
+closure-builder project.
+
+### Updating dependencies###
+Before you start working, run `npm run update` to update the dependencies to
+the latest package versions.
+
+### Code Style ###
+Run `npm run lint` to make sure that your code is according the general style.
+
+### Testing ###
+Tests could be performed with `npm run test`. Before the test runs it will
+automatically run the linter to make sure that the code has no syntax errors.
+
+### Deploying ###
+Add all your files and create your commit, but instead of using "git push"
+directly please use `npm run deploy` instead.
+It will automatically run some tests and increase the versions number by 0.0.1.
+
 
 Disclaimer
 ----------

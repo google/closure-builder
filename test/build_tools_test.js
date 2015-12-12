@@ -19,7 +19,7 @@
  */
 var assert = require('assert');
 var os = require('os');
-var BuildTools = require('../build_tools');
+var buildTools = require('../build_tools');
 
 var pathWin = 'C:\\path\\dir\\subdir';
 var pathUnix = '/home/user/dir/subdir';
@@ -30,34 +30,34 @@ var fileRemoteHash = 'https://www.example.com:80/dir/subdir/file.xml#dummy';
 var testFilesPath = 'test_files/resources/';
 
 
-describe('BuildTools', function() {
+describe('buildTools', function() {
 
   describe('Path', function() {
     it('getModulePath', function() {
-      var modulePath = BuildTools.getModulePath();
+      var modulePath = buildTools.getModulePath();
       assert(modulePath.indexOf('node_modules') != -1);
     });
     it('getFilePath', function() {
-      assert.equal(BuildTools.getFilePath(pathUnix), pathUnix);
-      assert.equal(BuildTools.getFilePath(fileUnix), '/home/user/dir');
+      assert.equal(buildTools.getFilePath(pathUnix), pathUnix);
+      assert.equal(buildTools.getFilePath(fileUnix), '/home/user/dir');
       if (os.platform() == 'win32') {
-        assert.equal(BuildTools.getFilePath(pathWin), pathWin);
-        assert.equal(BuildTools.getFilePath(fileWin), 'C:\\path\\dir');
+        assert.equal(buildTools.getFilePath(pathWin), pathWin);
+        assert.equal(buildTools.getFilePath(fileWin), 'C:\\path\\dir');
       }
     });
     it('getPathFile', function() {
-      assert.equal(BuildTools.getPathFile(fileUnix), 'file.txt');
+      assert.equal(buildTools.getPathFile(fileUnix), 'file.txt');
       if (os.platform() == 'win32') {
-        assert.equal(BuildTools.getPathFile(fileWin), 'index.html');
+        assert.equal(buildTools.getPathFile(fileWin), 'index.html');
       }
     });
     it('getTempPath', function() {
-      assert.equal(BuildTools.getTempPath(), os.tmpdir());
-      assert(BuildTools.getTempPath('test123').indexOf('test123') != -1);
+      assert.equal(buildTools.getTempPath(), os.tmpdir());
+      assert(buildTools.getTempPath('test123').indexOf('test123') != -1);
     });
     it('getRandomTempPath', function() {
-      var path1 = BuildTools.getRandomTempPath();
-      var path2 = BuildTools.getRandomTempPath();
+      var path1 = buildTools.getRandomTempPath();
+      var path2 = buildTools.getRandomTempPath();
       assert(path1 !== path2);
       assert(path1.indexOf(os.tmpdir()) !== -1);
       assert(path2.indexOf(os.tmpdir()) !== -1);
@@ -66,25 +66,39 @@ describe('BuildTools', function() {
 
   describe('Url', function() {
     it('getUrlFile', function() {
-      assert.equal(BuildTools.getUrlFile(fileRemote), 'file.xml');
-      assert.equal(BuildTools.getUrlFile(fileRemoteHash), 'file.xml');
+      assert.equal(buildTools.getUrlFile(fileRemote), 'file.xml');
+      assert.equal(buildTools.getUrlFile(fileRemoteHash), 'file.xml');
     });
   });
 
   describe('Files', function() {
     it ('getGlobFiles', function() {
-      var files = BuildTools.getGlobFiles(testFilesPath + '*');
+      var files = buildTools.getGlobFiles(testFilesPath + '*');
       assert(files.length >= 9);
     });
     it('sortFiles', function() {
-      var files = BuildTools.getGlobFiles(testFilesPath + '*');
-      var sortedFilesAll = BuildTools.sortFiles(files, true);
-      var sortedFiles = BuildTools.sortFiles(files);
-      var sortedFilesWithoutTest = BuildTools.sortFiles(files, false, true);
+      var files = buildTools.getGlobFiles(testFilesPath + '*');
+      var sortedFilesAll = buildTools.sortFiles(files, true);
+      var sortedFiles = buildTools.sortFiles(files);
+      var sortedFilesWithoutTest = buildTools.sortFiles(files, false, true);
       assert(files.length == sortedFilesAll.length);
       assert(sortedFilesAll.length > sortedFiles.length);
       assert(sortedFiles.length > sortedFilesWithoutTest.length);
       assert(sortedFilesWithoutTest.length > 5);
+    });
+  });
+
+  describe('Misc', function() {
+    it ('getMemory', function() {
+      var memory = buildTools.getMemory();
+      assert(memory > 16);
+    });
+    it ('checkAvailableMemory', function() {
+      var largeMemory = buildTools.checkAvailableMemory(
+        buildTools.getMemory() + 128);
+      var smallMemory = buildTools.checkAvailableMemory(128);
+      assert(!largeMemory);
+      assert(smallMemory);
     });
   });
 });

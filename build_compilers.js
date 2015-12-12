@@ -58,13 +58,15 @@ BuildCompilers.copyFile = function(src, dest, opt_callback) {
   var destFile = path.join(dest, buildTools.getFileBase(src));
   var fileEvent = function(error) {
     if (error) {
-      log.error('Resource', src, 'failed to copy to', destFile);
-      throw error;
+      var message = 'Resource ' + src + ' failed to copy to ' + destFile;
+      log.error(message);
+      if (opt_callback) {
+        opt_callback(message, false, destFile);
+      }
     } else {
       if (opt_callback) {
-        opt_callback(destFile);
+        opt_callback(false, false, destFile);
       }
-      log.debug('Resource', src, 'copied to', destFile);
     }
   };
   fs.copy(src, destFile, fileEvent.bind(this));
@@ -92,13 +94,17 @@ BuildCompilers.copyRemoteFile = function(src, dest, opt_callback) {
       file.close();
     });
     if (opt_callback) {
-      opt_callback(destFile);
+      opt_callback(false, false, destFile);
     }
     log.debug('Remote Resource', src, 'copied to', destFile);
   };
   var errorEvent = function(error) {
-    log.error('Remote resource', src, 'failed to copy to', destFile);
-    throw error;
+    var message = 'Remote resource ' + src + ' failed to copy to ' + destFile +
+      ':' + error;
+    log.error(message);
+    if (opt_callback) {
+      opt_callback(message, false, destFile);
+    }
   };
 
   if (validator.isURL(src, httpCheck)) {
@@ -106,7 +112,11 @@ BuildCompilers.copyRemoteFile = function(src, dest, opt_callback) {
   } else if (validator.isURL(src, httpsCheck)) {
     https.get(src, completeEvent).on('error', errorEvent);
   } else {
-    log.error('Invalid remote file:', src);
+    var message = 'Invalid remote file: ' + src;
+    log.error(message);
+    if (opt_callback) {
+      opt_callback(message, false, destFile);
+    }
   }
 };
 
@@ -119,11 +129,35 @@ BuildCompilers.copyRemoteFile = function(src, dest, opt_callback) {
  */
 BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
   buildTools.mkdir(dest);
-  for (var i = srcs.length - 1; i >= 0; i--) {
+  var errors_ = [];
+  var warnings_ = [];
+  var files_ = [];
+  var numFiles_ = srcs.length;
+  var numDone_ = 0;
+
+  var callback = function(errors, warnings, files) {
+    if (numFiles_ <= numDone_) {
+      if (opt_callback) {
+        opt_callback(errors_, warnings_, files_);
+      }
+    }
+    if (errors) {
+      errors_.push(errors);
+    }
+    if (warnings) {
+      warnings_.push(warnings);
+    }
+    if (files) {
+      files_.push(files);
+    }
+    numDone_ += 1;
+  }.bind(this);
+
+  for (var i = numFiles_ - 1; i >= 0; i--) {
     if (validator.isURL(srcs)) {
-      BuildCompilers.copyRemoteFile(srcs[i], dest, opt_callback);
+      BuildCompilers.copyRemoteFile(srcs[i], dest, callback);
     } else {
-      BuildCompilers.copyFile(srcs[i], dest, opt_callback);
+      BuildCompilers.copyFile(srcs[i], dest, callback);
     }
   }
 };
@@ -139,8 +173,15 @@ BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
  */
 BuildCompilers.compileSoyTemplates = function(files, out,
     opt_options, opt_callback) {
-  log.debug('Compiling', files.length, 'soy files to', out);
-  log.trace(files);
+  var buildConfig = (opt_options && opt_options.config) ?
+    opt_options.config : false;
+  var message = 'Compiling ' + files.length + ' soy files to ' + out;
+  if (buildConfig) {
+    buildConfig.setMessage(message);
+  } else {
+    log.debug(message);
+    log.trace(files);
+  }
   var options = {
     shouldProvideRequireSoyNamespaces: true
   };
@@ -151,29 +192,27 @@ BuildCompilers.compileSoyTemplates = function(files, out,
   options.outputDir = out;
   buildTools.mkdir(out);
   var compilerEvent = function(errors) {
-    var buildConfig = (opt_options && opt_options.config) ?
-      opt_options.config : false;
     if (errors) {
-      this.errorSoyCompiler('Failed for ' + out);
-      throw errors;
+      var error_message = 'Failed for ' + out + ':' + errors;
+      this.errorSoyCompiler(error_message);
+      if (opt_callback) {
+        opt_callback(error_message, false);
+      }
     } else {
       var soyFiles = glob.sync(path.join(out, '**/*.soy.js'));
-      var message = 'Compiled ' + soyFiles.length + ' soy files to ' +
+      var success_message = 'Compiled ' + soyFiles.length + ' soy files to ' +
         buildTools.getTruncateText(out);
-      if (buildConfig && false) {
-        if (!opt_callback) {
-          buildConfig.setMessage(message, 100);
-        } else {
-          buildConfig.setMessage(message, 50);
-        }
+      if (buildConfig) {
+        buildConfig.setMessage(success_message);
       } else {
-        this.infoSoyCompiler(message);
+        this.infoSoyCompiler(success_message);
       }
       if (opt_callback) {
-        opt_callback(soyFiles);
+        opt_callback(false, false, soyFiles);
       }
     }
   }.bind(this);
+
   soyCompiler.setOptions(options);
   soyCompiler.compileTemplateFiles(files, compilerEvent);
 };
@@ -198,21 +237,21 @@ BuildCompilers.compileCssFiles = function(files, out, opt_callback,
       var content = minified.styles;
       fs.outputFile(out, content, function(error) {
         if (error) {
-          this.errorCssCompiler('Was not able to write file ' + out + '!');
-          throw error;
+          var error_message = 'Was not able to write file ' + out + ':' + error;
+          this.errorCssCompiler(error_message);
+          if (opt_callback) {
+            opt_callback(error, false);
+          }
         } else {
-          var message = 'Saved file ' + buildTools.getTruncateText(out) +
-            ' ( ' + content.length + ' )';
+          var success_message = 'Saved file ' +
+            buildTools.getTruncateText(out) + ' ( ' + content.length + ' )';
           if (opt_config) {
-            opt_config.setMessage(message);
-            if (!opt_callback) {
-              opt_config.setMessage(message, 100);
-            }
+            opt_config.setMessage(success_message);
           } else {
-            this.infoCssCompiler(message);
+            this.infoCssCompiler(success_message);
           }
           if (opt_callback) {
-            opt_callback(out, content);
+            opt_callback(false, false, out, content);
           }
         }
       }.bind(this));
@@ -252,6 +291,7 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
     }
   }
   var compilerEvent = function(message, result) {
+    var warning_message = false;
     if (message) {
       var errors = 0;
       var warnings = 0;
@@ -262,12 +302,14 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
         warnings = message_info[2];
       }
       if (errors == 0 && warnings > 0) {
-        this.warnClosureCompiler(warnings + ' warnings for ' + out);
-        this.warnClosureCompiler(message);
+        warning_message = warnings + ' warnings for ' + out + ':' + message;
+        this.warnClosureCompiler(warning_message);
       } else {
-        this.errorClosureCompiler(errors + ' errors for ' + out);
+        var error_message = errors + ' errors for ' + out + ':' + message;
         this.errorClosureCompiler(message);
-        throw message;
+        if (opt_callback) {
+          opt_callback(error_message, false);
+        }
       }
     }
     if (result) {
@@ -281,22 +323,21 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
       }
       fs.outputFile(out, content, function(error) {
         if (error) {
-          this.errorClosureCompiler('Was not able to write file ' + out + '!');
-          throw error;
+          var error_message = 'Was not able to write file ' + out + ':' + error;
+          this.errorClosureCompiler(error_message);
+          if (opt_callback) {
+            opt_callback(error_message, warning_message);
+          }
         } else {
-          var message = 'Saved file ' + buildTools.getTruncateText(out) +
-            ' ( ' + content.length + ' )';
+          var success_message = 'Saved file ' +
+            buildTools.getTruncateText(out) + ' ( ' + content.length + ' )';
           if (opt_config) {
-            if (!opt_callback) {
-              opt_config.setMessage(message, 100);
-            } else {
-              opt_config.setMessage(message, 50);
-            }
+            opt_config.setMessage(success_message, 50);
           } else {
-            this.infoClosureCompiler(message);
+            this.infoClosureCompiler(success_message);
           }
           if (opt_callback) {
-            opt_callback(out, content);
+            opt_callback(false, warning_message, out, content);
           }
         }
       }.bind(this));

@@ -23,8 +23,7 @@ var fs = require('fs-extra');
 var buildTools = require('../build_tools.js');
 var closureBuilder = require('../closure-builder');
 var testConfigs = require('../test/test_configs.js');
-var largeMemoryTest = !buildTools.checkAvailableMemory(600);
-
+var largeMemoryTest = buildTools.checkAvailableMemory(600);
 
 describe('ClosureBuilder', function() {
   it('Object', function() {
@@ -37,7 +36,7 @@ describe('ClosureBuilder', function() {
     it('license', function(done) {
       this.timeout(30000);
       closureBuilder.build(testConfigs.optionLicenseConfig,
-        function(out, content) {
+        function(errors, warnings, out, content) {
           var license = fs.readFileSync(testConfigs.optionLicenseConfig.license,
             'utf8');
           assert(content.indexOf(license) != -1);
@@ -48,7 +47,8 @@ describe('ClosureBuilder', function() {
   describe('CSS files', function() {
     it('compile', function(done) {
       this.timeout(20000);
-      closureBuilder.build(testConfigs.cssConfig, function(out, content) {
+      closureBuilder.build(testConfigs.cssConfig, function(errors, warnings,
+          out, content) {
         var expected = '.menueliste li a,.submenue li a{text-decoration:none}' +
           'body{margin:0;padding:0;background:#e4e9ec}#container1,#container2' +
           ',#container3{width:900px}#content{background:red;margin:0 5px;min-' +
@@ -122,13 +122,31 @@ describe('ClosureBuilder', function() {
         done();
       });
     });
+    it('Expected Error Message', function(done) {
+      this.timeout(25000);
+      closureBuilder.build(testConfigs.closureTestErrorConfig, function(
+          errors, warnings) {
+        assert(errors);
+        assert(!warnings);
+        done();
+      });
+    });
+    it('Expected Warning Message', function(done) {
+      this.timeout(25000);
+      closureBuilder.build(testConfigs.closureTestWarningConfig, function(
+          errors, warnings) {
+        assert(!errors);
+        assert(warnings);
+        done();
+      });
+    });
   });
   describe('Closure library', function() {
     it('compile', function(done) {
-      this.timeout(120000);
       if (!largeMemoryTest) {
         return done();
       }
+      this.timeout(120000);
       closureBuilder.build(testConfigs.closureLibraryConfig, function() {
         done();
       });

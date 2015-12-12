@@ -60,7 +60,8 @@ ClosureBuilder.prototype.setLogLevel = function(loglevel) {
 
 /**
  * @param {!object} build_config
- * @param {function=} opt_callback
+ * @param {function=} opt_callback in the format
+ *   function(errors, warnings, files, results) {...}
  */
 ClosureBuilder.prototype.build = function(build_config, opt_callback) {
   if (!build_config) {
@@ -92,11 +93,17 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
   this.showConfigInformation(config);
 
   config.setMessage('Compiler Type: ' + type);
-  var callback = function(out, opt_content) {
+  var callback = function(errors, warnings, files, results) {
     if (opt_callback) {
-      opt_callback(out, opt_content);
+      opt_callback(errors, warnings, files, results);
     }
-    config.setMessage('\u001b[32mDone.\u001b[0m', 100);
+    if (errors) {
+      config.setMessage('\u001b[31mErrors!\u001b[0m', 100);
+    } else if (warnings) {
+      config.setMessage('\u001b[33mDone with warnings.\u001b[0m', 100);
+    } else {
+      config.setMessage('\u001b[32mDone.\u001b[0m', 100);
+    }
   }.bind(this);
 
   config.setMessage('Working ...', 10);

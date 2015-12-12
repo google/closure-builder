@@ -102,6 +102,24 @@ TestConfigs.closureNoECMAScript6Config = {
 };
 
 
+TestConfigs.closureTestErrorConfig = {
+  name: 'closure_test_error',
+  srcs: glob([
+    'test_files/special/closure_error.js'
+  ]),
+  out: path.join(testDirectory, 'closure-error')
+};
+
+
+TestConfigs.closureTestWarningConfig = {
+  name: 'closure_test_warning',
+  srcs: glob([
+    'test_files/special/closure_warning.js'
+  ]),
+  out: path.join(testDirectory, 'closure-warning')
+};
+
+
 TestConfigs.optionLicenseConfig = {
   name: 'option_license',
   srcs: [
