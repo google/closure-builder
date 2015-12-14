@@ -9,7 +9,7 @@ Closure build system to easily compile Soy template files together with
 Closure JavaScript files without the need to configure anything.
 The Google Closure library will be included automatically if needed.
 
-This simple build system could be also used for normal css, js and
+This simple build system could be also used for normal css, js, nodejs  and
 static files as well.
 
 * [Installation](#installation)
@@ -21,9 +21,11 @@ static files as well.
   * [Compile closure Javascript files with soy files](#compile-closure-javascript-files-with-soy-files)
   * [Compile soy files](#compile-soy-files)
   * [Compile JavaScript files](#compile-javascript-files)
+  * [Compile Node.js files](#compile-node-files)
+  * [Compile css files](#compile-css-files)
   * [Copy Resources](#copy-resources)
   * [Copy Remote Resources](#copy-remote-resources)
-  * [Compile css files](#compile-css-files)
+* [Best practise](#best_practise)
 * [Development](#development)
 * [Disclaimer](#disclaimer)
 * [Author](#author)
@@ -32,7 +34,8 @@ static files as well.
 
 Installation
 ------------
-Use NPM using `npm install closure-builder` or fork, clone download the source on GitHub to get the latest version.
+Use NPM using `npm install closure-builder` or fork, clone download the source
+on GitHub to get the latest version.
 
 
 Basic Usage
@@ -184,6 +187,30 @@ closureBuilder.build({
 });
 ```
 
+#### Compile Node.js files ####
+Combine node.js JavaScript files with browserify to an single JavaScript bundle.
+```javascript
+closureBuilder.build({
+  name: 'node_bundle_files',
+  srcs: glob([
+    'src/js/node_file.js'
+  ])
+  out: 'genfiles/node_bundle.js'
+});
+```
+
+#### Compile CSS files ####
+Combine and minified several CSS files to an single CSS file.
+```javascript
+closureBuilder.build({
+  name: 'css_files',
+  srcs: glob([
+    'src/css/*.css'
+  ])
+  out: 'genfiles/merged-and-minified.css'
+});
+```
+
 #### Copy resources ####
 Copy static resources from the different location to the target directory.
 ```javascript
@@ -222,17 +249,26 @@ closureBuilder.build({
 ```
 
 
-#### Compile CSS files ####
-Combine and minified several CSS files to an single CSS file.
-```javascript
-closureBuilder.build({
-  name: 'css_files',
-  srcs: glob([
-    'src/css/*.css'
-  ])
-  out: 'genfiles/merged-and-minified.css'
-});
+Best practise
+-------------
+For an better overview, you could split your build rules to several files.
+They could be placed in an "build" folder or something like this.
+Example: https://github.com/google/coding-with-chrome/tree/master/build
+
+This allows you to rebuild only some of the files if needed.
+
+Example package.json:
 ```
+ "scripts": {
+    "build": "npm run build-static-files && npm run build-remote-files && npm run build-extra-files && npm run build-cwc-files",
+    "rebuild": "npm run build-static-files && npm run build-cwc-files",
+    "build-static-files": "node build/static_files.js",
+    "build-remote-files": "node build/remote_files.js",
+    "build-extra-files": "node build/extra_files.js",
+    "build-cwc-files": "node build/cwc_files.js",
+ }
+```
+
 
 Development
 -----------
@@ -263,7 +299,7 @@ This is not an official Google product.
 
 Author
 ------
-[Markus Bordihn] (https://github.com/MarkusBordihn)
+[Markus Bordihn](https://github.com/MarkusBordihn)
 
 
 License

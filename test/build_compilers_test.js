@@ -39,6 +39,7 @@ describe('ClosureBuilder', function() {
         function(errors, warnings, out, content) {
           var license = fs.readFileSync(testConfigs.optionLicenseConfig.license,
             'utf8');
+          assert(!errors);
           assert(content.indexOf(license) != -1);
           done();
         });
@@ -62,6 +63,7 @@ describe('ClosureBuilder', function() {
           'r-right:10px solid #bacbe3;background:#9aacbb;width:119px}.submenu' +
           'e li a:hover{padding:5px 5px 5px .5em;border-left:10px solid #1c64' +
           'd1;border-right:10px solid #5ba3e0;background:#7d94a1}';
+        assert(!errors);
         assert.equal(content, expected);
         done();
       });
@@ -70,7 +72,8 @@ describe('ClosureBuilder', function() {
   describe('Resources files', function() {
     it('compile', function(done) {
       this.timeout(20000);
-      closureBuilder.build(testConfigs.resourcesConfig, function() {
+      closureBuilder.build(testConfigs.resourcesConfig, function(errors) {
+        assert(!errors);
         done();
       });
     });
@@ -78,7 +81,8 @@ describe('ClosureBuilder', function() {
   describe('Remote resources files', function() {
     it('compile', function(done) {
       this.timeout(20000);
-      closureBuilder.build(testConfigs.resourcesRemoteConfig, function() {
+      closureBuilder.build(testConfigs.resourcesRemoteConfig, function(errors) {
+        assert(!errors);
         done();
       });
     });
@@ -86,7 +90,8 @@ describe('ClosureBuilder', function() {
   describe('Soy file', function() {
     it('compile', function(done) {
       this.timeout(30000);
-      closureBuilder.build(testConfigs.soyTestConfig, function() {
+      closureBuilder.build(testConfigs.soyTestConfig, function(errors) {
+        assert(!errors);
         done();
       });
     });
@@ -94,36 +99,43 @@ describe('ClosureBuilder', function() {
   describe('Closure files', function() {
     it('Single file', function(done) {
       this.timeout(25000);
-      closureBuilder.build(testConfigs.closureTest1Config, function() {
+      closureBuilder.build(testConfigs.closureTest1Config, function(errors) {
+        assert(!errors);
         done();
       });
     });
     it('Two files', function(done) {
       this.timeout(25000);
-      closureBuilder.build(testConfigs.closureTest2Config, function() {
+      closureBuilder.build(testConfigs.closureTest2Config, function(errors) {
+        assert(!errors);
         done();
       });
     });
     it('ECMA Script 6', function(done) {
       this.timeout(25000);
-      closureBuilder.build(testConfigs.closureECMAScript6Config, function() {
+      closureBuilder.build(testConfigs.closureECMAScript6Config, function(
+          errors) {
+        assert(!errors);
         done();
       });
     });
     it('No ECMA Script 6', function(done) {
       this.timeout(25000);
-      closureBuilder.build(testConfigs.closureNoECMAScript6Config, function() {
+      closureBuilder.build(testConfigs.closureNoECMAScript6Config, function(
+          errors) {
+        assert(!errors);
         done();
       });
     });
     it('Group of files', function(done) {
       this.timeout(25000);
-      closureBuilder.build(testConfigs.closureTest3Config, function() {
+      closureBuilder.build(testConfigs.closureTest3Config, function(errors) {
+        assert(!errors);
         done();
       });
     });
     it('Expected Error Message', function(done) {
-      this.timeout(25000);
+      this.timeout(30000);
       closureBuilder.build(testConfigs.closureTestErrorConfig, function(
           errors, warnings) {
         assert(errors);
@@ -132,11 +144,20 @@ describe('ClosureBuilder', function() {
       });
     });
     it('Expected Warning Message', function(done) {
-      this.timeout(25000);
+      this.timeout(30000);
       closureBuilder.build(testConfigs.closureTestWarningConfig, function(
           errors, warnings) {
         assert(!errors);
         assert(warnings);
+        done();
+      });
+    });
+  });
+  describe('NodeJs', function() {
+    it('compile', function(done) {
+      this.timeout(120000);
+      closureBuilder.build(testConfigs.nodeTestConfig, function(errors) {
+        assert(!errors);
         done();
       });
     });
@@ -147,7 +168,8 @@ describe('ClosureBuilder', function() {
         return done();
       }
       this.timeout(120000);
-      closureBuilder.build(testConfigs.closureLibraryConfig, function() {
+      closureBuilder.build(testConfigs.closureLibraryConfig, function(errors) {
+        assert(!errors);
         done();
       });
     });

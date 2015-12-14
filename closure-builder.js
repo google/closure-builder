@@ -98,7 +98,7 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
       opt_callback(errors, warnings, files, results);
     }
     if (errors) {
-      config.setMessage('\u001b[31mErrors!\u001b[0m', 100);
+      config.setMessage('\u001b[31mErrors!\u001b[0m');
     } else if (warnings) {
       config.setMessage('\u001b[33mDone with warnings.\u001b[0m', 100);
     } else {
@@ -111,6 +111,8 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
     this.compileSoyTemplates(config, callback);
   } else if (type === buildType.CLOSURE) {
     this.compileClosureFiles(config, [], callback);
+  } else if (type === buildType.NODEJS) {
+    this.compileNodeFiles(config, callback);
   } else if (type === buildType.SOY_CLOSURE) {
     this.compileClosureWithSoyFiles(config, callback);
   } else if (type === buildType.JAVASCRIPT) {
@@ -221,6 +223,18 @@ ClosureBuilder.prototype.compileClosureWithSoyFiles = function(config,
     }
   };
   this.compileSoyTemplates(config, compilerEvent.bind(this));
+};
+
+
+/**
+ * @param {!buildConfig} config
+ * @param {function=} opt_callback
+ */
+ClosureBuilder.prototype.compileNodeFiles = function(config, opt_callback) {
+  config.setMessage('Compiling Node files ...');
+  var files = config.getNodeFiles();
+  buildCompilers.compileNodeFiles(files, config.getOutFilePath(), opt_callback,
+      config);
 };
 
 

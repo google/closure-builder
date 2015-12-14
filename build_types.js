@@ -31,6 +31,7 @@ var BuildType = {
   RESOURCES: 'resources',
   SOY: 'soy',
   SOY_CLOSURE: 'soy and closure',
+  NODEJS: 'nodejs',
   UNKNOWN: ''
 };
 

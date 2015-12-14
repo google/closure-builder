@@ -120,6 +120,15 @@ TestConfigs.closureTestWarningConfig = {
 };
 
 
+TestConfigs.nodeTestConfig = {
+  name: 'node_test',
+  srcs: glob([
+    'test_files/special/node_test.js'
+  ]),
+  out: path.join(testDirectory, 'node-test', 'node_bundle.js')
+};
+
+
 TestConfigs.optionLicenseConfig = {
   name: 'option_license',
   srcs: [

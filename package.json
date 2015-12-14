@@ -44,6 +44,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "adm-zip": "0.4.7",
+    "browserify": "12.0.1",
     "clean-css": "3.4.8",
     "closurecompiler": "https://github.com/dcodeIO/ClosureCompiler.js/tarball/master",
     "fs-extra": "0.26.2",
@@ -56,6 +57,7 @@
     "progress": "1.1.8",
     "randomstring": "1.1.3",
     "soynode": "1.1.0",
+    "touch": "1.0.0",
     "validator": "4.4.0"
   },
   "devDependencies": {

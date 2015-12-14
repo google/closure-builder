@@ -20,6 +20,7 @@
 var assert = require('assert');
 var os = require('os');
 var buildTools = require('../build_tools');
+var path = require('path');
 
 var pathWin = 'C:\\path\\dir\\subdir';
 var pathUnix = '/home/user/dir/subdir';
@@ -28,6 +29,7 @@ var fileUnix = '/home/user/dir/file.txt';
 var fileRemote = 'http://www.example.com:80/dir/subdir/file.xml?test=1&test=2';
 var fileRemoteHash = 'https://www.example.com:80/dir/subdir/file.xml#dummy';
 var testFilesPath = 'test_files/resources/';
+var testDirectory = buildTools.getTempPath('closure-builder-test');
 
 
 describe('buildTools', function() {
@@ -85,6 +87,21 @@ describe('buildTools', function() {
       assert(sortedFilesAll.length > sortedFiles.length);
       assert(sortedFiles.length > sortedFilesWithoutTest.length);
       assert(sortedFilesWithoutTest.length > 5);
+    });
+    it('mkfile', function() {
+      var file = path.join(testDirectory, 'tools', 'example-file');
+      buildTools.mkfile(file);
+      assert(buildTools.existFile(file));
+      assert(!buildTools.existDirectory(file));
+    });
+  });
+
+  describe('Directory', function() {
+    it('mkdir', function() {
+      var folder = path.join(testDirectory, 'tools', 'example-folder');
+      buildTools.mkdir(folder);
+      assert(!buildTools.existFile(folder));
+      assert(buildTools.existDirectory(folder));
     });
   });
 

@@ -24,6 +24,7 @@ var pathParse = require('path-parse');
 var fs = require('fs-extra');
 var glob = require('glob');
 var mkdirp = require('mkdirp');
+var touch = require('touch');
 var randomstring = require('randomstring');
 
 var BuildType = require('./build_types.js');
@@ -52,6 +53,8 @@ BuildTools.detectType = function(config) {
     }
   } else if (config.hasClosureFiles()) {
     return BuildType.CLOSURE;
+  } else if (config.hasNodeFiles()) {
+    return BuildType.NODEJS;
   } else if (config.hasJsFiles()) {
     return BuildType.JAVASCRIPT;
   } else if (config.hasCssFiles()) {
@@ -113,6 +116,7 @@ BuildTools.getBuildRequirements = function(config) {
     cssFiles: [].concat(srcsConfig.cssFiles),
     soyFiles: [].concat(depsConfig.soyFiles, soyConfig.soyFiles,
       srcsConfig.soyFiles),
+    nodeFiles: [].concat(srcsConfig.nodeFiles),
     requireClosureLibrary: (depsConfig.requireClosureLibrary ||
       srcsConfig.requireClosureLibrary),
     requireSoyLibrary: (depsConfig.requireSoyLibrary ||
@@ -133,6 +137,7 @@ BuildTools.scanFiles = function(files) {
   var jsFiles = [];
   var cssFiles = [];
   var soyFiles = [];
+  var nodeFiles = [];
   var requireClosureLibrary = false;
   var requireSoyLibrary = false;
   var requireECMAScript6 = false;
@@ -144,9 +149,12 @@ BuildTools.scanFiles = function(files) {
       requireSoyLibrary = true;
     } else if (file.indexOf('.js') !== -1) {
       var fileContent = fs.readFileSync(file, 'utf8');
-      if (fileContent.indexOf('goog.provide') !== -1 ||
-          fileContent.indexOf('goog.require') !== -1) {
+      if (fileContent.indexOf('goog.provide(') !== -1 ||
+          fileContent.indexOf('goog.require(') !== -1) {
         closureFiles.push(file);
+      } else if (fileContent.indexOf('require(' !== -1) &&
+        fileContent.indexOf('module.exports') !== -1) {
+        nodeFiles.push(file);
       } else {
         jsFiles.push(file);
       }
@@ -166,6 +174,7 @@ BuildTools.scanFiles = function(files) {
     jsFiles: jsFiles,
     cssFiles: cssFiles,
     soyFiles: soyFiles,
+    nodeFiles: nodeFiles,
     requireClosureLibrary: requireClosureLibrary,
     requireSoyLibrary: requireSoyLibrary,
     requireECMAScript6: requireECMAScript6
@@ -302,12 +311,12 @@ BuildTools.getSafeMemory = function() {
 
 
 /**
- * @param {string} file_path
+ * @param {string} dir_path
  * @return {boolean} Directory exists.
  */
-BuildTools.existDirectory = function(file_path) {
+BuildTools.existDirectory = function(dir_path) {
   try {
-    return fs.statSync(file_path).isDirectory();
+    return fs.statSync(dir_path).isDirectory();
   } catch (err) {
     return false;
   }
@@ -316,11 +325,34 @@ BuildTools.existDirectory = function(file_path) {
 
 /**
  * @param {string} file_path
+ * @return {boolean} File exists.
  */
-BuildTools.mkdir = function(file_path) {
-  if (!BuildTools.existDirectory(file_path)) {
-    mkdirp.sync(file_path);
+BuildTools.existFile = function(file_path) {
+  try {
+    return fs.statSync(file_path).isFile();
+  } catch (err) {
+    return false;
   }
+};
+
+
+/**
+ * @param {string} dir_path
+ */
+BuildTools.mkdir = function(dir_path) {
+  if (!BuildTools.existDirectory(dir_path)) {
+    mkdirp.sync(dir_path);
+  }
+};
+
+
+/**
+ * @param {string} file_path
+ */
+BuildTools.mkfile = function(file_path) {
+  var dir_path = path.dirname(file_path);
+  BuildTools.mkdir(dir_path);
+  touch.sync(file_path);
 };
 
 

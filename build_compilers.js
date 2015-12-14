@@ -17,6 +17,7 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
+var browserify = require('browserify');
 var closureCompiler = require('closurecompiler');
 var cleanCss = require('clean-css');
 var log = require('loglevel');
@@ -228,8 +229,14 @@ BuildCompilers.compileCssFiles = function(files, out, opt_callback,
     opt_config) {
   var compilerEvent = function(errors, minified) {
     if (errors) {
-      this.errorCssCompiler('Failed for ' + out);
-      throw errors;
+      var errorsMessage = 'Failed for ' + out + ':' + errors;
+      this.errorCssCompiler(errorsMessage);
+      if (opt_config) {
+        opt_config.setMessage(errorsMessage);
+      }
+      if (opt_callback) {
+        opt_callback(errors, false);
+      }
     } else if (minified) {
       if (opt_config) {
         opt_config.setMessage('Saving output to ' + out);
@@ -258,6 +265,47 @@ BuildCompilers.compileCssFiles = function(files, out, opt_callback,
     }
   }.bind(this);
   new cleanCss().minify(files, compilerEvent);
+};
+
+
+/**
+ * @param {Array} files
+ * @param {string=} output
+ * @param {function=} opt_callback
+ * @param {BuildConfig=} opt_config
+ */
+BuildCompilers.compileNodeFiles = function(files, out, opt_callback,
+    opt_config) {
+  var nodeCompiler = browserify();
+  nodeCompiler.add(files);
+  buildTools.mkfile(out);
+  var bufferEvent = function(errors) {
+    if (errors) {
+      var error_message = 'Was not able to write file ' + out + ':' + errors;
+      this.errorNodeCompiler(error_message);
+      if (opt_callback) {
+        opt_callback(errors, false);
+      }
+    } else {
+      if (opt_config) {
+        opt_config.setMessage('Saving output to ' + out);
+      }
+    }
+  }.bind(this);
+  var streamEvent = fs.createWriteStream(out);
+  streamEvent.on('error', function(error) {
+    var error_message = 'Was not able to write file ' + out + ':' + error;
+    this.errorNodeCompiler(error_message);
+    if (opt_callback) {
+      opt_callback(error, false);
+    }
+  }.bind(this));
+  streamEvent.on('finish', function() {
+    if (opt_callback) {
+      opt_callback(false, false, out);
+    }
+  });
+  nodeCompiler.bundle(bufferEvent).pipe(streamEvent);
 };
 
 
@@ -406,6 +454,14 @@ BuildCompilers.errorClosureCompiler = function(msg) {
  */
 BuildCompilers.errorCssCompiler = function(msg) {
   log.error('[Css Compiler Error]', msg);
+};
+
+
+/**
+ * @param {string} msg
+ */
+BuildCompilers.errorNodeCompiler = function(msg) {
+  log.error('[Node Compiler Error]', msg);
 };
 
 
