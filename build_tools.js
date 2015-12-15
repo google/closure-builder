@@ -300,7 +300,10 @@ BuildTools.checkAvailableMemory = function(size) {
  * @return {!number} Available memory in megabyte.
  */
 BuildTools.getMemory = function(opt_raw) {
-  var memory = os.freemem() / 10000000;
+  var memory = os.freemem() / 1000000;
+  if (memory > 512 && process.env.C9_PROJECT) {
+    memory = 384;
+  }
   if (opt_raw) {
     return memory;
   }
@@ -312,7 +315,7 @@ BuildTools.getMemory = function(opt_raw) {
  * @return {number} 90% of the available memory in megabyte.
  */
 BuildTools.getSafeMemory = function() {
-  return Math.floor(BuildTools.getMemory() * 0.9);
+  return Math.floor(BuildTools.getMemory(true) * 0.9);
 };
 
 

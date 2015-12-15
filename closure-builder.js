@@ -30,10 +30,9 @@ var buildCompilers = require('./build_compilers.js');
  * @constructor
  */
 var ClosureBuilder = function() {
-  log.info('Loading Closure Builder ...');
-  log.info('Avalible memory in MB:', buildTools.getMemory(), '(',
+  console.log('Loading Closure Builder ...');
+  console.log('Avalible memory in MB:', buildTools.getMemory(), '(',
     buildTools.getSafeMemory(), ')');
-  log.info('JAVA_HOME:', process.env['JAVA_HOME'] ? 'found' : 'not found');
   this.logLevel = 'info';
   this.modulePath = buildTools.getModulePath();
   this.nameCache = {};
