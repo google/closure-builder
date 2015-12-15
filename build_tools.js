@@ -117,6 +117,7 @@ BuildTools.getBuildRequirements = function(config) {
     soyFiles: [].concat(depsConfig.soyFiles, soyConfig.soyFiles,
       srcsConfig.soyFiles),
     nodeFiles: [].concat(srcsConfig.nodeFiles),
+    requireClosureExport: (srcsConfig.requireClosureExport),
     requireClosureLibrary: (depsConfig.requireClosureLibrary ||
       srcsConfig.requireClosureLibrary),
     requireSoyLibrary: (depsConfig.requireSoyLibrary ||
@@ -139,6 +140,7 @@ BuildTools.scanFiles = function(files) {
   var soyFiles = [];
   var nodeFiles = [];
   var requireClosureLibrary = false;
+  var requireClosureExport = false;
   var requireSoyLibrary = false;
   var requireECMAScript6 = false;
 
@@ -151,6 +153,9 @@ BuildTools.scanFiles = function(files) {
       var fileContent = fs.readFileSync(file, 'utf8');
       if (fileContent.indexOf('goog.provide(') !== -1 ||
           fileContent.indexOf('goog.require(') !== -1) {
+        if (fileContent.indexOf(' * @export') !== -1) {
+          requireClosureExport = true;
+        }
         closureFiles.push(file);
       } else if (fileContent.indexOf('require(' !== -1) &&
         fileContent.indexOf('module.exports') !== -1) {
@@ -175,6 +180,7 @@ BuildTools.scanFiles = function(files) {
     cssFiles: cssFiles,
     soyFiles: soyFiles,
     nodeFiles: nodeFiles,
+    requireClosureExport: requireClosureExport,
     requireClosureLibrary: requireClosureLibrary,
     requireSoyLibrary: requireSoyLibrary,
     requireECMAScript6: requireECMAScript6

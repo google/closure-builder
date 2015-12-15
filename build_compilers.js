@@ -322,11 +322,13 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
   log.debug('Compiling', ((opt_func) ? opt_func + ' with' : ''), files.length,
     'files to', out, '...');
   log.trace(files);
-  var options = opt_options || {
-    compilation_level: 'SIMPLE_OPTIMIZATIONS',
-    Xmx: BuildCompilers.SAFE_MEMORY + 'm',
-    Xms: '64m'
-  };
+  var options = opt_options || {};
+  if (!('compilation_level' in options)) {
+    options.compilation_level = 'SIMPLE_OPTIMIZATIONS';
+  }
+  options.Xmx = BuildCompilers.SAFE_MEMORY + 'm';
+  options.Xms = '64m';
+
   if (opt_func) {
     options.only_closure_dependencies = true;
     options.manage_closure_dependencies = true;
@@ -336,6 +338,9 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
     if (opt_config.requireECMAScript6) {
       options.language_in = 'ECMASCRIPT6';
       options.language_out = 'ES5_STRICT';
+    }
+    if (opt_config.requireClosureExport) {
+      options.generate_exports = true;
     }
   }
   var compilerEvent = function(message, result) {

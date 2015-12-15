@@ -120,6 +120,15 @@ TestConfigs.closureTestWarningConfig = {
 };
 
 
+TestConfigs.closureTestExportConfig = {
+  name: 'closure_test_export',
+  srcs: glob([
+    'test_files/special/closure_export.js'
+  ]),
+  out: path.join(testDirectory, 'closure-export')
+};
+
+
 TestConfigs.nodeTestConfig = {
   name: 'node_test',
   srcs: glob([

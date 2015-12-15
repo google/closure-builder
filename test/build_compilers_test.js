@@ -36,10 +36,11 @@ describe('ClosureBuilder', function() {
     it('license', function(done) {
       this.timeout(30000);
       closureBuilder.build(testConfigs.optionLicenseConfig,
-        function(errors, warnings, out, content) {
+        function(errors, warnings, files, content) {
           var license = fs.readFileSync(testConfigs.optionLicenseConfig.license,
             'utf8');
           assert(!errors);
+          assert(content);
           assert(content.indexOf(license) != -1);
           done();
         });
@@ -49,7 +50,7 @@ describe('ClosureBuilder', function() {
     it('compile', function(done) {
       this.timeout(20000);
       closureBuilder.build(testConfigs.cssConfig, function(errors, warnings,
-          out, content) {
+          files, content) {
         var expected = '.menueliste li a,.submenue li a{text-decoration:none}' +
           'body{margin:0;padding:0;background:#e4e9ec}#container1,#container2' +
           ',#container3{width:900px}#content{background:red;margin:0 5px;min-' +
@@ -64,6 +65,7 @@ describe('ClosureBuilder', function() {
           'e li a:hover{padding:5px 5px 5px .5em;border-left:10px solid #1c64' +
           'd1;border-right:10px solid #5ba3e0;background:#7d94a1}';
         assert(!errors);
+        assert(content);
         assert.equal(content, expected);
         done();
       });
@@ -152,6 +154,23 @@ describe('ClosureBuilder', function() {
         done();
       });
     });
+    it('Automatic @export handling', function(done) {
+      this.timeout(30000);
+      closureBuilder.build(testConfigs.closureTestExportConfig, function(
+          errors, warnings, files, content) {
+        assert(!errors);
+        assert(content);
+        assert(content.indexOf(
+          'goog.exportSymbol("closure_test_export"') !== -1);
+        assert(content.indexOf(
+          'goog.exportProperty(closure_test_export.prototype,"visible"'
+          ) !== -1);
+        assert(content.indexOf(
+          'goog.exportProperty(closure_test_export.prototype,"invisible'
+          ) === -1);
+        done();
+      });
+    });
   });
   describe('NodeJs', function() {
     it('compile', function(done) {
@@ -167,7 +186,7 @@ describe('ClosureBuilder', function() {
       if (!largeMemoryTest) {
         return done();
       }
-      this.timeout(120000);
+      this.timeout(140000);
       closureBuilder.build(testConfigs.closureLibraryConfig, function(errors) {
         assert(!errors);
         done();

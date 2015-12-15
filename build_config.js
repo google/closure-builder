@@ -121,6 +121,9 @@ var BuildConfig = function(config) {
   var requirements = BuildTools.getBuildRequirements(this);
 
   /** @type {boolean} */
+  this.requireClosureExport = requirements.requireClosureExport;
+
+  /** @type {boolean} */
   this.requireClosureLibrary = requirements.requireClosureLibrary;
 
   /** @type {boolean} */
