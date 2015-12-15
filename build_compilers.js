@@ -342,6 +342,9 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
     if (opt_config.requireClosureExport) {
       options.generate_exports = true;
     }
+    if (opt_config.compress) {
+      options.compilation_level = 'ADVANCED_OPTIMIZATIONS';
+    }
   }
   var compilerEvent = function(message, result) {
     var warning_message = false;

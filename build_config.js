@@ -65,7 +65,7 @@ var BuildConfig = function(config) {
   this.runTime_ = Date.now();
 
   /** @type {!boolean} */
-  this.compress = false;
+  this.compress = this.config.compress || false;
 
   /** @type {!string} */
   this.tempPath = BuildTools.getRandomTempPath();
