@@ -356,6 +356,8 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
       if (message_info) {
         errors = message_info[1];
         warnings = message_info[2];
+      } else if (message.indexOf('INTERNAL COMPILER ERROR') !== -1) {
+        errors = message;
       }
       if (errors == 0 && warnings > 0) {
         warning_message = warnings + ' warnings for ' + out + ':' + message;

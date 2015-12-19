@@ -7,6 +7,8 @@ goog.provide('closure_test_export');
 
 
 /**
+ * @constructor
+ * @final
  * @export
  */
 closure_test_export = function() {
