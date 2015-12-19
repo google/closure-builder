@@ -30,8 +30,7 @@ var buildCompilers = require('./build_compilers.js');
  * @constructor
  */
 var ClosureBuilder = function() {
-  console.log('Loading Closure Builder ...');
-  console.log('Available memory in MB:', buildTools.getMemory(), '(',
+  log.debug('Available memory in MB:', buildTools.getMemory(), '(',
     buildTools.getSafeMemory(), ')');
   this.logLevel = 'info';
   this.modulePath = buildTools.getModulePath();
