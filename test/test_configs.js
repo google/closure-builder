@@ -73,12 +73,12 @@ TestConfigs.closureTest2Config = {
 };
 
 
-TestConfigs.closureTest3Config = {
-  name: 'closure_test_3',
+TestConfigs.closureTestGroupConfig = {
+  name: 'closure_test_group',
   srcs: glob([
     'test_files/closure_test_*.js'
   ]),
-  out: path.join(testDirectory, 'closure-test-3')
+  out: path.join(testDirectory, 'closure-test-group')
 };
 
 

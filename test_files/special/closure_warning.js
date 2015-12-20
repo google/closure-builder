@@ -1,13 +1,12 @@
 /**
  * Closure test dummy one
- * global goog
  */
 
 goog.provide('closure_test_warning');
 
 
 
-closure_test_warning = function(something) {
+closure_test_warning = function() {
   let hello = "World";
   var something = {
     000002: 'test'

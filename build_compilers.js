@@ -326,6 +326,9 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
   if (!('compilation_level' in options)) {
     options.compilation_level = 'SIMPLE_OPTIMIZATIONS';
   }
+  if (!('jscomp_error' in options)) {
+    options.jscomp_error = 'checkVars';
+  }
   options.Xmx = BuildCompilers.SAFE_MEMORY + 'm';
   options.Xms = '64m';
 

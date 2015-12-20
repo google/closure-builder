@@ -1,9 +1,9 @@
 /**
  * Closure test dummy two
- * global goog
  */
 
 goog.provide('closure_test_export');
+
 
 
 /**
@@ -12,7 +12,8 @@ goog.provide('closure_test_export');
  * @export
  */
 closure_test_export = function() {
-  return 'Hello Workd';
+  /** @type {!string} */
+  this.teset = 'Hello Workd';
 };
 
 

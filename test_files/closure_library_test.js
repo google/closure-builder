@@ -1,6 +1,5 @@
 /**
  * Closure library test dummy
- * global goog
  */
 
 goog.provide('closure_library_test');

@@ -37,8 +37,12 @@ var ClosureBuilder = function() {
   this.nameCache = {};
   this.soyLimit = false;
   this.closureLibPath = path.join(this.modulePath, 'google-closure-library');
-  this.closureLibFiles = path.join(this.closureLibPath, '**.js');
-  this.closureLibTests = path.join(this.closureLibPath, '**_test.js');
+  this.closureGoogPath = path.join(this.closureLibPath, 'closure', 'goog');
+  this.closureLibFiles = path.join(this.closureGoogPath, '**.js');
+  this.closureLibTests = path.join(this.closureGoogPath, '**_test.js');
+  this.closureLibThirdParty = path.join(this.closureLibPath, 'third_party',
+       '**.js');
+  this.closureBaseFile = path.join(this.closureGoogPath, 'base.js');
   this.soyLibFile = path.join(this.modulePath, 'soynode', 'node_modules',
       'closure-templates', 'soyutils_usegoog.js');
 };
@@ -132,6 +136,7 @@ ClosureBuilder.prototype.showConfigInformation = function(config) {
   log.debug('Type:', config.type);
   log.debug('Closure namespace:', config.closureNamespace);
   log.debug('Require closure library:', config.requireClosureLibrary);
+  log.debug('Require closure export:', config.requireClosureExport);
   log.debug('Require soy library:', config.requireSoyLibrary);
   log.debug('License file:', config.license);
 
@@ -182,15 +187,20 @@ ClosureBuilder.prototype.compileSoyTemplates = function(config, opt_callback) {
 ClosureBuilder.prototype.compileClosureFiles = function(config, opt_files,
     opt_callback) {
   var jsLibs = [];
+  var files = [];
   config.setMessage('Compiling Closure Files');
   if (config.requireClosureLibrary) {
-    jsLibs.push('"' + this.closureLibFiles + '"');
+    jsLibs.push( this.closureLibFiles + '"');
     jsLibs.push('"!' + this.closureLibTests + '"');
+    jsLibs.push('"' + this.closureLibThirdParty + '"');
   }
   if (config.requireSoyLibrary) {
     jsLibs.push('"' + this.soyLibFile + '"');
   }
-  var files = [].concat(config.getClosureFiles(), jsLibs, opt_files || []);
+  if (config.requireClosureExport) {
+    files.push(this.closureBaseFile);
+  }
+  files = files.concat(config.getClosureFiles(), jsLibs, opt_files || []);
   buildCompilers.compileJsFiles(files, config.getOutFilePath(), config.name,
     config.closureCompilerOptions, opt_callback, config);
 };

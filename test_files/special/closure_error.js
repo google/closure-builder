@@ -1,6 +1,5 @@
 /**
  * Closure test dummy one
- * global goog
  */
 
 goog.provide('closure_test_error');

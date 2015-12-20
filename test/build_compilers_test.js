@@ -131,7 +131,8 @@ describe('ClosureBuilder', function() {
     });
     it('Group of files', function(done) {
       this.timeout(25000);
-      closureBuilder.build(testConfigs.closureTest3Config, function(errors) {
+      closureBuilder.build(testConfigs.closureTestGroupConfig, function(
+          errors) {
         assert(!errors);
         done();
       });
