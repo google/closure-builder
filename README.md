@@ -21,7 +21,7 @@ static files as well.
   * [Compile closure Javascript files with soy files](#compile-closure-javascript-files-with-soy-files)
   * [Compile soy files](#compile-soy-files)
   * [Compile JavaScript files](#compile-javascript-files)
-  * [Compile Node.js files](#compile-nodejs-files)
+  * [Compile Node.js files](#compile-node-js-files)
   * [Compile css files](#compile-css-files)
   * [Copy Resources](#copy-resources)
   * [Copy Remote Resources](#copy-remote-resources)
@@ -64,7 +64,7 @@ But there is not limit of BUILD rules which could be setup for your needs.
 
 #### Required ####
 These basic required options for compiling are:
-- `name` Closure name space to compiler or unique name of your build rule
+- `name` Closure namespace to compiler or unique name of your build rule
 - `srcs` List of (Soy, CSS, Closure or JavaScript files) which should be compiled
 - `out` Output path / output file for the compiled Soy, Closure or JavaScript files
 
@@ -88,7 +88,7 @@ The following options are available for the closure and soy compiler:
 - `options.exclude_test` If true *_test.* files will be excluded
 
 #### Not implemented yet ####
-The following options are partial implemented and should not be used:
+The following options are partially implemented and should not be used:
 - `data`
 - `compress`
 - `type`
@@ -96,10 +96,10 @@ The following options are partial implemented and should not be used:
 
 Function Callback
 -----------------
-For performance reasons the tasks will be executed asynchrone when ever it
+For performance reasons the tasks will be executed asynchrone whenever it
 is possible.
 
-If you need to know exactly if an tasks has finished you could add an callback
+If you need to know exactly if an tasks has finished you could add a callback
 as well.
 
 ```javascript
@@ -149,7 +149,7 @@ closureBuilder.build({
 ```
 
 #### Compile Closure JavaScript files with Soy files ####
-Compiling Closure JavaScript files and associated Soy files to an single
+Compiling Closure JavaScript files and associated Soy files to a single
 javascript file.
 ```javascript
 closureBuilder.build({
@@ -176,7 +176,7 @@ closureBuilder.build({
 ```
 
 #### Compile JavaScript files ####
-Combine several JavaScript files to an single JavaScript file.
+Combine several JavaScript files to a single JavaScript file.
 ```javascript
 closureBuilder.build({
   name: 'javascript_files',
@@ -188,7 +188,7 @@ closureBuilder.build({
 ```
 
 #### Compile Node.js files ####
-Combine node.js JavaScript files with browserify to an single JavaScript bundle.
+Combine node.js JavaScript files with browserify to a single JavaScript bundle.
 ```javascript
 closureBuilder.build({
   name: 'node_bundle_files',
@@ -200,7 +200,7 @@ closureBuilder.build({
 ```
 
 #### Compile CSS files ####
-Combine and minified several CSS files to an single CSS file.
+Combine and minified several CSS files to a single CSS file.
 ```javascript
 closureBuilder.build({
   name: 'css_files',
@@ -272,10 +272,10 @@ Example package.json:
 
 Development
 -----------
-There are some automated scripts which will help you for deveopment on the
+There are some automated scripts which will help you for development on the
 closure-builder project.
 
-### Updating dependencies###
+### Updating dependencies ###
 Before you start working, run `npm run update` to update the dependencies to
 the latest package versions.
 
