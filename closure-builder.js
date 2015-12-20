@@ -190,7 +190,7 @@ ClosureBuilder.prototype.compileClosureFiles = function(config, opt_files,
   var files = [];
   config.setMessage('Compiling Closure Files');
   if (config.requireClosureLibrary) {
-    jsLibs.push( this.closureLibFiles + '"');
+    jsLibs.push('"' + this.closureLibFiles + '"');
     jsLibs.push('"!' + this.closureLibTests + '"');
     jsLibs.push('"' + this.closureLibThirdParty + '"');
   }
@@ -198,7 +198,7 @@ ClosureBuilder.prototype.compileClosureFiles = function(config, opt_files,
     jsLibs.push('"' + this.soyLibFile + '"');
   }
   if (config.requireClosureExport) {
-    files.push(this.closureBaseFile);
+    files.push('"' + this.closureBaseFile + '"');
   }
   files = files.concat(config.getClosureFiles(), jsLibs, opt_files || []);
   buildCompilers.compileJsFiles(files, config.getOutFilePath(), config.name,

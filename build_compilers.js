@@ -360,14 +360,18 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
         errors = message_info[1];
         warnings = message_info[2];
       } else if (message.indexOf('INTERNAL COMPILER ERROR') !== -1) {
-        errors = message;
+        errors = 1;
+      } else if (message.toLowerCase().indexOf('error') !== -1) {
+        errors = message.toLowerCase().split('error').length - 1;
+      } else if (message.toLowerCase().indexOf('warning') !== -1) {
+        warnings = message.toLowerCase().split('warning').length - 1;
       }
       if (errors == 0 && warnings > 0) {
         warning_message = warnings + ' warnings for ' + out + ':' + message;
         this.warnClosureCompiler(warning_message);
       } else {
         var error_message = errors + ' errors for ' + out + ':' + message;
-        this.errorClosureCompiler(message);
+        this.errorClosureCompiler(error_message);
         if (opt_callback) {
           opt_callback(error_message, false);
         }

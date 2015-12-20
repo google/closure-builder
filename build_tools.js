@@ -270,7 +270,7 @@ BuildTools.getUrlFile = function(file_url) {
  * @return {string} Temp dir path.
  */
 BuildTools.getRandomTempPath = function(opt_name) {
-  var name = (opt_name || 'closure-builder') + randomstring.generate(7);
+  var name = (opt_name || 'closure-builder') + '-' + randomstring.generate(7);
   return BuildTools.getTempPath(name);
 };
 
@@ -312,10 +312,14 @@ BuildTools.getMemory = function(opt_raw) {
 
 
 /**
- * @return {number} 90% of the available memory in megabyte.
+ * @return {number} 90% of the available memory in megabyte and max of 1024.
  */
 BuildTools.getSafeMemory = function() {
-  return Math.floor(BuildTools.getMemory(true) * 0.9);
+  var safeMemory = Math.floor(BuildTools.getMemory(true) * 0.9);
+  if (safeMemory > 1024) {
+    return 1024;
+  }
+  return safeMemory;
 };
 
 

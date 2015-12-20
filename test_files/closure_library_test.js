@@ -9,6 +9,6 @@ goog.require('goog.ui.CharPicker');
 goog.require('goog.ui.MenuItem');
 
 
-closure_builder_closure_library_test = function() {
+closure_library_test = function() {
   return '_CLOSURE_LIBRARY_TEST_';
 };
