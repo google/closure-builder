@@ -82,13 +82,23 @@ TestConfigs.closureTestGroupConfig = {
 };
 
 
-TestConfigs.closureECMAScript6Config = {
-  name: 'closure_test_ecma6',
+TestConfigs.closureECMAScript6ConstConfig = {
+  name: 'closure_test_ecma6_const',
   srcs: glob([
     'test_files/closure_test_*.js'
   ]),
-  out: path.join(testDirectory, 'closure-test-ecma6')
+  out: path.join(testDirectory, 'closure-test-ecma6-const')
 };
+
+
+TestConfigs.closureECMAScript6LetConfig = {
+  name: 'closure_test_ecma6_let',
+  srcs: glob([
+    'test_files/closure_test_*.js'
+  ]),
+  out: path.join(testDirectory, 'closure-test-ecma6-let')
+};
+
 
 
 TestConfigs.closureNoECMAScript6Config = {
@@ -185,6 +195,15 @@ TestConfigs.resourcesRemoteConfig = {
     'http://' + resourceUrl + 'file.css#test'
   ],
   out: path.join(testDirectory, 'remote-resources')
+};
+
+
+TestConfigs.resourcesRemote404Config = {
+  name: 'remote_resources_404',
+  resources: [
+    'https://www.google.de/file_not_exists'
+  ],
+  out: path.join(testDirectory, 'remote-resources-404')
 };
 
 

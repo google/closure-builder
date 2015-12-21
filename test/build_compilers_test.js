@@ -72,7 +72,7 @@ describe('ClosureBuilder', function() {
     });
   });
   describe('Resources files', function() {
-    it('compile', function(done) {
+    it('copy', function(done) {
       this.timeout(20000);
       closureBuilder.build(testConfigs.resourcesConfig, function(errors) {
         assert(!errors);
@@ -81,7 +81,7 @@ describe('ClosureBuilder', function() {
     });
   });
   describe('Remote resources files', function() {
-    it('compile', function(done) {
+    it('downloading', function(done) {
       this.timeout(20000);
       closureBuilder.build(testConfigs.resourcesRemoteConfig, function(errors) {
         assert(!errors);
@@ -98,6 +98,32 @@ describe('ClosureBuilder', function() {
       });
     });
   });
+  describe('ECMA Script 6', function() {
+    it('Const', function(done) {
+      this.timeout(25000);
+      closureBuilder.build(testConfigs.closureECMAScript6ConstConfig, function(
+          errors) {
+        assert(!errors);
+        done();
+      });
+    });
+    it('Let', function(done) {
+      this.timeout(25000);
+      closureBuilder.build(testConfigs.closureECMAScript6LetConfig, function(
+          errors) {
+        assert(!errors);
+        done();
+      });
+    });
+    it('No ECMA Script 6', function(done) {
+      this.timeout(25000);
+      closureBuilder.build(testConfigs.closureNoECMAScript6Config, function(
+          errors) {
+        assert(!errors);
+        done();
+      });
+    });
+  });
   describe('Closure files', function() {
     it('Single file', function(done) {
       this.timeout(25000);
@@ -109,22 +135,6 @@ describe('ClosureBuilder', function() {
     it('Two files', function(done) {
       this.timeout(25000);
       closureBuilder.build(testConfigs.closureTest2Config, function(errors) {
-        assert(!errors);
-        done();
-      });
-    });
-    it('ECMA Script 6', function(done) {
-      this.timeout(25000);
-      closureBuilder.build(testConfigs.closureECMAScript6Config, function(
-          errors) {
-        assert(!errors);
-        done();
-      });
-    });
-    it('No ECMA Script 6', function(done) {
-      this.timeout(25000);
-      closureBuilder.build(testConfigs.closureNoECMAScript6Config, function(
-          errors) {
         assert(!errors);
         done();
       });

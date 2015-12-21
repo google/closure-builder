@@ -50,6 +50,13 @@ BuildCompilers.SAFE_MEMORY = buildTools.getSafeMemory() || 512;
 
 
 /**
+ * Running in test mode ?
+ * @type {boolean}
+ */
+BuildCompilers.TEST_MODE = typeof global.it === 'function';
+
+
+/**
  * Copy file from src to dest.
  * @param {!string} src
  * @param {!string} dest
@@ -86,8 +93,13 @@ BuildCompilers.copyRemoteFile = function(src, dest, opt_callback) {
   var httpsCheck = { protocols: ['https'], require_protocol: true };
   var completeEvent = function(response) {
     if (response.statusCode !== 200) {
-      log.error('Remote Resource', src, 'failed to download');
-      throw 'HTTP Error: ' + response.statusCode;
+      var error_message = 'Remote Resource' + src + 'failed to download with' +
+        'http status: '  + response.statusCode;
+      log.error(error_message);
+      if (opt_callback) {
+        opt_callback(error_message, false, destFile);
+      }
+      return;
     }
     var file = fs.createWriteStream(destFile);
     response.pipe(file);
@@ -327,7 +339,7 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
     options.compilation_level = 'SIMPLE_OPTIMIZATIONS';
   }
   if (!('jscomp_error' in options)) {
-    options.jscomp_error = 'checkVars';
+    options.jscomp_warning = 'checkVars';
   }
   options.Xmx = BuildCompilers.SAFE_MEMORY + 'm';
   options.Xms = '64m';
