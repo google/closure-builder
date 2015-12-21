@@ -360,6 +360,9 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
     if (opt_config.compress) {
       options.compilation_level = 'ADVANCED_OPTIMIZATIONS';
     }
+    if (opt_config.externs) {
+      options.externs = opt_config.externs;
+    }
   }
   var compilerEvent = function(message, result) {
     var warning_message = false;

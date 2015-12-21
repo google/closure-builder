@@ -82,6 +82,18 @@ TestConfigs.closureTestGroupConfig = {
 };
 
 
+TestConfigs.closureTestExternConfig = {
+  name: 'closure_test_extern',
+  srcs: glob([
+    'test_files/closure_test_*.js'
+  ]),
+  externs: [
+    'test_files/externs.js'
+  ],
+  out: path.join(testDirectory, 'closure-test-extern')
+};
+
+
 TestConfigs.closureECMAScript6ConstConfig = {
   name: 'closure_test_ecma6_const',
   srcs: glob([

@@ -80,6 +80,9 @@ var BuildConfig = function(config) {
   this.deps = BuildTools.sortFiles(this.config.deps || []);
 
   /** @type {!array} */
+  this.externs = BuildTools.sortFiles(this.config.externs || []);
+
+  /** @type {!array} */
   this.resources = BuildTools.sortFiles(this.config.resources || [], true);
 
   /** @type {!array} */

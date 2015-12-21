@@ -80,6 +80,7 @@ These options could be used for adding additional information:
 - `license` Additional license header file which will be include as header to the compiled files
 - `debug` If true display additional debug informations
 - `trace` If true display additional trace informations
+- `externs` Additional JavaScript externs for the compiler
 
 ##### Options #####
 The following options are available for the closure and soy compiler:
@@ -159,6 +160,22 @@ closureBuilder.build({
     'soy/**/*.soy'
   ]),
   deps: [...],
+  out: 'genfiles/compiled.js'
+});
+```
+
+#### Compile Closure JavaScript files with externs ####
+Compiling Closure JavaScript files with JavaScript externs.
+javascript file.
+```javascript
+closureBuilder.build({
+  name: 'goog.namespace',
+  srcs: glob([
+    'src/**/*.js',
+  ]),
+  externs: [
+    'src/externs/global.js'
+  ],
   out: 'genfiles/compiled.js'
 });
 ```

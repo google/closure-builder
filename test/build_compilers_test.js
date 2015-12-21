@@ -26,12 +26,16 @@ var testConfigs = require('../test/test_configs.js');
 var largeMemoryTest = buildTools.checkAvailableMemory(600);
 
 describe('ClosureBuilder', function() {
-  it('Object', function() {
-    assert.equal(typeof closureBuilder, 'object');
+
+  describe('Structure', function() {
+    it('Object', function() {
+      assert.equal(typeof closureBuilder, 'object');
+    });
+    it('function', function() {
+      assert.equal(typeof closureBuilder.build, 'function');
+    });
   });
-  it('function', function() {
-    assert.equal(typeof closureBuilder.build, 'function');
-  });
+
   describe('Options', function() {
     it('license', function(done) {
       this.timeout(30000);
@@ -46,6 +50,7 @@ describe('ClosureBuilder', function() {
         });
     });
   });
+
   describe('CSS files', function() {
     it('compile', function(done) {
       this.timeout(20000);
@@ -71,6 +76,7 @@ describe('ClosureBuilder', function() {
       });
     });
   });
+
   describe('Resources files', function() {
     it('copy', function(done) {
       this.timeout(20000);
@@ -80,6 +86,7 @@ describe('ClosureBuilder', function() {
       });
     });
   });
+
   describe('Remote resources files', function() {
     it('downloading', function(done) {
       this.timeout(20000);
@@ -89,6 +96,7 @@ describe('ClosureBuilder', function() {
       });
     });
   });
+
   describe('Soy file', function() {
     it('compile', function(done) {
       this.timeout(30000);
@@ -98,6 +106,7 @@ describe('ClosureBuilder', function() {
       });
     });
   });
+
   describe('ECMA Script 6', function() {
     it('Const', function(done) {
       this.timeout(25000);
@@ -124,6 +133,7 @@ describe('ClosureBuilder', function() {
       });
     });
   });
+
   describe('Closure files', function() {
     it('Single file', function(done) {
       this.timeout(25000);
@@ -144,6 +154,15 @@ describe('ClosureBuilder', function() {
       closureBuilder.build(testConfigs.closureTestGroupConfig, function(
           errors) {
         assert(!errors);
+        done();
+      });
+    });
+    it('Externs', function(done) {
+      this.timeout(25000);
+      closureBuilder.build(testConfigs.closureTestExternConfig, function(
+          errors, warnings) {
+        assert(!errors);
+        assert(!warnings);
         done();
       });
     });
@@ -183,6 +202,7 @@ describe('ClosureBuilder', function() {
       });
     });
   });
+
   describe('NodeJs', function() {
     it('compile', function(done) {
       this.timeout(120000);
@@ -192,6 +212,7 @@ describe('ClosureBuilder', function() {
       });
     });
   });
+
   describe('Closure library', function() {
     it('compile', function(done) {
       if (!largeMemoryTest) {
@@ -204,4 +225,5 @@ describe('ClosureBuilder', function() {
       });
     });
   });
+
 });
