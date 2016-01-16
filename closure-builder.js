@@ -100,11 +100,11 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
       opt_callback(errors, warnings, files, results);
     }
     if (errors) {
-      config.setMessage('\u001b[31mErrors!\u001b[0m');
+      config.setMessage('\u001b[93m[\u001b[31mErrors!\u001b[93m]\u001b[0m');
     } else if (warnings) {
-      config.setMessage('\u001b[33mDone with warnings.\u001b[0m', 100);
+      config.setMessage('\u001b[93m[\u001b[33mWarn\u001b[93m]\u001b[0m', 100);
     } else {
-      config.setMessage('\u001b[32mDone.\u001b[0m', 100);
+      config.setMessage('\u001b[93m[\u001b[32mDone\u001b[93m]\u001b[0m', 100);
     }
   }.bind(this);
 

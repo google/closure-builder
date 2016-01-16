@@ -56,10 +56,10 @@ var BuildConfig = function(config) {
   this.excludeTest = this.options.exclude_test || false;
 
   /** @private */
-  this.bar_ = new progressBar('[:percent] ' + '\u001b[32m' + this.name +
-      '\u001b[0m :message \u001b[37m(:elapsed sec)\u001b[0m', {
-        renderThrottle: 100, total: 100
-      });
+  this.bar_ = new progressBar('\u001b[100m[:percent]\u001b[0m ' +
+      '\u001b[32m' + this.name + '\u001b[0m' +
+      ' :message \u001b[37m(:elapsed sec)\u001b[0m', {
+        renderThrottle: 100, total: 100 });
 
   /** @private */
   this.runTime_ = Date.now();

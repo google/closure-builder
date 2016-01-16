@@ -379,12 +379,17 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
       } else if (message.toLowerCase().indexOf('error') !== -1) {
         errors = message.toLowerCase().split('error').length - 1;
       } else if (message.toLowerCase().indexOf('warning') !== -1) {
-        warnings = message.toLowerCase().split('warning').length - 1;
+        if (message.indexOf('Java HotSpot\(TM\) Client VM warning') === -1 ||
+            message.toLowerCase().split('warning').length > 2) {
+          warnings = message.toLowerCase().split('warning').length - 1;
+        } else {
+          warnings = 0;
+        }
       }
       if (errors == 0 && warnings > 0) {
         warning_message = warnings + ' warnings for ' + out + ':' + message;
         this.warnClosureCompiler(warning_message);
-      } else {
+      } else if (errors > 0) {
         var error_message = errors + ' errors for ' + out + ':' + message;
         this.errorClosureCompiler(error_message);
         if (opt_callback) {
