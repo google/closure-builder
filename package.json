@@ -2,6 +2,7 @@
   "name": "closure-builder",
   "version": "1.0.24",
   "description": "Simple Closure, Soy and JavaScript Build system",
+  "preferGlobal": true,
   "keywords": [
     "soy",
     "closure",
@@ -50,6 +51,7 @@
     "follow-redirects": "0.0.7",
     "glob": "6.0.4",
     "google-closure-library": "20151216.0.0",
+    "closure-templates": "https://github.com/MarkusBordihn/closure-templates/tarball/master",
     "loglevel": "1.4.0",
     "mkdirp": "0.5.1",
     "path-parse": "1.0.5",
@@ -63,7 +65,6 @@
     "assert": "latest",
     "eslint": "latest",
     "mocha": "latest",
-    "grunt": "latest",
     "npm-check-updates": "latest"
   }
 }

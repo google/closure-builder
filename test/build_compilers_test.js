@@ -109,7 +109,7 @@ describe('ClosureBuilder', function() {
 
   describe('ECMA Script 6', function() {
     it('Const', function(done) {
-      this.timeout(25000);
+      this.timeout(40000);
       closureBuilder.build(testConfigs.closureECMAScript6ConstConfig, function(
           errors) {
         assert(!errors);
@@ -117,7 +117,7 @@ describe('ClosureBuilder', function() {
       });
     });
     it('Let', function(done) {
-      this.timeout(25000);
+      this.timeout(40000);
       closureBuilder.build(testConfigs.closureECMAScript6LetConfig, function(
           errors) {
         assert(!errors);
@@ -125,7 +125,7 @@ describe('ClosureBuilder', function() {
       });
     });
     it('No ECMA Script 6', function(done) {
-      this.timeout(25000);
+      this.timeout(40000);
       closureBuilder.build(testConfigs.closureNoECMAScript6Config, function(
           errors) {
         assert(!errors);
@@ -185,7 +185,7 @@ describe('ClosureBuilder', function() {
       });
     });
     it('Automatic @export handling', function(done) {
-      this.timeout(30000);
+      this.timeout(40000);
       closureBuilder.build(testConfigs.closureTestExportConfig, function(
           errors, warnings, files, content) {
         assert(!errors);

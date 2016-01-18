@@ -221,6 +221,25 @@ BuildTools.getGlobFiles = function(files) {
 
 
 /**
+ * @param {array} files
+ * @return {array}
+ */
+BuildTools.getSafeFileList = function(files) {
+  var result = [];
+  for (var file in files) {
+    var fileEntry = files[file];
+    if ((fileEntry.charAt(0) === '"' && fileEntry.charAt(0) === '"') ||
+        (fileEntry.charAt(0) === '\'' && fileEntry.charAt(0) === '\'')){
+      result.push(fileEntry);
+    } else {
+      result.push('"' + fileEntry + '"');
+    }
+  }
+  return result;
+};
+
+
+/**
  * @return {string} Node module path.
  */
 BuildTools.getModulePath = function() {

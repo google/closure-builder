@@ -43,8 +43,8 @@ var ClosureBuilder = function() {
   this.closureLibThirdParty = path.join(this.closureLibPath, 'third_party',
        '**.js');
   this.closureBaseFile = path.join(this.closureGoogPath, 'base.js');
-  this.soyLibFile = path.join(this.modulePath, 'soynode', 'node_modules',
-      'closure-templates', 'soyutils_usegoog.js');
+  this.soyLibFile = path.join(this.modulePath, 'closure-templates',
+      'javascript', 'soyutils_usegoog.js');
 };
 
 

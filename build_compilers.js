@@ -254,6 +254,7 @@ BuildCompilers.compileCssFiles = function(files, out, opt_callback,
         opt_config.setMessage('Saving output to ' + out);
       }
       var content = minified.styles;
+      var stats = minified.stats;
       fs.outputFile(out, content, function(error) {
         if (error) {
           var error_message = 'Was not able to write file ' + out + ':' + error;
@@ -263,7 +264,8 @@ BuildCompilers.compileCssFiles = function(files, out, opt_callback,
           }
         } else {
           var success_message = 'Saved file ' +
-            buildTools.getTruncateText(out) + ' ( ' + content.length + ' )';
+            buildTools.getTruncateText(out) + ' ( ' + stats.originalSize +
+            ' > ' + stats.minifiedSize + ' )';
           if (opt_config) {
             opt_config.setMessage(success_message);
           } else {
@@ -428,7 +430,8 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
       }.bind(this));
     }
   }.bind(this);
-  closureCompiler.compile(files, options, compilerEvent);
+  closureCompiler.compile(buildTools.getSafeFileList(files), options,
+    compilerEvent);
 };
 
 
