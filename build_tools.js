@@ -240,10 +240,24 @@ BuildTools.getSafeFileList = function(files) {
 
 
 /**
+ * @param {string=} opt_name
  * @return {string} Node module path.
  */
-BuildTools.getModulePath = function() {
-  return path.join(path.dirname(module.filename), 'node_modules');
+BuildTools.getModulePath = function(opt_name) {
+  var modulePath = path.join(path.dirname(module.filename), 'node_modules');
+  if (!opt_name) {
+    return modulePath;
+  }
+  if (BuildTools.existDirectory(path.join(modulePath, opt_name))) {
+    return path.join(modulePath, opt_name);
+  }
+  for (var i in require.main.paths) {
+    if (BuildTools.existDirectory(path.join(require.main.paths[i], opt_name))) {
+      return path.join(require.main.paths[i], opt_name);
+    }
+  }
+  console.warn('Not found module:', opt_name, '!');
+  return '';
 };
 
 

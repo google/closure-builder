@@ -36,15 +36,16 @@ var ClosureBuilder = function() {
   this.modulePath = buildTools.getModulePath();
   this.nameCache = {};
   this.soyLimit = false;
-  this.closureLibPath = path.join(this.modulePath, 'google-closure-library');
+  this.closureLibPath = buildTools.getModulePath('google-closure-library');
   this.closureGoogPath = path.join(this.closureLibPath, 'closure', 'goog');
   this.closureLibFiles = path.join(this.closureGoogPath, '**.js');
   this.closureLibTests = path.join(this.closureGoogPath, '**_test.js');
   this.closureLibThirdParty = path.join(this.closureLibPath, 'third_party',
        '**.js');
   this.closureBaseFile = path.join(this.closureGoogPath, 'base.js');
-  this.soyLibFile = path.join(this.modulePath, 'closure-templates',
-      'javascript', 'soyutils_usegoog.js');
+  this.soyLibPath = buildTools.getModulePath('closure-templates');
+  this.soyLibFile = path.join(this.soyLibPath, 'javascript',
+    'soyutils_usegoog.js');
 };
 
 
