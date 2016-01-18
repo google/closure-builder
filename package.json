@@ -1,6 +1,6 @@
 {
   "name": "closure-builder",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "Simple Closure, Soy and JavaScript Build system",
   "preferGlobal": true,
   "keywords": [
