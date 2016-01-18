@@ -37,6 +37,9 @@ var ClosureBuilder = function() {
   this.nameCache = {};
   this.soyLimit = false;
   this.closureLibPath = buildTools.getModulePath('google-closure-library');
+  if (!this.closureLibPath) {
+    log.warn('Google Closure Library was not found!');
+  }
   this.closureGoogPath = path.join(this.closureLibPath, 'closure', 'goog');
   this.closureLibFiles = path.join(this.closureGoogPath, '**.js');
   this.closureLibTests = path.join(this.closureGoogPath, '**_test.js');
@@ -44,8 +47,16 @@ var ClosureBuilder = function() {
        '**.js');
   this.closureBaseFile = path.join(this.closureGoogPath, 'base.js');
   this.soyLibPath = buildTools.getModulePath('closure-templates');
-  this.soyLibFile = path.join(this.soyLibPath, 'javascript',
-    'soyutils_usegoog.js');
+  if (!this.soyLibPath) {
+    log.warn('Google Closure Template was not found!');
+  }
+  if (buildTools.existFile(path.join(this.soyLibPath, 'soyutils_usegoog.js'))) {
+    this.soyLibFile = path.join(this.soyLibPath, 'soyutils_usegoog.js');
+  } else if (buildTools.existFile(path.join(this.soyLibPath, 'javascript',
+    'soyutils_usegoog.js'))) {
+    this.soyLibFile = path.join(this.soyLibPath, 'javascript',
+      'soyutils_usegoog.js');
+  }
 };
 
 

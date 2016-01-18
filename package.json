@@ -28,7 +28,7 @@
     "predeploy": "npm test",
     "deploy": "npm version patch && git add package.json",
     "postdeploy": "git push --follow-tags",
-    "update": "ncu -u && npm update && npm test"
+    "update": "ncu -u && npm install && npm update && npm test"
   },
   "author": {
     "name": "Markus Bordihn",
