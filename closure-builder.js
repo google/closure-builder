@@ -287,10 +287,21 @@ ClosureBuilder.prototype.getBuildConfig = function(config) {
 ClosureBuilder.prototype.copyResources = function(config, opt_callback) {
   config.setMessage('Copying resources ...');
   var files = config.getResourceFiles();
-  buildCompilers.copyFiles(files, config.outPath);
-  config.setMessage('Copied resources files to ' + config.outPath);
+  var errors_ = 0;
+  var warnings_ = 0;
+  var callback = function(errors, warnings) {
+    if (errors && errors.length >= 1) {
+      errors_ += 1;
+    }
+    if (warnings && warnings.length >= 1) {
+      config.setMessage(warnings);
+      warnings_ += 1;
+    }
+  }.bind(this);
+  buildCompilers.copyFiles(files, config.outPath, callback);
+  config.setMessage('Copied resources files to ' + config.outPath, 100);
   if (opt_callback) {
-    opt_callback();
+    opt_callback(errors_, warnings_);
   }
 };
 

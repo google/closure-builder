@@ -112,11 +112,24 @@ BuildCompilers.copyRemoteFile = function(src, dest, opt_callback) {
     log.debug('Remote Resource', src, 'copied to', destFile);
   };
   var errorEvent = function(error) {
-    var message = 'Remote resource ' + src + ' failed to copy to ' + destFile +
-      ':' + error;
-    log.error(message);
+    if (error && error.code == 'ENOTFOUND') {
+      var warnMessage = 'Resource at ' + error.hostname +
+        ' is not reachable!\n' +
+        'Please make sure you are online and that the name is correct!\n' +
+        '(This message could be ignored if you are working offline!)';
+      if (opt_callback) {
+        opt_callback(false, warnMessage, destFile);
+      } else {
+        log.warn(warnMessage);
+      }
+      return;
+    }
+    var errorMessage = 'Remote resource ' + src + ' failed to copy to ' +
+      destFile + ':' + error;
     if (opt_callback) {
-      opt_callback(message, false, destFile);
+      opt_callback(errorMessage, false, destFile);
+    } else {
+      log.error(errorMessage);
     }
   };
 
@@ -147,13 +160,7 @@ BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
   var files_ = [];
   var numFiles_ = srcs.length;
   var numDone_ = 0;
-
   var callback = function(errors, warnings, files) {
-    if (numFiles_ <= numDone_) {
-      if (opt_callback) {
-        opt_callback(errors_, warnings_, files_);
-      }
-    }
     if (errors) {
       errors_.push(errors);
     }
@@ -164,6 +171,11 @@ BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
       files_.push(files);
     }
     numDone_ += 1;
+    if (numFiles_ <= numDone_) {
+      if (opt_callback) {
+        opt_callback(errors_, warnings_, files_);
+      }
+    }
   }.bind(this);
 
   for (var i = numFiles_ - 1; i >= 0; i--) {
@@ -368,7 +380,7 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
   }
   var compilerEvent = function(message, result) {
     var warning_message = false;
-    if (message) {
+    if (message && message.match) {
       var errors = 0;
       var warnings = 0;
       var message_reg = /([0-9]+) error\(s\), ([0-9]+) warning\(s\)/;
@@ -398,6 +410,8 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
           opt_callback(error_message, false);
         }
       }
+    } else if (message) {
+      log.info(message);
     }
     if (result) {
       var content = result;
