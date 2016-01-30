@@ -1,5 +1,5 @@
 /**
- * Closure test dummy two
+ * Closure test group.
  */
 
 goog.provide('closure_test_group');

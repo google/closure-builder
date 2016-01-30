@@ -17,15 +17,16 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var os = require('os');
-var url = require('url');
-var path = require('path');
-var pathParse = require('path-parse');
+var childProcess = require('child_process');
 var fs = require('fs-extra');
 var glob = require('glob');
 var mkdirp = require('mkdirp');
-var touch = require('touch');
+var os = require('os');
+var path = require('path');
+var pathParse = require('path-parse');
 var randomstring = require('randomstring');
+var touch = require('touch');
+var url = require('url');
 
 var BuildType = require('./build_types.js');
 
@@ -226,13 +227,18 @@ BuildTools.getGlobFiles = function(files) {
  */
 BuildTools.getSafeFileList = function(files) {
   var result = [];
+  var cache = {};
   for (var file in files) {
     var fileEntry = files[file];
-    if ((fileEntry.charAt(0) === '"' && fileEntry.charAt(0) === '"') ||
-        (fileEntry.charAt(0) === '\'' && fileEntry.charAt(0) === '\'')){
-      result.push(fileEntry);
-    } else {
-      result.push('"' + fileEntry + '"');
+    var safeFileEntry = '"' + fileEntry + '"';
+    if (fileEntry && !(fileEntry in cache || safeFileEntry in cache)) {
+      if ((fileEntry.charAt(0) === '"' && fileEntry.charAt(0) === '"') ||
+          (fileEntry.charAt(0) === '\'' && fileEntry.charAt(0) === '\'')){
+        result.push(fileEntry);
+      } else {
+        result.push(safeFileEntry);
+      }
+      cache[fileEntry] = true;
     }
   }
   return result;
@@ -316,6 +322,17 @@ BuildTools.getTempPath = function(opt_name) {
   var tempPath = path.join(os.tmpdir(), opt_name || '');
   BuildTools.mkdir(tempPath);
   return tempPath;
+};
+
+
+/**
+ * @param {array} args
+ * @param {function} callback
+ * @param {string=} opt_java
+ */
+BuildTools.execJava = function(args, callback, opt_java) {
+  var javaBin = opt_java || 'java';
+  childProcess.execFile(javaBin, args, callback);
 };
 
 

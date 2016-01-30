@@ -152,8 +152,18 @@ describe('ClosureBuilder', function() {
     it('Group of files', function(done) {
       this.timeout(25000);
       closureBuilder.build(testConfigs.closureTestGroupConfig, function(
-          errors) {
+          errors, warnings) {
         assert(!errors);
+        assert(!warnings);
+        done();
+      });
+    });
+    it('Duplicate input files', function(done) {
+      this.timeout(25000);
+      closureBuilder.build(testConfigs.closureTestDuplicateConfig, function(
+          errors, warnings) {
+        assert(!errors);
+        assert(!warnings);
         done();
       });
     });

@@ -1,5 +1,5 @@
 /**
- * Closure test with ecma6
+ * Closure test with ecma6.
  */
 
 goog.provide('closure_test_no_ecma6');

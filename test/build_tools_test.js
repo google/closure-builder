@@ -94,6 +94,13 @@ describe('buildTools', function() {
       assert(buildTools.existFile(file));
       assert(!buildTools.existDirectory(file));
     });
+    it('getSafeFileList', function() {
+      var files = ['a1', 'a2', 'a3', 'a4', 'a5', 'b2', 'a4'];
+      var expectedFiles = ['"a1"', '"a2"', '"a3"', '"a4"', '"a5"', '"b2"'];
+      var safeFiles = buildTools.getSafeFileList(files);
+      assert(safeFiles);
+      assert.deepEqual(safeFiles, expectedFiles);
+    });
   });
 
   describe('Directory', function() {

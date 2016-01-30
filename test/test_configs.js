@@ -54,6 +54,18 @@ TestConfigs.soyTestConfig = {
 };
 
 
+TestConfigs.closureTestDuplicateConfig = {
+  name: 'closure_test_duplicate',
+  srcs: glob([
+    'test_files/*.js'
+  ]),
+  deps: glob([
+    'test_files/closure_test_*.js'
+  ]),
+  out: path.join(testDirectory, 'closure-test-1')
+};
+
+
 TestConfigs.closureTest1Config = {
   name: 'closure_test_1',
   srcs: [

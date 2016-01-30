@@ -384,10 +384,10 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
       var errors = 0;
       var warnings = 0;
       var message_reg = /([0-9]+) error\(s\), ([0-9]+) warning\(s\)/;
-      var message_info = message.match(message_reg);
-      if (message_info) {
-        errors = message_info[1];
-        warnings = message_info[2];
+      var messageInfo = message.match(message_reg);
+      if (messageInfo) {
+        errors = messageInfo[1];
+        warnings = messageInfo[2];
       } else if (message.indexOf('INTERNAL COMPILER ERROR') !== -1) {
         errors = 1;
       } else if (message.toLowerCase().indexOf('error') !== -1) {
@@ -411,7 +411,11 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
         }
       }
     } else if (message) {
-      log.info(message);
+      var unknowErrorMessage = 'Unknown Error: ' + message;
+      this.errorClosureCompiler(unknowErrorMessage);
+      if (opt_callback) {
+        opt_callback(unknowErrorMessage, false);
+      }
     }
     if (result) {
       var content = result;

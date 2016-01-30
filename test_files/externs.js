@@ -1,5 +1,5 @@
 /**
- * Closure extern
+ * Closure extern.
  */
 
 

@@ -1,5 +1,5 @@
 /**
- * Closure test dummy externs
+ * Closure test dummy externs.
  */
 
 goog.provide('closure_test_extern');
