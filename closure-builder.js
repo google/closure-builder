@@ -207,10 +207,10 @@ ClosureBuilder.prototype.compileClosureFiles = function(config, opt_files,
     jsLibs.push('"' + this.closureLibThirdParty + '"');
   }
   if (config.requireSoyLibrary) {
-    jsLibs.push('"' + this.soyLibFile + '"');
+    jsLibs.push(this.soyLibFile);
   }
   if (config.requireClosureExport) {
-    files.push('"' + this.closureBaseFile + '"');
+    files.push(this.closureBaseFile);
   }
   files = files.concat(config.getClosureFiles(), jsLibs, opt_files || []);
   buildCompilers.compileJsFiles(files, config.getOutFilePath(), config.name,

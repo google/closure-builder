@@ -57,7 +57,9 @@ TestConfigs.soyTestConfig = {
 TestConfigs.closureTestDuplicateConfig = {
   name: 'closure_test_duplicate',
   srcs: glob([
-    'test_files/*.js'
+    'test_files/closure_test_1.js',
+    'test_files/closure_test_2.js',
+    'test_files/closure_test_duplicate.js'
   ]),
   deps: glob([
     'test_files/closure_test_*.js'
