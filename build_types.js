@@ -32,6 +32,7 @@ var BuildType = {
   SOY: 'soy',
   SOY_CLOSURE: 'soy and closure',
   NODEJS: 'nodejs',
+  MARKDOWN: 'markdown',
   UNKNOWN: ''
 };
 

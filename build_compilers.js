@@ -24,6 +24,7 @@ var log = require('loglevel');
 var path = require('path');
 var fs = require('fs-extra');
 var glob = require('glob');
+var marked = require('marked');
 var http = require('follow-redirects').http;
 var https = require('follow-redirects').https;
 var soyCompiler = require('soynode');
@@ -179,7 +180,7 @@ BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
   }.bind(this);
 
   for (var i = numFiles_ - 1; i >= 0; i--) {
-    if (validator.isURL(srcs)) {
+    if (validator.isURL(srcs[i])) {
       BuildCompilers.copyRemoteFile(srcs[i], dest, callback);
     } else {
       BuildCompilers.copyFile(srcs[i], dest, callback);
@@ -265,29 +266,7 @@ BuildCompilers.compileCssFiles = function(files, out, opt_callback,
       if (opt_config) {
         opt_config.setMessage('Saving output to ' + out);
       }
-      var content = minified.styles;
-      var stats = minified.stats;
-      fs.outputFile(out, content, function(error) {
-        if (error) {
-          var error_message = 'Was not able to write file ' + out + ':' + error;
-          this.errorCssCompiler(error_message);
-          if (opt_callback) {
-            opt_callback(error, false);
-          }
-        } else {
-          var success_message = 'Saved file ' +
-            buildTools.getTruncateText(out) + ' ( ' + stats.originalSize +
-            ' > ' + stats.minifiedSize + ' )';
-          if (opt_config) {
-            opt_config.setMessage(success_message);
-          } else {
-            this.infoCssCompiler(success_message);
-          }
-          if (opt_callback) {
-            opt_callback(false, false, out, content);
-          }
-        }
-      }.bind(this));
+      buildTools.saveContent(out, minified.styles, opt_callback, opt_config);
     }
   }.bind(this);
   new cleanCss().minify(files, compilerEvent);
@@ -332,6 +311,51 @@ BuildCompilers.compileNodeFiles = function(files, out, opt_callback,
     }
   });
   nodeCompiler.bundle(bufferEvent).pipe(streamEvent);
+};
+
+
+/**
+ * @param {Array} file
+ * @param {string=} output
+ * @param {function=} opt_callback
+ * @param {BuildConfig=} opt_config
+ */
+BuildCompilers.convertMarkdownFile = function(file, out, opt_callback,
+    opt_config) {
+  var markdown = fs.readFileSync(file, 'utf8');
+  var content = marked(markdown);
+  var destFile = path.join(out,
+    buildTools.getPathFile(file).replace('.md', '.html'));
+  buildTools.saveContent(destFile, content, opt_callback, opt_config);
+};
+
+
+/**
+ * @param {Array} files
+ * @param {string=} output
+ * @param {function=} opt_callback
+ * @param {BuildConfig=} opt_config
+ */
+BuildCompilers.convertMarkdownFiles = function(files, out, opt_callback,
+    opt_config) {
+  var foundError = false;
+  var outFiles = [];
+  var errorEvent = function(error, warning, file) {
+    if (error) {
+      foundError = error;
+    } else if (file) {
+      outFiles.push(file);
+    }
+  }.bind(this);
+  for (var i in files) {
+    BuildCompilers.convertMarkdownFile(files[i], out, errorEvent, opt_config);
+    if (foundError) {
+      break;
+    }
+  }
+  if (opt_callback) {
+    opt_callback(foundError, false, outFiles, '');
+  }
 };
 
 
@@ -426,30 +450,12 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
           content = license + '\n\n' + result;
         }
       }
-      fs.outputFile(out, content, function(error) {
-        if (error) {
-          var error_message = 'Was not able to write file ' + out + ':' + error;
-          this.errorClosureCompiler(error_message);
-          if (opt_callback) {
-            opt_callback(error_message, warning_message);
-          }
-        } else {
-          var success_message = 'Saved file ' +
-            buildTools.getTruncateText(out) + ' ( ' + content.length + ' )';
-          if (opt_config) {
-            opt_config.setMessage(success_message, 50);
-          } else {
-            this.infoClosureCompiler(success_message);
-          }
-          if (opt_callback) {
-            opt_callback(false, warning_message, out, content);
-          }
-        }
-      }.bind(this));
+      buildTools.saveContent(out, content, opt_callback, opt_config,
+          warning_message);
     }
   }.bind(this);
   closureCompiler.compile(buildTools.getSafeFileList(files), options,
-    compilerEvent);
+      compilerEvent);
 };
 
 

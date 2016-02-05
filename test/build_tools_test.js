@@ -26,6 +26,8 @@ var pathWin = 'C:\\path\\dir\\subdir';
 var pathUnix = '/home/user/dir/subdir';
 var fileWin = 'C:\\path\\dir\\index.html';
 var fileUnix = '/home/user/dir/file.txt';
+var fileMarkdownWin = 'C:\\path\\dir\\index.md';
+var fileMarkdownUnix = '/home/user/dir/file.md';
 var fileRemote = 'http://www.example.com:80/dir/subdir/file.xml?test=1&test=2';
 var fileRemoteHash = 'https://www.example.com:80/dir/subdir/file.xml#dummy';
 var testFilesPath = 'test_files/resources/';
@@ -42,15 +44,19 @@ describe('buildTools', function() {
     it('getFilePath', function() {
       assert.equal(buildTools.getFilePath(pathUnix), pathUnix);
       assert.equal(buildTools.getFilePath(fileUnix), '/home/user/dir');
+      assert.equal(buildTools.getFilePath(fileMarkdownUnix), '/home/user/dir');
       if (os.platform() == 'win32') {
         assert.equal(buildTools.getFilePath(pathWin), pathWin);
         assert.equal(buildTools.getFilePath(fileWin), 'C:\\path\\dir');
+        assert.equal(buildTools.getFilePath(fileMarkdownWin), 'C:\\path\\dir');
       }
     });
     it('getPathFile', function() {
       assert.equal(buildTools.getPathFile(fileUnix), 'file.txt');
+      assert.equal(buildTools.getPathFile(fileMarkdownUnix), 'file.md');
       if (os.platform() == 'win32') {
         assert.equal(buildTools.getPathFile(fileWin), 'index.html');
+        assert.equal(buildTools.getPathFile(fileMarkdownWin), 'file.md');
       }
     });
     it('getTempPath', function() {

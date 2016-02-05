@@ -60,6 +60,8 @@ BuildTools.detectType = function(config) {
     return BuildType.JAVASCRIPT;
   } else if (config.hasCssFiles()) {
     return BuildType.CSS;
+  } else if (config.hasMarkdownFiles()) {
+    return BuildType.MARKDOWN;
   } else if (config.hasResourceFiles()) {
     return BuildType.RESOURCES;
   } else {
@@ -110,6 +112,7 @@ BuildTools.getBuildRequirements = function(config) {
   var depsConfig = this.scanFiles(config.deps);
   var srcsConfig = this.scanFiles(config.srcs);
   var soyConfig = this.scanFiles(config.soy);
+  var mdConfig = this.scanFiles(config.markdown);
 
   return {
     closureFiles: [].concat(depsConfig.closureFiles, srcsConfig.closureFiles),
@@ -118,6 +121,7 @@ BuildTools.getBuildRequirements = function(config) {
     soyFiles: [].concat(depsConfig.soyFiles, soyConfig.soyFiles,
       srcsConfig.soyFiles),
     nodeFiles: [].concat(srcsConfig.nodeFiles),
+    markdownFiles: [].concat(mdConfig.markdownFiles),
     requireClosureExport: (srcsConfig.requireClosureExport),
     requireClosureLibrary: (depsConfig.requireClosureLibrary ||
       srcsConfig.requireClosureLibrary),
@@ -140,6 +144,7 @@ BuildTools.scanFiles = function(files) {
   var cssFiles = [];
   var soyFiles = [];
   var nodeFiles = [];
+  var markdownFiles = [];
   var requireClosureLibrary = false;
   var requireClosureExport = false;
   var requireSoyLibrary = false;
@@ -173,6 +178,8 @@ BuildTools.scanFiles = function(files) {
       }
     } else if (file.indexOf('.css') !== -1) {
       cssFiles.push(file);
+    } else if (file.indexOf('.md') !== -1) {
+      markdownFiles.push(file);
     }
   }
   return {
@@ -181,11 +188,46 @@ BuildTools.scanFiles = function(files) {
     cssFiles: cssFiles,
     soyFiles: soyFiles,
     nodeFiles: nodeFiles,
+    markdownFiles: markdownFiles,
     requireClosureExport: requireClosureExport,
     requireClosureLibrary: requireClosureLibrary,
     requireSoyLibrary: requireSoyLibrary,
     requireECMAScript6: requireECMAScript6
   };
+};
+
+
+/**
+ * @param {string!} file
+ * @param {string!} content
+ * @param {function=} opt_callback
+ * @param {BuildConfig=} opt_config
+ * @param {?} opt_warning
+ */
+BuildTools.saveContent = function(file, content, opt_callback, opt_config,
+    opt_warning) {
+  var fileEvent = function(error) {
+    if (error) {
+      var errorMessage = 'Was not able to write file ' + file + ':' + error;
+      if (opt_config) {
+        opt_config.setMessage(errorMessage);
+      }
+      if (opt_callback) {
+        opt_callback('Was not able to write file ' + file + ':' + error,
+          opt_warning);
+      }
+    } else {
+      var successMessage = 'Saved file ' +
+        BuildTools.getTruncateText(file) + ' ( ' + content.length + ' )';
+      if (opt_config) {
+        opt_config.setMessage(successMessage);
+      }
+      if (opt_callback) {
+        opt_callback(false, opt_warning, file, content);
+      }
+    }
+  };
+  fs.outputFile(file, content, fileEvent.bind(this));
 };
 
 

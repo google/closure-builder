@@ -134,6 +134,16 @@ describe('ClosureBuilder', function() {
     });
   });
 
+  describe('Markdown files', function() {
+    it('Convert to HTML', function(done) {
+      this.timeout(25000);
+      closureBuilder.build(testConfigs.markdownConfig, function(errors) {
+        assert(!errors);
+        done();
+      });
+    });
+  });
+
   describe('Closure files', function() {
     it('Single file', function(done) {
       this.timeout(25000);

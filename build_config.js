@@ -92,6 +92,9 @@ var BuildConfig = function(config) {
   /** @type {!array} */
   this.soy = BuildTools.sortFiles(this.config.soy || []);
 
+  /** @type {!array} */
+  this.markdown = BuildTools.sortFiles(this.config.markdown || []);
+
   /** @type {!string} */
   this.out = this.config.out;
 
@@ -151,6 +154,9 @@ var BuildConfig = function(config) {
   this.nodeFiles_ = requirements.nodeFiles;
 
   /** @private {!array} */
+  this.markdownFiles_ = requirements.markdownFiles;
+
+  /** @private {!array} */
   this.resourceFiles_ = this.resources;
 
   if (!this.type) {
@@ -196,6 +202,13 @@ BuildConfig.prototype.getSoyFiles = function() {
 /**
  * @return {!array}
  */
+BuildConfig.prototype.getMarkdownFiles = function() {
+  return this.markdownFiles_;
+};
+
+/**
+ * @return {!array}
+ */
 BuildConfig.prototype.getResourceFiles = function() {
   return this.resourceFiles_;
 };
@@ -236,6 +249,15 @@ BuildConfig.prototype.hasCssFiles = function() {
 BuildConfig.prototype.hasSoyFiles = function() {
   return this.soyFiles_.length || 0;
 };
+
+
+/**
+ * @return {!number}
+ */
+BuildConfig.prototype.hasMarkdownFiles = function() {
+  return this.markdownFiles_.length || 0;
+};
+
 
 /**
  * @return {!number}

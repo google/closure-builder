@@ -144,7 +144,7 @@ closureBuilder.build({
   name: 'goog.namespace',
   srcs: glob([
     'src/js/*.js'
-  ])
+  ]),
   out: 'genfiles/merged-and-minified.js'
 });
 ```
@@ -187,7 +187,7 @@ closureBuilder.build({
   name: 'soy_files',
   srcs: glob([
     'soy/**/*.soy'
-  ])
+  ]),
   out: 'genfiles/compiled_soy_files/'
 });
 ```
@@ -199,7 +199,7 @@ closureBuilder.build({
   name: 'javascript_files',
   srcs: glob([
     'src/js/*.js'
-  ])
+  ]),
   out: 'genfiles/merged-and-minified.js'
 });
 ```
@@ -211,7 +211,7 @@ closureBuilder.build({
   name: 'node_bundle_files',
   srcs: glob([
     'src/js/node_file.js'
-  ])
+  ]),
   out: 'genfiles/node_bundle.js'
 });
 ```
@@ -223,7 +223,7 @@ closureBuilder.build({
   name: 'css_files',
   srcs: glob([
     'src/css/*.css'
-  ])
+  ]),
   out: 'genfiles/merged-and-minified.css'
 });
 ```
@@ -262,6 +262,19 @@ closureBuilder.build({
     'https://raw.githubusercontent.com/google/closure-builder/master/test_files/resources/file.css'
   ],
   out: 'genfiles/static-folder/'
+});
+```
+
+
+#### Convert Markdown (.md) to .html file ####
+Convert markdown (.md) to .html file.
+```javascript
+closureBuilder.build({
+  name: 'md_file',
+  markdown: [
+    'README.md'
+  ],
+  out: 'genfiles/'
 });
 ```
 

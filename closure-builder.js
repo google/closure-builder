@@ -133,10 +133,12 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
     this.compileJavaScriptFiles(config, callback);
   } else if (type === buildType.CSS) {
     this.compileCssFiles(config, callback);
+  } else if (type === buildType.MARKDOWN) {
+    this.convertMarkdownFiles(config, callback);
   } else if (type === buildType.RESOURCES) {
     this.copyResources(config, callback);
   } else {
-    log.error('Type', type, 'is unsupported!');
+    callback('Type ' + type + ' is unsupported!');
   }
 };
 
@@ -163,6 +165,9 @@ ClosureBuilder.prototype.showConfigInformation = function(config) {
 
   log.debug('Found', config.hasJsFiles(), 'javascript files.');
   log.trace(config.getJavaScriptFiles());
+
+  log.debug('Found', config.hasMarkdownFiles(), 'markdown files.');
+  log.trace(config.getMarkdownFiles());
 
   log.debug('Found', config.hasResourceFiles(), 'resources files.');
   log.trace(config.getResourceFiles());
@@ -266,6 +271,18 @@ ClosureBuilder.prototype.compileCssFiles = function(config, opt_callback) {
   config.setMessage('Compiling CSS files ...');
   var files = config.getCssFiles();
   buildCompilers.compileCssFiles(files, config.getOutFilePath(), opt_callback,
+      config);
+};
+
+
+/**
+ * @param {!buildConfig} config
+ * @param {function=} opt_callback
+ */
+ClosureBuilder.prototype.convertMarkdownFiles = function(config, opt_callback) {
+  config.setMessage('Converting markdown files ...');
+  var files = config.getMarkdownFiles();
+  buildCompilers.convertMarkdownFiles(files, config.outPath, opt_callback,
       config);
 };
 

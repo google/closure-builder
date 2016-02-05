@@ -54,6 +54,15 @@ TestConfigs.soyTestConfig = {
 };
 
 
+TestConfigs.markdownConfig = {
+  name: 'markdown_test',
+  markdown: [
+    'test_files/test.md'
+  ],
+  out: path.join(testDirectory, 'markdown')
+};
+
+
 TestConfigs.closureTestDuplicateConfig = {
   name: 'closure_test_duplicate',
   srcs: glob([
