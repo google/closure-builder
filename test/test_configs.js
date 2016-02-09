@@ -65,11 +65,11 @@ TestConfigs.markdownConfig = {
 
 TestConfigs.closureTestDuplicateConfig = {
   name: 'closure_test_duplicate',
-  srcs: glob([
+  srcs: [
     'test_files/closure_test_1.js',
     'test_files/closure_test_2.js',
     'test_files/closure_test_duplicate.js'
-  ]),
+  ],
   deps: glob([
     'test_files/closure_test_*.js'
   ]),
@@ -102,6 +102,15 @@ TestConfigs.closureTestGroupConfig = {
     'test_files/closure_test_*.js'
   ]),
   out: path.join(testDirectory, 'closure-test-group')
+};
+
+
+TestConfigs.closureTestModuleConfig = {
+  name: 'closure_test_require_module',
+  srcs: glob([
+    'test_files/closure_test_*.js'
+  ]),
+  out: path.join(testDirectory, 'closure-module')
 };
 
 

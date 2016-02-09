@@ -1,7 +1,6 @@
 /**
  * Closure test with ecma6.
  */
-
 goog.provide('closure_test_ecma6_let');
 
 goog.require('closure_test_2');

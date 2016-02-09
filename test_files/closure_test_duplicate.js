@@ -1,7 +1,6 @@
 /**
  * Closure test duplicate.
  */
-
 goog.provide('closure_test_duplicate');
 
 goog.require('closure_test_2');

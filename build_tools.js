@@ -158,7 +158,8 @@ BuildTools.scanFiles = function(files) {
     } else if (file.indexOf('.js') !== -1) {
       var fileContent = fs.readFileSync(file, 'utf8');
       if (fileContent.indexOf('goog.provide(') !== -1 ||
-          fileContent.indexOf('goog.require(') !== -1) {
+          fileContent.indexOf('goog.require(') !== -1 ||
+          fileContent.indexOf('goog.module(') !== -1) {
         if (fileContent.indexOf(' * @export') !== -1) {
           requireClosureExport = true;
         }

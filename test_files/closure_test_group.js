@@ -1,7 +1,6 @@
 /**
  * Closure test group.
  */
-
 goog.provide('closure_test_group');
 
 goog.require('closure_test_2');

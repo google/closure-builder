@@ -168,6 +168,15 @@ describe('ClosureBuilder', function() {
         done();
       });
     });
+    it('Module files', function(done) {
+      this.timeout(30000);
+      closureBuilder.build(testConfigs.closureTestModuleConfig, function(
+          errors, warnings) {
+        assert(!errors);
+        assert(!warnings);
+        done();
+      });
+    });
     it('Duplicate input files', function(done) {
       this.timeout(25000);
       closureBuilder.build(testConfigs.closureTestDuplicateConfig, function(

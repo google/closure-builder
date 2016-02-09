@@ -1,7 +1,6 @@
 /**
  * Closure library test dummy.
  */
-
 goog.provide('closure_library_test');
 
 goog.require('goog.ui.Button');
