@@ -61,13 +61,13 @@ describe('BuildConfig', function() {
       assert.equal(buildConfig.options, strucConfig.options);
     });
     it('this.jscomp_off', function() {
-      assert.equal(buildConfig.jscomp_off, strucConfig.jscomp_off);
+      assert.equal(buildConfig.jscompOff, strucConfig.jscomp_off);
     });
     it('this.jscomp_warning', function() {
-      assert.equal(buildConfig.jscomp_warning, strucConfig.jscomp_warning);
+      assert.equal(buildConfig.jscompWarning, strucConfig.jscomp_warning);
     });
     it('this.jscomp_error', function() {
-      assert.equal(buildConfig.jscomp_error, strucConfig.jscomp_error);
+      assert.equal(buildConfig.jscompError, strucConfig.jscomp_error);
     });
   });
   describe('this.out', function() {

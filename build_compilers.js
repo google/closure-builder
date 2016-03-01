@@ -410,14 +410,17 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
     if (opt_config.externs) {
       options.externs = opt_config.externs;
     }
-    if (opt_config.jscomp_off) {
-      options.jscomp_off = opt_config.jscomp_off;
+    if (opt_config.jscompOff !== undefined &&
+        opt_config.jscompOff.length > 0) {
+      options.jscomp_off = opt_config.jscompOff;
     }
-    if (opt_config.jscomp_warning) {
-      options.jscomp_warning = opt_config.jscomp_warning;
+    if (opt_config.jscompWarning !== undefined &&
+        opt_config.jscompWarning.length > 0) {
+      options.jscomp_warning = opt_config.jscompWarning;
     }
-    if (opt_config.jscomp_error) {
-      options.jscomp_error = opt_config.jscomp_error;
+    if (opt_config.jscompError !== undefined &&
+        opt_config.jscompError.length > 0) {
+      options.jscomp_error = opt_config.jscompError;
     }
   }
   var compilerEvent = function(message, result) {

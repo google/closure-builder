@@ -139,13 +139,13 @@ var BuildConfig = function(config) {
   this.requireSoyLibrary = requirements.requireSoyLibrary;
 
   /** @type {!array} */
-  this.jscomp_off = this.config.jscomp_off || [];
+  this.jscompOff = this.config.jscomp_off || [];
 
   /** @type {!array} */
-  this.jscomp_warning = this.config.jscomp_warning || [];
+  this.jscompWarning = this.config.jscomp_warning || [];
 
   /** @type {!array} */
-  this.jscomp_error = this.config.jscomp_error || [];
+  this.jscompError = this.config.jscomp_error || [];
 
   /** @private {!array} */
   this.closureFiles_ = requirements.closureFiles;
