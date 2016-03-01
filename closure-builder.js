@@ -79,7 +79,7 @@ ClosureBuilder.prototype.setLogLevel = function(loglevel) {
  */
 ClosureBuilder.prototype.build = function(build_config, opt_callback) {
   if (!build_config) {
-    log.error('Empty Closure Builder config!');
+    log.error('No Closure Builder config!');
     return;
   }
 
@@ -243,7 +243,9 @@ ClosureBuilder.prototype.compileJavaScriptFiles = function(config,
 ClosureBuilder.prototype.compileClosureWithSoyFiles = function(config,
     opt_callback) {
   var compilerEvent = function(errors, warnings, files) {
-    if (files) {
+    if (errors) {
+      opt_callback(errors, warnings);
+    } else if (files) {
       this.compileClosureFiles(config, files, opt_callback);
     }
   };

@@ -54,6 +54,16 @@ TestConfigs.soyTestConfig = {
 };
 
 
+TestConfigs.soyTestConfigBroken = {
+  name: 'closure_test_soy_broken',
+  srcs: [
+    'test_files/special/closure_soy_broken.js',
+    'test_files/special/broken.soy'
+  ],
+  out: path.join(testDirectory, 'closure-soy-broken')
+};
+
+
 TestConfigs.markdownConfig = {
   name: 'markdown_test',
   markdown: [
@@ -223,6 +233,21 @@ TestConfigs.resourcesConfig = {
     'test_files/resources/**/*.png',
     'test_files/resources/**/*.xml'
   ]),
+  out: path.join(testDirectory, 'local-resources')
+};
+
+
+TestConfigs.resourcesNotExistsConfig = {
+  name: 'resources',
+  resources: [
+    'test_files/resources/not_exists.css',
+    'test_files/resources/not_exists.htm',
+    'test_files/resources/not_exists.html',
+    'test_files/resources/not_exists.jpg',
+    'test_files/resources/not_exists.gif',
+    'test_files/resources/not_exists.png',
+    'test_files/resources/not_exists.xml'
+  ],
   out: path.join(testDirectory, 'local-resources')
 };
 

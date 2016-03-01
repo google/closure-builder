@@ -64,6 +64,14 @@ BuildCompilers.TEST_MODE = typeof global.it === 'function';
  * @param {function=} opt_callback
  */
 BuildCompilers.copyFile = function(src, dest, opt_callback) {
+  if (!buildTools.access(src)) {
+    var message = 'No access to resource ' + src;
+    log.error(message);
+    if (opt_callback) {
+      opt_callback(message, false);
+    }
+    return;
+  }
   var destFile = path.join(dest, buildTools.getFileBase(src));
   var fileEvent = function(error) {
     if (error) {
@@ -376,8 +384,9 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
   if (!('compilation_level' in options)) {
     options.compilation_level = 'SIMPLE_OPTIMIZATIONS';
   }
-  if (!('jscomp_error' in options)) {
-    options.jscomp_warning = 'checkVars';
+  if (!('jscomp_warning' in options)) {
+    options.jscomp_warning = ['checkVars', 'deprecated', 'extraRequire',
+      'missingProvide', 'missingRequire'];
   }
   options.Xmx = BuildCompilers.SAFE_MEMORY + 'm';
   options.Xms = '64m';
@@ -400,6 +409,15 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
     }
     if (opt_config.externs) {
       options.externs = opt_config.externs;
+    }
+    if (opt_config.jscomp_off) {
+      options.jscomp_off = opt_config.jscomp_off;
+    }
+    if (opt_config.jscomp_warning) {
+      options.jscomp_warning = opt_config.jscomp_warning;
+    }
+    if (opt_config.jscomp_error) {
+      options.jscomp_error = opt_config.jscomp_error;
     }
   }
   var compilerEvent = function(message, result) {

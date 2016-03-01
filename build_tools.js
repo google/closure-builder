@@ -417,6 +417,20 @@ BuildTools.getSafeMemory = function() {
 
 
 /**
+ * @param {string} path
+ * @return {boolean} True if path could be accessed.
+ */
+BuildTools.access = function(path) {
+  try {
+    fs.accessSync(path);
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
+
+/**
  * @param {string} dir_path
  * @return {boolean} Directory exists.
  */

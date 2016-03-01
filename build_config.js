@@ -138,6 +138,15 @@ var BuildConfig = function(config) {
   /** @type {boolean} */
   this.requireSoyLibrary = requirements.requireSoyLibrary;
 
+  /** @type {!array} */
+  this.jscomp_off = this.config.jscomp_off || [];
+
+  /** @type {!array} */
+  this.jscomp_warning = this.config.jscomp_warning || [];
+
+  /** @type {!array} */
+  this.jscomp_error = this.config.jscomp_error || [];
+
   /** @private {!array} */
   this.closureFiles_ = requirements.closureFiles;
 

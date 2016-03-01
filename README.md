@@ -82,11 +82,32 @@ These options could be used for adding additional information:
 - `trace` If true display additional trace informations
 - `externs` Additional JavaScript externs for the compiler
 
-##### Options #####
+#### Options ####
 The following options are available for the closure and soy compiler:
 - `options.soy` Additional settings for the Soy compiler
 - `options.closure` Additional settings for the Closure compiler
 - `options.exclude_test` If true *_test.* files will be excluded
+
+#### Closure compiler warnings ####
+To adjust the Closure compiler warnings, you could use
+`options.closure.jscomp_...` or the shortcut `jscomp_...`.
+- `jscomp_error`  List of compiler checks which produce an error message.
+- `jscomp_warning` List of compiler checks which produce an warning message.
+- `jscomp_off` List of compiler checks which should be disabled.
+See full [list of compiler checks](https://github.com/google/closure-compiler/wiki/Warnings#warnings-categories)
+
+```javascript
+closureBuilder.build({
+  name: 'Closure compiler warnings',
+  options: {
+    closure : {
+      jscomp_error: ['deprecated', 'extraRequire',
+      'missingProvide', 'missingRequire', 'newCheckTypes']
+    }
+  },
+  ...
+}
+```
 
 #### Not implemented yet ####
 The following options are partially implemented and should not be used:

@@ -85,6 +85,14 @@ describe('ClosureBuilder', function() {
         done();
       });
     });
+    it('Expected Error message', function(done) {
+      this.timeout(20000);
+      closureBuilder.build(testConfigs.resourcesNotExistsConfig,
+      function(errors) {
+        assert(errors);
+        done();
+      });
+    });
   });
 
   describe('Remote resources files', function() {
