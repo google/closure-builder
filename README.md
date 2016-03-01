@@ -94,6 +94,7 @@ To adjust the Closure compiler warnings, you could use
 - `jscomp_error`  List of compiler checks which produce an error message.
 - `jscomp_warning` List of compiler checks which produce an warning message.
 - `jscomp_off` List of compiler checks which should be disabled.
+
 See full [list of compiler checks](https://github.com/google/closure-compiler/wiki/Warnings#warnings-categories)
 
 ```javascript

@@ -421,6 +421,16 @@ BuildTools.getSafeMemory = function() {
  * @return {boolean} True if path could be accessed.
  */
 BuildTools.access = function(path) {
+  if (!fs.accessSync) {
+    try {
+      fs.statSync(path);
+    } catch (err) {
+      if (err.code == 'ENOENT') {
+        return false;
+      }
+    }
+    return true;
+  }
   try {
     fs.accessSync(path);
     return true;
