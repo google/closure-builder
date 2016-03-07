@@ -5,6 +5,6 @@
 
 
 /**
- * @type {object}
+ * @type {Object}
  */
 var global_extern = {};
