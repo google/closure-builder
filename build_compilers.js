@@ -385,11 +385,10 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
     options.compilation_level = 'SIMPLE_OPTIMIZATIONS';
   }
   if (!('jscomp_warning' in options)) {
-    options.jscomp_warning = ['checkTypes', 'checkVars',
-      'conformanceViolations', 'externsValidation', 'fileoverviewTags',
-      'globalThis', 'invalidCasts', 'misplacedTypeAnnotation', 'deprecated',
-      'missingProvide', 'missingRequire', 'missingReturn', 'nonStandardJsDocs',
-      'suspiciousCode', 'typeInvalidation', 'unknownDefines', 'uselessCode'];
+    options.jscomp_warning = ['checkVars', 'conformanceViolations',
+      'deprecated', 'externsValidation', 'fileoverviewTags', 'globalThis',
+      'misplacedTypeAnnotation', 'missingProvide', 'missingRequire',
+      'missingReturn', 'nonStandardJsDocs', 'typeInvalidation', 'uselessCode'];
   }
   options.Xmx = BuildCompilers.SAFE_MEMORY + 'm';
   options.Xms = '64m';
