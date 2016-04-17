@@ -32,6 +32,7 @@ var buildCompilers = require('./build_compilers.js');
 var ClosureBuilder = function() {
   log.debug('Available memory in MB:', buildTools.getMemory(), '(',
     buildTools.getSafeMemory(), ')');
+  this.error = false;
   this.logLevel = 'info';
   this.modulePath = buildTools.getModulePath();
   this.nameCache = {};
@@ -39,6 +40,7 @@ var ClosureBuilder = function() {
   this.closureLibPath = buildTools.getModulePath('google-closure-library');
   if (!this.closureLibPath) {
     log.warn('Google Closure Library was not found!');
+    this.error = true;
   }
   this.closureGoogPath = path.join(this.closureLibPath, 'closure', 'goog');
   this.closureLibFiles = path.join(this.closureGoogPath, '**.js');
@@ -49,6 +51,7 @@ var ClosureBuilder = function() {
   this.soyLibPath = buildTools.getModulePath('closure-templates');
   if (!this.soyLibPath) {
     log.warn('Google Closure Template was not found!');
+    this.error = true;
   }
   if (buildTools.existFile(path.join(this.soyLibPath, 'soyutils_usegoog.js'))) {
     this.soyLibFile = path.join(this.soyLibPath, 'soyutils_usegoog.js');
@@ -78,6 +81,7 @@ ClosureBuilder.prototype.setLogLevel = function(loglevel) {
  *   function(errors, warnings, files, results) {...}
  */
 ClosureBuilder.prototype.build = function(build_config, opt_callback) {
+
   if (!build_config) {
     log.error('No Closure Builder config!');
     return;

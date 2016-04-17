@@ -293,7 +293,9 @@ BuildTools.getSafeFileList = function(files) {
  * @return {string} Node module path.
  */
 BuildTools.getModulePath = function(opt_name) {
-  var modulePath = path.join(path.dirname(module.filename), 'node_modules');
+  var npm = 'npm';
+  var modules = 'node_modules';
+  var modulePath = path.join(path.dirname(module.filename), modules);
   if (!opt_name) {
     return modulePath;
   }
@@ -305,7 +307,16 @@ BuildTools.getModulePath = function(opt_name) {
       return path.join(require.main.paths[i], opt_name);
     }
   }
-  console.warn('Not found module:', opt_name, '!');
+  if (process.env.APPDATA) {
+    if (BuildTools.existDirectory(path.join(process.env.APPDATA, npm, modules,
+        opt_name))) {
+      return path.join(process.env.APPDATA, npm, modules, opt_name);
+    }
+  } else if (BuildTools.existDirectory(path.join('/usr/lib/', npm, modules,
+      opt_name))) {
+    return path.join('/usr/lib/', npm, modules, opt_name);
+  }
+  console.warn('Cannot find module:', opt_name, 'in:', require.main.paths);
   return '';
 };
 

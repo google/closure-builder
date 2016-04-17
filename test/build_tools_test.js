@@ -56,7 +56,7 @@ describe('buildTools', function() {
       assert.equal(buildTools.getPathFile(fileMarkdownUnix), 'file.md');
       if (os.platform() == 'win32') {
         assert.equal(buildTools.getPathFile(fileWin), 'index.html');
-        assert.equal(buildTools.getPathFile(fileMarkdownWin), 'file.md');
+        assert.equal(buildTools.getPathFile(fileMarkdownWin), 'index.md');
       }
     });
     it('getTempPath', function() {
