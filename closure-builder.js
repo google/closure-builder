@@ -32,27 +32,64 @@ var buildCompilers = require('./build_compilers.js');
 var ClosureBuilder = function() {
   log.debug('Available memory in MB:', buildTools.getMemory(), '(',
     buildTools.getSafeMemory(), ')');
+
+  /** @type {boolean} */
   this.error = false;
+
+  /** @type {string} */
   this.logLevel = 'info';
+
+  /** @type {string} */
   this.modulePath = buildTools.getModulePath();
+
+  /** @type {string} */
+  this.selfPath = buildTools.getModulePath('closure-builder');
+
+  /** @type {Object} */
   this.nameCache = {};
+
+  /** @type {boolean} */
   this.soyLimit = false;
-  this.closureLibPath = path.join('resources', 'closure-library');
-  if (!this.closureLibPath) {
-    log.warn('Google Closure Library was not found!');
+
+  /** @type {string} */
+  this.resourcePath = path.join(this.selfPath, 'resources');
+  if (!buildTools.existDirectory(this.resourcePath)) {
+    log.error('Resources where not found!');
     this.error = true;
   }
+
+  /** @type {string} */
+  this.closureLibPath = path.join(this.resourcePath, 'closure-library');
+  if (!buildTools.existDirectory(this.closureLibPath)) {
+    log.error('Google Closure Library was not found!');
+    this.error = true;
+  }
+
+  /** @type {string} */
   this.closureGoogPath = path.join(this.closureLibPath, 'closure', 'goog');
+
+  /** @type {string} */
   this.closureLibFiles = path.join(this.closureGoogPath, '**.js');
+
+  /** @type {string} */
   this.closureLibTests = path.join(this.closureGoogPath, '**_test.js');
+
+  /** @type {string} */
   this.closureLibThirdParty = path.join(this.closureLibPath, 'third_party',
        '**.js');
+
+  /** @type {string} */
   this.closureLibThirdPartyTests = path.join(this.closureLibPath, 'third_party',
        '**_test.js');
+
+  /** @type {string} */
   this.closureBaseFile = path.join(this.closureGoogPath, 'base.js');
-  this.soyLibPath = path.join('resources', 'closure-templates');
+
+  /** @type {string} */
+  this.soyLibPath = path.join(this.resourcePath, 'closure-templates');
+
   if (!this.soyLibPath) {
-    log.warn('Google Closure Templates was not found!');
+    log.error('Google Closure Templates was not found!');
     this.error = true;
   }
   if (buildTools.existFile(path.join(this.soyLibPath, 'soyutils_usegoog.js'))) {
@@ -62,7 +99,7 @@ var ClosureBuilder = function() {
     this.soyLibFile = path.join(this.soyLibPath, 'javascript',
       'soyutils_usegoog.js');
   } else {
-    log.warn('Missing soyutils_usegoog.js!');
+    log.error('Missing soyutils_usegoog.js!');
     this.error = true;
   }
 };
@@ -86,6 +123,10 @@ ClosureBuilder.prototype.setLogLevel = function(loglevel) {
  *   function(errors, warnings, files, results) {...}
  */
 ClosureBuilder.prototype.build = function(build_config, opt_callback) {
+
+  if (this.error) {
+    return;
+  }
 
   if (!build_config) {
     log.error('No Closure Builder config!');
