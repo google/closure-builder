@@ -47,6 +47,8 @@ var ClosureBuilder = function() {
   this.closureLibTests = path.join(this.closureGoogPath, '**_test.js');
   this.closureLibThirdParty = path.join(this.closureLibPath, 'third_party',
        '**.js');
+  this.closureLibThirdPartyTests = path.join(this.closureLibPath, 'third_party',
+       '**_test.js');
   this.closureBaseFile = path.join(this.closureGoogPath, 'base.js');
   this.soyLibPath = buildTools.getModulePath('closure-templates');
   if (!this.soyLibPath) {
@@ -59,6 +61,9 @@ var ClosureBuilder = function() {
     'soyutils_usegoog.js'))) {
     this.soyLibFile = path.join(this.soyLibPath, 'javascript',
       'soyutils_usegoog.js');
+  } else {
+    log.warn('Missing soyutils_usegoog.js!');
+    this.error = true;
   }
 };
 
@@ -214,11 +219,12 @@ ClosureBuilder.prototype.compileClosureFiles = function(config, opt_files,
     jsLibs.push('"' + this.closureLibFiles + '"');
     jsLibs.push('"!' + this.closureLibTests + '"');
     jsLibs.push('"' + this.closureLibThirdParty + '"');
+    jsLibs.push('"!' + this.closureLibThirdPartyTests + '"');
   }
   if (config.requireSoyLibrary) {
     jsLibs.push(this.soyLibFile);
   }
-  if (config.requireClosureExport) {
+  if (config.requireClosureExport && !config.requireClosureLibrary) {
     files.push(this.closureBaseFile);
   }
   files = files.concat(config.getClosureFiles(), jsLibs, opt_files || []);

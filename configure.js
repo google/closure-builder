@@ -18,11 +18,21 @@
  * @author mbordihn@google.com (Markus Bordihn)
  */
 var packageJson = require('./package.json');
+
 var buildTools = require('./build_tools.js');
-
-
+var remoteTools = require('./tools/remote.js');
 
 console.log('Configuring Closure Builder ' + packageJson.version + ' ...\n');
+
+// Google Closure Library
+console.log('Downloading Google Closure Library ...');
+var closureLibrary = 'https://github.com/google/closure-library/zipball/master';
+var closureLibraryTarget = './resources/closure-library.zip';
+remoteTools.getFile(closureLibrary, closureLibraryTarget);
+
+
+// JAVA
+console.log('Perform basic Java checks ...');
 buildTools.execJava(['-version'], function(error, stdout, stderr) {
   if (!error && stderr && stderr.indexOf('java version') >= 0) {
     var versionReg = /java version \"?([0-9_.-]+)\"?/;

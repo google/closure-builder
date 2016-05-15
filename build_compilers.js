@@ -25,12 +25,11 @@ var path = require('path');
 var fs = require('fs-extra');
 var glob = require('glob');
 var marked = require('marked');
-var http = require('follow-redirects').http;
-var https = require('follow-redirects').https;
 var soyCompiler = require('soynode');
 var validator = require('validator');
 
 var buildTools = require('./build_tools.js');
+var remoteTools = require('./tools/remote.js');
 
 
 
@@ -98,61 +97,33 @@ BuildCompilers.copyFile = function(src, dest, opt_callback) {
  */
 BuildCompilers.copyRemoteFile = function(src, dest, opt_callback) {
   var destFile = path.join(dest, buildTools.getUrlFile(src));
-  var httpCheck = { protocols: ['http'], require_protocol: true };
-  var httpsCheck = { protocols: ['https'], require_protocol: true };
   var completeEvent = function(response) {
-    if (response.statusCode !== 200) {
-      var error_message = 'Remote Resource' + src + 'failed to download with' +
-        'http status: '  + response.statusCode;
-      log.error(error_message);
-      if (opt_callback) {
-        opt_callback(error_message, false, destFile);
-      }
+    if (!opt_callback) {
       return;
     }
-    var file = fs.createWriteStream(destFile);
-    response.pipe(file);
-    file.on('finish', function() {
-      file.close();
-    });
-    if (opt_callback) {
+    if (response.statusCode !== 200) {
+      opt_callback('Remote Resource' + src + 'failed to download with' +
+        'http status: '  + response.statusCode, false, destFile);
+    } else {
       opt_callback(false, false, destFile);
     }
-    log.debug('Remote Resource', src, 'copied to', destFile);
   };
   var errorEvent = function(error) {
+    if (!opt_callback) {
+      return;
+    }
     if (error && error.code == 'ENOTFOUND') {
       var warnMessage = 'Resource at ' + error.hostname +
         ' is not reachable!\n' +
         'Please make sure you are online and that the name is correct!\n' +
         '(This message could be ignored if you are working offline!)';
-      if (opt_callback) {
-        opt_callback(false, warnMessage, destFile);
-      } else {
-        log.warn(warnMessage);
-      }
-      return;
-    }
-    var errorMessage = 'Remote resource ' + src + ' failed to copy to ' +
-      destFile + ':' + error;
-    if (opt_callback) {
-      opt_callback(errorMessage, false, destFile);
+      opt_callback(false, warnMessage, destFile);
     } else {
-      log.error(errorMessage);
+      opt_callback('Remote resource ' + src + ' failed to copy to ' +
+      destFile + ':' + error, false, destFile);
     }
   };
-
-  if (validator.isURL(src, httpCheck)) {
-    http.get(src, completeEvent).on('error', errorEvent);
-  } else if (validator.isURL(src, httpsCheck)) {
-    https.get(src, completeEvent).on('error', errorEvent);
-  } else {
-    var message = 'Invalid remote file: ' + src;
-    log.error(message);
-    if (opt_callback) {
-      opt_callback(message, false, destFile);
-    }
-  }
+  remoteTools.getFile(src, dest, completeEvent, errorEvent);
 };
 
 
