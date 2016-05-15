@@ -1,4 +1,4 @@
-grunt-closure-builder
-node_modules
-resources
-test_files
+grunt-closure-builder/*
+node_modules/*
+resources/*
+test_files/*

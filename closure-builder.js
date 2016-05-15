@@ -37,7 +37,7 @@ var ClosureBuilder = function() {
   this.modulePath = buildTools.getModulePath();
   this.nameCache = {};
   this.soyLimit = false;
-  this.closureLibPath = buildTools.getModulePath('google-closure-library');
+  this.closureLibPath = path.join('resources', 'closure-library');
   if (!this.closureLibPath) {
     log.warn('Google Closure Library was not found!');
     this.error = true;
@@ -50,9 +50,9 @@ var ClosureBuilder = function() {
   this.closureLibThirdPartyTests = path.join(this.closureLibPath, 'third_party',
        '**_test.js');
   this.closureBaseFile = path.join(this.closureGoogPath, 'base.js');
-  this.soyLibPath = buildTools.getModulePath('closure-templates');
+  this.soyLibPath = path.join('resources', 'closure-templates');
   if (!this.soyLibPath) {
-    log.warn('Google Closure Template was not found!');
+    log.warn('Google Closure Templates was not found!');
     this.error = true;
   }
   if (buildTools.existFile(path.join(this.soyLibPath, 'soyutils_usegoog.js'))) {

@@ -52,7 +52,7 @@ RemoteTools.getFile = function(src, dest, opt_filename, opt_complete_callback,
   var httpsCheck = { protocols: ['https'], require_protocol: true };
   var completeEvent = function(response) {
     if (response.statusCode !== 200) {
-      log.error(src + 'failed to download with http status: '  +
+      log.error('ERROR:', src, 'failed to download with http status: ',
         response.statusCode);
     } else {
       var file = fs.createWriteStream(destFile);
@@ -73,7 +73,7 @@ RemoteTools.getFile = function(src, dest, opt_filename, opt_complete_callback,
         '(This message could be ignored if you are working offline!)');
       return;
     } else {
-      log.error(src + ' failed to copy to ' + destFile + ':' + error);
+      log.error('ERROR:', src, 'failed to copy to', destFile, ':', error);
     }
     if (opt_error_callback) {
       opt_error_callback(error);

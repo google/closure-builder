@@ -18,7 +18,6 @@
  * @author mbordihn@google.com (Markus Bordihn)
  */
 var decompress = require('decompress');
-var decompressUnzip = require('decompress-unzip');
 var path = require('path');
 
 var packageJson = require('./package.json');
@@ -26,18 +25,33 @@ var buildTools = require('./build_tools.js');
 var remoteTools = require('./tools/remote.js');
 
 console.log('Configuring Closure Builder ' + packageJson.version + ' ...\n');
+var tempPath = buildTools.getRandomTempPath();
 
 // Google Closure Library
 console.log('Downloading Google Closure Library ...');
-var closureLibrary = 'https://github.com/google/closure-library/zipball/master';
-var tempPath = buildTools.getRandomTempPath();
-remoteTools.getFile(closureLibrary, tempPath, 'closure-library.zip',
+var closureLibrary = 'https://github.com/google/closure-library/tarball/master';
+remoteTools.getFile(closureLibrary, tempPath, 'closure-library.tar.gz',
     function() {
       console.log('Extracting Google Closure Library, please wait ...');
-      new decompress()
-        .src(path.join(tempPath, 'closure-library.zip'))
+      new decompress({mode: '755'})
+        .src(path.join(tempPath, 'closure-library.tar.gz'))
         .dest('./resources/closure-library')
-        .use(decompressUnzip({strip: 1}))
+        .use(decompress.targz({strip: 1}))
+        .run();
+    });
+
+
+// Closure Templates
+console.log('Downloading Google Closure Templates ...');
+var closureTemplates = 'https://github.com/google/closure-templates/' +
+  'tarball/master';
+remoteTools.getFile(closureTemplates, tempPath, 'closure-templates.tar.gz',
+    function() {
+      console.log('Extracting Google Closure Templates, please wait ...');
+      new decompress({mode: '755'})
+        .src(path.join(tempPath, 'closure-templates.tar.gz'))
+        .dest('./resources/closure-templates')
+        .use(decompress.targz({strip: 1}))
         .run();
     });
 
