@@ -1,8 +1,9 @@
+Thumbs.db
 node_modules
 npm-debug.log
-Thumbs.db
-tmp
+resources
 temp
+tmp
 .settings
 .project
 .c9

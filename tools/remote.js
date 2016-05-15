@@ -19,11 +19,13 @@
  */
 var log = require('loglevel');
 var fs = require('fs-extra');
+var path = require('path');
 var http = require('follow-redirects').http;
 var https = require('follow-redirects').https;
 //var querystring = require('querystring');
 var validator = require('validator');
 
+var buildTools = require('../build_tools.js');
 
 
  /**
@@ -37,13 +39,15 @@ var RemoteTools = function() {};
 
 /**
  * Copy file from remote to dest.
- * @param {!string} src
- * @param {!string} dest
+ * @param {!string} src url
+ * @param {!string} dest directory
  * @param {function=} opt_complete_callback
  * @param {function=} opt_error_callback
  */
-RemoteTools.getFile = function(src, dest, opt_complete_callback,
+RemoteTools.getFile = function(src, dest, opt_filename, opt_complete_callback,
     opt_error_callback) {
+  buildTools.mkdir(dest);
+  var destFile = path.join(dest, opt_filename || buildTools.getUrlFile(src));
   var httpCheck = { protocols: ['http'], require_protocol: true };
   var httpsCheck = { protocols: ['https'], require_protocol: true };
   var completeEvent = function(response) {
@@ -51,15 +55,15 @@ RemoteTools.getFile = function(src, dest, opt_complete_callback,
       log.error(src + 'failed to download with http status: '  +
         response.statusCode);
     } else {
-      var file = fs.createWriteStream(dest);
+      var file = fs.createWriteStream(destFile);
       response.pipe(file);
       file.on('finish', function() {
         file.close();
+        if (opt_complete_callback) {
+          opt_complete_callback(response, file);
+        }
       });
-      log.debug(src, 'saved as', dest);
-    }
-    if (opt_complete_callback) {
-      opt_complete_callback(response);
+      log.debug(src, 'saved as', destFile);
     }
   };
   var errorEvent = function(error) {
@@ -69,7 +73,7 @@ RemoteTools.getFile = function(src, dest, opt_complete_callback,
         '(This message could be ignored if you are working offline!)');
       return;
     } else {
-      log.error(src + ' failed to copy to ' + dest + ':' + error);
+      log.error(src + ' failed to copy to ' + destFile + ':' + error);
     }
     if (opt_error_callback) {
       opt_error_callback(error);

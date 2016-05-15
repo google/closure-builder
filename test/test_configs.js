@@ -238,7 +238,7 @@ TestConfigs.resourcesConfig = {
 
 
 TestConfigs.resourcesNotExistsConfig = {
-  name: 'resources',
+  name: 'resources_none_exists',
   resources: [
     'test_files/resources/not_exists.css',
     'test_files/resources/not_exists.htm',

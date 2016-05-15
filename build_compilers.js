@@ -96,7 +96,7 @@ BuildCompilers.copyFile = function(src, dest, opt_callback) {
  * @param {function=} opt_callback
  */
 BuildCompilers.copyRemoteFile = function(src, dest, opt_callback) {
-  var destFile = path.join(dest, buildTools.getUrlFile(src));
+  var destFile = buildTools.getUrlFile(src);
   var completeEvent = function(response) {
     if (!opt_callback) {
       return;
@@ -123,7 +123,7 @@ BuildCompilers.copyRemoteFile = function(src, dest, opt_callback) {
       destFile + ':' + error, false, destFile);
     }
   };
-  remoteTools.getFile(src, dest, completeEvent, errorEvent);
+  remoteTools.getFile(src, dest, destFile, completeEvent, errorEvent);
 };
 
 

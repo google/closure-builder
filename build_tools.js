@@ -316,7 +316,8 @@ BuildTools.getModulePath = function(opt_name) {
       opt_name))) {
     return path.join('/usr/lib/', npm, modules, opt_name);
   }
-  console.warn('Cannot find module:', opt_name, 'in:', require.main.paths);
+  console.warn('Cannot find module:', opt_name, 'in:', modulePath, 'and',
+    require.main.paths);
   return '';
 };
 

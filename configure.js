@@ -17,8 +17,11 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var packageJson = require('./package.json');
+var decompress = require('decompress');
+var decompressUnzip = require('decompress-unzip');
+var path = require('path');
 
+var packageJson = require('./package.json');
 var buildTools = require('./build_tools.js');
 var remoteTools = require('./tools/remote.js');
 
@@ -27,8 +30,16 @@ console.log('Configuring Closure Builder ' + packageJson.version + ' ...\n');
 // Google Closure Library
 console.log('Downloading Google Closure Library ...');
 var closureLibrary = 'https://github.com/google/closure-library/zipball/master';
-var closureLibraryTarget = './resources/closure-library.zip';
-remoteTools.getFile(closureLibrary, closureLibraryTarget);
+var tempPath = buildTools.getRandomTempPath();
+remoteTools.getFile(closureLibrary, tempPath, 'closure-library.zip',
+    function() {
+      console.log('Extracting Google Closure Library, please wait ...');
+      new decompress()
+        .src(path.join(tempPath, 'closure-library.zip'))
+        .dest('./resources/closure-library')
+        .use(decompressUnzip({strip: 1}))
+        .run();
+    });
 
 
 // JAVA
