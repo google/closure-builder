@@ -39,7 +39,8 @@ var ClosureCompiler = function() {};
  * @param {string=} opt_target_file
  */
 ClosureCompiler.compile = function(params, files, opt_target_file) {
-
+  ClosureCompiler.localCompile(['--version'], files, opt_target_file);
+  //ClosureCompiler.remoteCompile([], files, opt_target_file);
 };
 
 
@@ -49,10 +50,14 @@ ClosureCompiler.compile = function(params, files, opt_target_file) {
  * @param {string=} opt_target_file
  */
 ClosureCompiler.localCompile = function(params, files, opt_target_file) {
-  var compiler = path.join(__dirname, '..', '..', 'resources', 'closure-compiler',
-      'compiler.jar');
+  if (!params) {
+    return;
+  }
 
-  buildTools.execJavaJar(compiler, ['--help'], function(error, stdout, stderr) {
+  var compiler = path.join(__dirname, '..', '..', 'resources',
+    'closure-compiler', 'compiler.jar');
+
+  buildTools.execJavaJar(compiler, params, function(error, stdout, stderr) {
     console.log('error', error);
     console.log('stdout', stdout);
     console.log('stderr', stderr);

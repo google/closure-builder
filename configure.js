@@ -30,21 +30,21 @@ console.log('Configuring Closure Builder ' + packageJson.version + ' ...\n');
 remoteTools.getTarGz(
   'Google Closure Library',
   'https://github.com/google/closure-library/tarball/master',
-  './resources/closure-library'
+  path.join('.', 'resources', 'closure-library')
 );
 
 // Google Closure Templates
 remoteTools.getTarGz(
   'Google Closure Templates',
   'https://github.com/google/closure-templates/tarball/master',
-  './resources/closure-templates'
+  path.join('.', 'resources', 'closure-templates')
 );
 
 // Google Closure Compiler
 remoteTools.getTarGz(
   'Google Closure Compiler',
   'https://dl.google.com/closure-compiler/compiler-latest.tar.gz',
-  './resources/closure-compiler'
+  path.join('.', 'resources', 'closure-compiler')
 );
 
 // Google Closure Stylesheets
@@ -53,11 +53,11 @@ var gcsVersion = 'v1.2.0';
 var gcsDoc = 'https://raw.githubusercontent.com/google/closure-stylesheets/';
 remoteTools.getFiles(
   'Google Closure Stylesheets', [
-  gcs + gcsVersion + '/closure-stylesheets.jar',
-  gcs + gcsVersion + '/closure-stylesheets-library.jar',
-  gcsDoc + 'master/LICENSE',
-  gcsDoc + 'master/README.md'],
-  './resources/closure-stylesheets'
+    gcs + gcsVersion + '/closure-stylesheets.jar',
+    gcs + gcsVersion + '/closure-stylesheets-library.jar',
+    gcsDoc + 'master/LICENSE',
+    gcsDoc + 'master/README.md'],
+  path.join('.', 'resources', 'closure-stylesheets')
 );
 
 // JAVA check
@@ -74,4 +74,4 @@ buildTools.execJava(['-version'], function(error, stdout, stderr) {
 
 // Test
 console.log('Local compiler ...');
-closureCompiler.localCompile();
+closureCompiler.compile();

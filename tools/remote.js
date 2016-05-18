@@ -85,7 +85,7 @@ RemoteTools.getFile = function(url, dest,
 
   var responseEvent = function(response) {
     var len = parseInt(response.headers['content-length'], 10);
-    var barText = 'Downloading ' + destFilename + '\t[:bar] :percent :etas';
+    var barText = 'Downloading ' + destFilename + ' [:bar] :percent :etas';
     var bar = new progressBar(barText, {
       complete: '=',
       incomplete: ' ',
@@ -94,7 +94,11 @@ RemoteTools.getFile = function(url, dest,
     });
 
     response.on('data', function(chunk) {
-      bar.tick(chunk.length);
+      try {
+        bar.tick(chunk.length);
+      } catch (e) {
+        console.log('ERROR:', e);
+      }
     });
   };
 
@@ -156,15 +160,13 @@ RemoteTools.getTarGz = function(name, url, dest,
   }
   console.log('Downloading', name, '...');
   RemoteTools.getFile(url, tempPath, filename, function() {
-      console.log('Extracting', name, 'please wait ...');
-      new decompress({mode: '755'})
-        .src(path.join(tempPath, filename))
-        .dest(dest)
-        .use(decompress.targz({strip: 1}))
-        .run(opt_complete_callback);
-    },
-    opt_error_callback
-  );
+    console.log('Extracting', name, 'please wait ...');
+    new decompress({mode: '755'})
+      .src(path.join(tempPath, filename))
+      .dest(dest)
+      .use(decompress.targz({strip: 1}))
+      .run(opt_complete_callback);
+  }, opt_error_callback);
 };
 
 
