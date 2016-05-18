@@ -18,8 +18,10 @@
  * @author mbordihn@google.com (Markus Bordihn)
  */
 var https = require('https');
+var path = require('path');
 var querystring = require('querystring');
 
+var buildTools = require('../../build_tools.js');
 
 
  /**
@@ -33,10 +35,37 @@ var ClosureCompiler = function() {};
 
 /**
  * @param {Object} params
- * @param {!string} filename
  * @param {!string} files
+ * @param {string=} opt_target_file
  */
-ClosureCompiler.remoteCompile = function(params, filename, files) {
+ClosureCompiler.compile = function(params, files, opt_target_file) {
+
+};
+
+
+/**
+ * @param {Object} params
+ * @param {!string} files
+ * @param {string=} opt_target_file
+ */
+ClosureCompiler.localCompile = function(params, files, opt_target_file) {
+  var compiler = path.join(__dirname, '..', '..', 'resources', 'closure-compiler',
+      'compiler.jar');
+
+  buildTools.execJavaJar(compiler, ['--help'], function(error, stdout, stderr) {
+    console.log('error', error);
+    console.log('stdout', stdout);
+    console.log('stderr', stderr);
+  });
+};
+
+
+/**
+ * @param {Object} params
+ * @param {!string} files
+ * @param {string=} opt_target_file
+ */
+ClosureCompiler.remoteCompile = function(params, files, opt_target_file) {
   var data = querystring.stringify({
     'compilation_level' : 'SIMPLE_OPTIMIZATIONS',
     'output_format': 'json',
@@ -75,10 +104,7 @@ ClosureCompiler.remoteCompile = function(params, filename, files) {
   console.log(data);
   request.write(data);
   request.end();
-
 };
 
-
-ClosureCompiler.remoteCompile();
 
 module.exports = ClosureCompiler;

@@ -17,12 +17,13 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var log = require('loglevel');
+var decompress = require('decompress');
 var fs = require('fs-extra');
-var path = require('path');
 var http = require('follow-redirects').http;
 var https = require('follow-redirects').https;
-//var querystring = require('querystring');
+var log = require('loglevel');
+var path = require('path');
+var progressBar = require('progress');
 var validator = require('validator');
 
 var buildTools = require('../build_tools.js');
@@ -39,20 +40,21 @@ var RemoteTools = function() {};
 
 /**
  * Copy file from remote to dest.
- * @param {!string} src url
- * @param {!string} dest directory
+ * @param {!string} url
+ * @param {!string} dest
+ * @param {string=} opt_filename
  * @param {function=} opt_complete_callback
  * @param {function=} opt_error_callback
  */
-RemoteTools.getFile = function(src, dest, opt_filename, opt_complete_callback,
-    opt_error_callback) {
+RemoteTools.getFile = function(url, dest,
+    opt_filename, opt_complete_callback, opt_error_callback) {
   buildTools.mkdir(dest);
-  var destFile = path.join(dest, opt_filename || buildTools.getUrlFile(src));
-  var httpCheck = { protocols: ['http'], require_protocol: true };
-  var httpsCheck = { protocols: ['https'], require_protocol: true };
+  var destFilename = opt_filename || buildTools.getUrlFile(url);
+  var destFile = path.join(dest, destFilename);
+
   var completeEvent = function(response) {
     if (response.statusCode !== 200) {
-      log.error('ERROR:', src, 'failed to download with http status: ',
+      log.error('ERROR:', url, 'failed to download with http status: ',
         response.statusCode);
     } else {
       var file = fs.createWriteStream(destFile);
@@ -63,9 +65,10 @@ RemoteTools.getFile = function(src, dest, opt_filename, opt_complete_callback,
           opt_complete_callback(response, file);
         }
       });
-      log.debug(src, 'saved as', destFile);
+      log.debug(url, 'saved as', destFile);
     }
   };
+
   var errorEvent = function(error) {
     if (error && error.code == 'ENOTFOUND') {
       log.warn('File at ' + error.hostname + ' is not reachable!\n' +
@@ -73,25 +76,96 @@ RemoteTools.getFile = function(src, dest, opt_filename, opt_complete_callback,
         '(This message could be ignored if you are working offline!)');
       return;
     } else {
-      log.error('ERROR:', src, 'failed to copy to', destFile, ':', error);
+      log.error('ERROR:', url, 'failed to copy to', destFile, ':', error);
     }
     if (opt_error_callback) {
       opt_error_callback(error);
     }
   };
 
-  if (validator.isURL(src, httpCheck)) {
-    http.get(src, completeEvent).on('error', errorEvent);
-  } else if (validator.isURL(src, httpsCheck)) {
-    https.get(src, completeEvent).on('error', errorEvent);
+  var responseEvent = function(response) {
+    var len = parseInt(response.headers['content-length'], 10);
+    var barText = 'Downloading ' + destFilename + '\t[:bar] :percent :etas';
+    var bar = new progressBar(barText, {
+      complete: '=',
+      incomplete: ' ',
+      width: 20,
+      total: len
+    });
+
+    response.on('data', function(chunk) {
+      bar.tick(chunk.length);
+    });
+  };
+
+  var dataHandler = null;
+  var httpCheck = { protocols: ['http'], require_protocol: true };
+  var httpsCheck = { protocols: ['https'], require_protocol: true };
+  if (validator.isURL(url, httpCheck)) {
+    dataHandler = http;
+  } else if (validator.isURL(url, httpsCheck)) {
+    dataHandler = https;
+  }
+
+  if (dataHandler) {
+    dataHandler.get(url, completeEvent)
+      .on('response', responseEvent)
+      .on('end', completeEvent)
+      .on('error', errorEvent);
   } else {
-    log.error('Invalid remote file: ' + src);
+    log.error('Invalid remote file: ' + url);
     if (opt_error_callback) {
-      opt_error_callback('Invalid file: ' + src);
+      opt_error_callback('Invalid file: ' + url);
     }
   }
 };
 
+
+/**
+ * Copy file from remote to dest.
+ * @param {!array} urls
+ * @param {!string} dest
+ * @param {string=} opt_filename
+ * @param {function=} opt_complete_callback
+ * @param {function=} opt_error_callback
+ */
+RemoteTools.getFiles = function(name, urls, dest,
+    opt_complete_callback, opt_error_callback) {
+  console.log('Downloading', urls.length, 'files for', name, '...');
+  for (var url in urls) {
+    RemoteTools.getFile(urls[url], dest, undefined, opt_complete_callback,
+      opt_error_callback);
+  }
+};
+
+
+/**
+ * Copy file from remote to dest.
+ * @param {!string} name
+ * @param {!string} url
+ * @param {!string} dest directory
+ * @param {function=} opt_complete_callback
+ * @param {function=} opt_error_callback
+ */
+RemoteTools.getTarGz = function(name, url, dest,
+    opt_complete_callback, opt_error_callback) {
+  var tempPath = buildTools.getRandomTempPath();
+  var filename = buildTools.getUrlFile(url);
+  if (filename.indexOf('.tar.gz') == -1) {
+    filename = filename + '.tar.gz';
+  }
+  console.log('Downloading', name, '...');
+  RemoteTools.getFile(url, tempPath, filename, function() {
+      console.log('Extracting', name, 'please wait ...');
+      new decompress({mode: '755'})
+        .src(path.join(tempPath, filename))
+        .dest(dest)
+        .use(decompress.targz({strip: 1}))
+        .run(opt_complete_callback);
+    },
+    opt_error_callback
+  );
+};
 
 
 module.exports = RemoteTools;

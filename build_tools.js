@@ -392,6 +392,18 @@ BuildTools.execJava = function(args, callback, opt_java) {
 
 
 /**
+ * @param {string} jar
+ * @param {array} args
+ * @param {function} callback
+ * @param {string=} opt_java
+ */
+BuildTools.execJavaJar = function(jar, args, callback, opt_java) {
+  var javaBin = opt_java || 'java';
+  childProcess.execFile(javaBin, ['-jar', jar].concat(args), callback);
+};
+
+
+/**
  * @param {!number} size in megabyte.
  * @return {!boolean}
  */
