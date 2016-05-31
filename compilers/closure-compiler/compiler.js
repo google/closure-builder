@@ -17,6 +17,7 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
+var fs = require('fs-extra');
 var https = require('https');
 var path = require('path');
 var querystring = require('querystring');
@@ -34,51 +35,106 @@ var ClosureCompiler = function() {};
 
 
 /**
- * @param {Object} params
  * @param {!string} files
+ * @param {Object=} opt_params
  * @param {string=} opt_target_file
  */
-ClosureCompiler.compile = function(params, files, opt_target_file) {
-  ClosureCompiler.localCompile(['--version'], files, opt_target_file);
+ClosureCompiler.compile = function(files, opt_params, opt_target_file) {
+  ClosureCompiler.localCompile(files, opt_params, opt_target_file);
   //ClosureCompiler.remoteCompile([], files, opt_target_file);
 };
 
 
 /**
- * @param {Object} params
  * @param {!string} files
+ * @param {Object=} opt_options
  * @param {string=} opt_target_file
+ * @param {function=} opt_callback
  */
-ClosureCompiler.localCompile = function(params, files, opt_target_file) {
-  if (!params) {
+ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
+    opt_callback) {
+  if (!files) {
     return;
   }
 
   var compiler = path.join(__dirname, '..', '..', 'resources',
     'closure-compiler', 'compiler.jar');
+  var compilerOptions = [];
+  var options = opt_options || {};
 
-  buildTools.execJavaJar(compiler, params, function(error, stdout, stderr) {
-    console.log('error', error);
-    console.log('stdout', stdout);
-    console.log('stderr', stderr);
-  });
+  // Compilation level
+  if (!('compilation_level' in options)) {
+    options.compilation_level = 'SIMPLE_OPTIMIZATIONS';
+  }
+
+  // Handling options
+  for (var option in options) {
+    compilerOptions.push('--' + option, options[option]);
+  }
+
+  // Handling files
+  for (var i=0; i<files.length; i++) {
+    compilerOptions.push('--js', files[i]);
+  }
+
+  var compilerEvent = function(error, stdout, stderr) {
+    var code = stdout;
+    var errors = error;
+    var warnings = false;
+    if (errors) {
+      ClosureCompiler.error(errors);
+      code = null;
+    }
+
+    if (opt_callback) {
+      opt_callback(errors, warnings, opt_target_file, code);
+    }
+  };
+
+  buildTools.execJavaJar(compiler, compilerOptions, compilerEvent);
 };
 
 
 /**
- * @param {Object} params
  * @param {!string} files
+ * @param {Object=} opt_options
  * @param {string=} opt_target_file
+ * @param {function=} opt_callback
  */
-ClosureCompiler.remoteCompile = function(params, files, opt_target_file) {
-  var data = querystring.stringify({
+ClosureCompiler.remoteCompile = function(files, opt_options, opt_target_file,
+    opt_callback) {
+  // Handling options
+  var unsupportedOptions = {
+    'closure_entry_point': true
+  };
+  for (var option in opt_options) {
+    if (option in unsupportedOptions) {
+      var errorMsg = option + ' is unsupported by the closure-compiler ' + 
+        'webservice!';
+      ClosureCompiler.error(errorMsg);
+      if (opt_callback) {
+        opt_callback(errorMsg);
+      }
+      return;
+    }
+  }
+
+  var data = {
     'compilation_level' : 'SIMPLE_OPTIMIZATIONS',
     'output_format': 'json',
-    'output_info': ['compiled_code', 'warnings', 'errors', 'statistics'],
-    'js_code': 'var test = "Hello"; function dummmy() {return test;}'
-  });
+    'output_info': ['compiled_code', 'warnings', 'errors', 'statistics']
+  };
 
-  console.log('FILES:', files);
+  var jsCode = '';
+  for (var i=0; i<files.length; i++) {
+    jsCode += fs.readFileSync(files[i]).toString();
+  }
+  if (jsCode) {
+    data['js_code'] = jsCode;
+  }
+
+  var dataString = querystring.stringify(data);
+  console.log('Data', dataString);
 
   var options = {
     host: 'closure-compiler.appspot.com',
@@ -86,29 +142,70 @@ ClosureCompiler.remoteCompile = function(params, files, opt_target_file) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Content-Length': data.length
+      'Content-Length': dataString.length
     }
   };
 
   var request = https.request(options, function(response) {
-    console.log('STATUS:', response.statusCode);
-    console.log('HEADERS:', JSON.stringify(response.headers));
+    var data = '';
     response.setEncoding('utf8');
     response.on('data', function(chunk) {
-      console.log('BODY:', chunk);
+      data += chunk;
     });
     response.on('end', function() {
-      console.log('No more data in response.');
+      var result =  JSON.parse(data);
+      var code = result.compiledCode;
+      var errors = result.errors;
+      var warnings = result.warnings;
+      if (errors) {
+        ClosureCompiler.error(errors);
+        code = '';
+      } else if (code) {
+        code += '\n';
+      }
+      if (opt_callback) {
+        opt_callback(errors, warnings, opt_target_file, code);
+      }
+      console.log('Result', result);
     });
   });
 
   request.on('error', function(e) {
     console.log('Problem with request:', e.message);
+    if (opt_callback) {
+      opt_callback(e.message);
+    }
   });
 
-  console.log(data);
-  request.write(data);
+  console.log(dataString);
+  request.write(dataString);
   request.end();
+};
+
+
+/**
+ * @param {string} msg
+ */
+ClosureCompiler.info = function(msg) {
+  if (msg) {
+    console.info('[Closure Compiler]', msg);
+  }
+};
+
+
+/**
+ * @param {string} msg
+ */
+ClosureCompiler.warn = function(msg) {
+  console.error('[Closure Compiler Warn]', msg);
+};
+
+
+/**
+ * @param {string} msg
+ */
+ClosureCompiler.error = function(msg) {
+  console.error('[Closure Compiler Error]', msg);
 };
 
 

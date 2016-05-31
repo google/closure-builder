@@ -43,7 +43,7 @@ var BuildCompilers = function() {};
 
 
 /**
- * Avalible memory to avoid "Out of mememory" issues.
+ * Avalible memory to avoid "Out of memory" issues.
  * @type {number}
  */
 BuildCompilers.SAFE_MEMORY = buildTools.getSafeMemory() || 512;

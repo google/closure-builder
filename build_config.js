@@ -24,6 +24,7 @@ var randomString = require('randomstring');
 var BuildType = require('./build_types.js');
 var BuildTools = require('./build_tools.js');
 
+
 /**
  * Build configuration object.
  *

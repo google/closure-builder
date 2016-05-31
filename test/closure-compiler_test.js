@@ -18,15 +18,110 @@
  * @author mbordihn@google.com (Markus Bordihn)
  */
 var assert = require('assert');
+var buildTools = require('../build_tools.js');
 var closureCompiler = require('../compilers/closure-compiler/compiler.js');
-
-
+var glob = buildTools.getGlobFiles;
 
 describe('Closure Compiler', function() {
 
-  describe('remoteCompile', function() {
-    assert(closureCompiler.remoteCompile);
-    closureCompiler.remoteCompile();
+  // Remote compiler tests
+  describe('Remote Compiler', function() {
+    it('Single file', function(done) {
+      this.timeout(25000);
+      closureCompiler.remoteCompile(['test_files/closure_test_1.js'], null, null,
+        function(errors, warnings, file, content) {
+          assert(!errors);
+          assert(!warnings);
+          assert.equal(content,
+            'var closure_test_1=function(){return"_CLOSURE_TEST_1"};\n');
+          done();
+      });
+    });
+    it('Two files', function(done) {
+      this.timeout(25000);
+      closureCompiler.remoteCompile(['test_files/closure_test_1.js',
+        'test_files/closure_test_2.js'], null, null,
+        function(errors, warnings, file, content) {
+          assert(!errors);
+          assert(!warnings);
+          assert.equal(content,
+            'var closure_test_1=function(){return"_CLOSURE_TEST_1"},' +
+            'closure_test_2=function(){return closure_test_1()+' +
+            '"_CLOSURE_TEST_2"};\n');
+          done();
+      });
+    });
+    it('Group of files', function(done) {
+      this.timeout(25000);
+      var files = glob(['test_files/closure_test_*.js']);
+      var options = {
+        only_closure_dependencies: true,
+        manage_closure_dependencies: true,
+        closure_entry_point: 'closure_test_group'
+      };
+      closureCompiler.remoteCompile(files, options, null,
+        function(errors, warnings, files, content) {
+          assert(errors);
+          assert(!warnings);
+          assert(!content);
+          done();
+        });
+    });
+
+  });
+
+
+  // Local compiler tests
+  describe('Local Compiler', function() {
+    it('Single file', function(done) {
+      this.timeout(25000);
+      closureCompiler.localCompile(['test_files/closure_test_1.js'], null, null,
+        function(errors, warnings, file, content) {
+          assert(!errors);
+          assert(!warnings);
+          assert.equal(content,
+            'var closure_test_1=function(){return"_CLOSURE_TEST_1"};\n');
+          done();
+        });
+    });
+    it('Two files', function(done) {
+      this.timeout(25000);
+      var files = ['test_files/closure_test_1.js',
+        'test_files/closure_test_2.js'];
+      closureCompiler.localCompile(files, null, null,
+        function(errors, warnings, file, content) {
+          assert(!errors);
+          assert(!warnings);
+          assert.equal(content,
+            'var closure_test_1=function(){return"_CLOSURE_TEST_1"};' +
+            'var closure_test_2=function(){return closure_test_1()+' +
+            '"_CLOSURE_TEST_2"};\n');
+          done();
+        });
+    });
+    it('Group of files', function(done) {
+      this.timeout(25000);
+      var files = glob(['test_files/closure_test_*.js']);
+      var options = {
+        only_closure_dependencies: true,
+        manage_closure_dependencies: true,
+        closure_entry_point: 'closure_test_group'
+      };
+      closureCompiler.localCompile(files, options, null,
+        function(errors, warnings, files, content) {
+          assert(!errors);
+          assert(!warnings);
+          assert.equal(content, 
+            'var closure_test_1=function(){return"_CLOSURE_TEST_1"};' +
+            'var closure_test_2=function(){return closure_test_1()+' +
+            '"_CLOSURE_TEST_2"};var closure_test_group=function(){' +
+            'return closure_test_2()+"_CLOSURE_TEST_2"};\n');
+          done();
+        });
+    });
+
   });
 
 });
+
+

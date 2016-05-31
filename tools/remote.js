@@ -97,7 +97,7 @@ RemoteTools.getFile = function(url, dest,
       try {
         bar.tick(chunk.length);
       } catch (e) {
-        console.log('ERROR:', e);
+        return;
       }
     });
   };
@@ -161,11 +161,10 @@ RemoteTools.getTarGz = function(name, url, dest,
   console.log('Downloading', name, '...');
   RemoteTools.getFile(url, tempPath, filename, function() {
     console.log('Extracting', name, 'please wait ...');
-    new decompress({mode: '755'})
-      .src(path.join(tempPath, filename))
-      .dest(dest)
-      .use(decompress.targz({strip: 1}))
-      .run(opt_complete_callback);
+    var input = path.join(tempPath, filename);
+    var output = dest;
+    decompress(input, output, {strip: 1, mode: '755'}).then(
+      opt_complete_callback);
   }, opt_error_callback);
 };
 

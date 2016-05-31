@@ -71,7 +71,3 @@ buildTools.execJava(['-version'], function(error, stdout, stderr) {
     console.warn('No global Java available ...');
   }
 });
-
-// Test
-console.log('Local compiler ...');
-closureCompiler.compile();
