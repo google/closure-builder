@@ -79,6 +79,4 @@ ClosureCompiler.remoteCompile = function(params, filename, files) {
 };
 
 
-ClosureCompiler.remoteCompile();
-
 module.exports = ClosureCompiler;
