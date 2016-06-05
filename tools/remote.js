@@ -163,7 +163,11 @@ RemoteTools.getTarGz = function(name, url, dest,
     console.log('Extracting', name, 'please wait ...');
     var input = path.join(tempPath, filename);
     var output = dest;
-    decompress(input, output, {strip: 1, mode: '755'}).then(
+    decompress(input, output, {
+      strip: 1,
+      mode: '755',
+      filter: file => path.basename(file.path).indexOf('_test.') === -1
+    }).then(
       opt_complete_callback);
   }, opt_error_callback);
 };

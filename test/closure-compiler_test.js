@@ -26,7 +26,7 @@ describe('Closure Compiler', function() {
 
   describe('remoteCompile', function() {
     assert(closureCompiler.remoteCompile);
-    closureCompiler.remoteCompile();
+    //closureCompiler.remoteCompile();
   });
 
 });
