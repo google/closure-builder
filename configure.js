@@ -17,7 +17,6 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var decompress = require('decompress');
 var path = require('path');
 
 var packageJson = require('./package.json');
@@ -25,38 +24,42 @@ var buildTools = require('./build_tools.js');
 var remoteTools = require('./tools/remote.js');
 
 console.log('Configuring Closure Builder ' + packageJson.version + ' ...\n');
-var tempPath = buildTools.getRandomTempPath();
 
 // Google Closure Library
-console.log('Downloading Google Closure Library ...');
-var closureLibrary = 'https://github.com/google/closure-library/tarball/master';
-remoteTools.getFile(closureLibrary, tempPath, 'closure-library.tar.gz',
-    function() {
-      console.log('Extracting Google Closure Library, please wait ...');
-      new decompress({mode: '755'})
-        .src(path.join(tempPath, 'closure-library.tar.gz'))
-        .dest('./resources/closure-library')
-        .use(decompress.targz({strip: 1}))
-        .run();
-    });
+remoteTools.getTarGz(
+  'Google Closure Library',
+  'https://github.com/google/closure-library/tarball/master',
+  path.join('.', 'resources', 'closure-library')
+);
 
+// Google Closure Templates
+remoteTools.getTarGz(
+  'Google Closure Templates',
+  'https://github.com/google/closure-templates/tarball/master',
+  path.join('.', 'resources', 'closure-templates')
+);
 
-// Closure Templates
-console.log('Downloading Google Closure Templates ...');
-var closureTemplates = 'https://github.com/google/closure-templates/' +
-  'tarball/master';
-remoteTools.getFile(closureTemplates, tempPath, 'closure-templates.tar.gz',
-    function() {
-      console.log('Extracting Google Closure Templates, please wait ...');
-      new decompress({mode: '755'})
-        .src(path.join(tempPath, 'closure-templates.tar.gz'))
-        .dest('./resources/closure-templates')
-        .use(decompress.targz({strip: 1}))
-        .run();
-    });
+// Google Closure Compiler
+remoteTools.getTarGz(
+  'Google Closure Compiler',
+  'https://dl.google.com/closure-compiler/compiler-latest.tar.gz',
+  path.join('.', 'resources', 'closure-compiler')
+);
 
+// Google Closure Stylesheets
+var gcs = 'https://github.com/google/closure-stylesheets/releases/download/';
+var gcsVersion = 'v1.2.0';
+var gcsDoc = 'https://raw.githubusercontent.com/google/closure-stylesheets/';
+remoteTools.getFiles(
+  'Google Closure Stylesheets', [
+    gcs + gcsVersion + '/closure-stylesheets.jar',
+    gcs + gcsVersion + '/closure-stylesheets-library.jar',
+    gcsDoc + 'master/LICENSE',
+    gcsDoc + 'master/README.md'],
+  path.join('.', 'resources', 'closure-stylesheets')
+);
 
-// JAVA
+// JAVA check
 console.log('Perform basic Java checks ...');
 buildTools.execJava(['-version'], function(error, stdout, stderr) {
   if (!error && stderr && stderr.indexOf('java version') >= 0) {

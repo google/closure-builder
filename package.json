@@ -48,21 +48,21 @@
   "license": "Apache-2.0",
   "dependencies": {
     "browserify": "13.0.1",
-    "clean-css": "3.4.12",
+    "clean-css": "3.4.17",
     "closurecompiler": "https://github.com/MarkusBordihn/ClosureCompiler.js/tarball/master",
-    "decompress": "^3.0.0",
+    "decompress": "^4.0.0",
     "follow-redirects": "0.1.0",
     "fs-extra": "0.30.0",
     "glob": "7.0.3",
-    "loglevel": "1.4.0",
+    "loglevel": "1.4.1",
     "marked": "0.3.5",
     "mkdirp": "0.5.1",
     "path-parse": "1.0.5",
     "progress": "1.1.8",
-    "randomstring": "1.1.4",
+    "randomstring": "1.1.5",
     "soynode": "1.1.0",
     "touch": "1.0.0",
-    "validator": "5.2.0"
+    "validator": "5.3.0"
   },
   "devDependencies": {
     "assert": "latest",

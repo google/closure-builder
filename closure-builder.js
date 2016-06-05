@@ -366,8 +366,12 @@ ClosureBuilder.prototype.copyResources = function(config, opt_callback) {
       warnings_ += 1;
     }
   }.bind(this);
-  buildCompilers.copyFiles(files, config.outPath, callback);
-  config.setMessage('Copied resources files to ' + config.outPath, 100);
+  buildCompilers.copyFiles(files, config.out, callback);
+  if (files.length == 1) {
+    config.setMessage('Copied resource file to ' + config.out, 100);
+  } else {
+    config.setMessage('Copied resources files to ' + config.out, 100);
+  }
   if (opt_callback) {
     opt_callback(errors_, warnings_);
   }

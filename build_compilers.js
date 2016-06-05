@@ -72,6 +72,9 @@ BuildCompilers.copyFile = function(src, dest, opt_callback) {
     return;
   }
   var destFile = path.join(dest, buildTools.getFileBase(src));
+  if (buildTools.isFile(dest)) {
+    destFile = dest;
+  }
   var fileEvent = function(error) {
     if (error) {
       var message = 'Resource ' + src + ' failed to copy to ' + destFile;
@@ -134,7 +137,7 @@ BuildCompilers.copyRemoteFile = function(src, dest, opt_callback) {
  * @param {function=} opt_callback
  */
 BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
-  buildTools.mkdir(dest);
+  buildTools.mkdir(buildTools.getFileBase(dest));
   var errors_ = [];
   var warnings_ = [];
   var files_ = [];

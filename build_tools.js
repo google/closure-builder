@@ -479,6 +479,18 @@ BuildTools.existFile = function(file_path) {
 
 
 /**
+ * @param {string} file_path
+ * @return {boolean} True of possible file.
+ */
+BuildTools.isFile = function(file_path) {
+  if (path.extname(file_path)) {
+    return true;
+  }
+  return false;
+};
+
+
+/**
  * @param {string} dir_path
  */
 BuildTools.mkdir = function(dir_path) {
