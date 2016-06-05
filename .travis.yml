@@ -3,9 +3,6 @@ node_js:
 - stable
 - '4.1'
 - '4.0'
-- '0.12'
-- '0.11'
-- '0.10'
 addons:
   code_climate:
     repo_token: 90c156a6a494992a51296ea1e1a549680b84a0864608eab3029455a9bd3b6e9d
