@@ -20,17 +20,22 @@
   "scripts": {
     "configure": "node configure.js",
     "lint": "eslint .",
+
     "test": "mocha",
     "test-config": "mocha test/build_config_test.js",
     "test-tools": "mocha test/build_tools_test.js",
     "test-types": "mocha test/build_types_test.js",
     "test-compilers": "mocha test/build_compilers_test.js",
     "test-closure-compiler": "mocha test/closure-compiler_test.js",
+
     "pretest": "npm run lint",
     "predeploy": "npm test",
+
     "deploy": "npm version patch && git add package.json",
     "postdeploy": "git push --follow-tags",
-    "update": "ncu -u && npm install && npm update && npm test",
+
+    "clean": "echo Cleaning up. Please wait ... && npm prune && rimraf resources/*",
+    "update": "npm run clean && ncu -u -a && npm install && npm update && npm run configure && npm test",
     "install": "npm run configure"
   },
   "author": {
@@ -57,6 +62,7 @@
     "loglevel": "1.4.1",
     "marked": "0.3.5",
     "mkdirp": "0.5.1",
+    "rimraf": "^2.5.2",
     "path-parse": "1.0.5",
     "progress": "1.1.8",
     "randomstring": "1.1.5",
