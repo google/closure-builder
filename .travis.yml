@@ -1,11 +1,16 @@
 language: node_js
 node_js:
-- stable
-- '4.1'
-- '4.0'
+  - stable
+  - '5'
+  - '5.1'
+  - '4'
+  - '4.2'
+  - '4.1'
+
 addons:
   code_climate:
     repo_token: 90c156a6a494992a51296ea1e1a549680b84a0864608eab3029455a9bd3b6e9d
+
 deploy:
   provider: npm
   email: Markus@Bordihn.de

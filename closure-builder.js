@@ -70,15 +70,8 @@ var ClosureBuilder = function() {
   this.closureLibFiles = path.join(this.closureGoogPath, '**.js');
 
   /** @type {string} */
-  this.closureLibTests = path.join(this.closureGoogPath, '**_test.js');
-
-  /** @type {string} */
   this.closureLibThirdParty = path.join(this.closureLibPath, 'third_party',
        '**.js');
-
-  /** @type {string} */
-  this.closureLibThirdPartyTests = path.join(this.closureLibPath, 'third_party',
-       '**_test.js');
 
   /** @type {string} */
   this.closureBaseFile = path.join(this.closureGoogPath, 'base.js');
@@ -256,9 +249,7 @@ ClosureBuilder.prototype.compileClosureFiles = function(config, opt_files,
   config.setMessage('Compiling Closure Files');
   if (config.requireClosureLibrary) {
     jsLibs.push('"' + this.closureLibFiles + '"');
-    jsLibs.push('"!' + this.closureLibTests + '"');
     jsLibs.push('"' + this.closureLibThirdParty + '"');
-    jsLibs.push('"!' + this.closureLibThirdPartyTests + '"');
   }
   if (config.requireSoyLibrary) {
     jsLibs.push(this.soyLibFile);

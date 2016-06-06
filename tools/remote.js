@@ -166,7 +166,13 @@ RemoteTools.getTarGz = function(name, url, dest,
     decompress(input, output, {
       strip: 1,
       mode: '755',
-      filter: file => path.basename(file.path).indexOf('_test.') === -1
+      filter: file => path.basename(file.path) !== 'tests' &&
+        path.basename(file.path).indexOf('_test.') === -1 &&
+        path.basename(file.path).indexOf('Test.java') === -1 &&
+        path.extname(file.path) !== '.sh' &&
+        path.extname(file.path) !== '.bat' &&
+        path.extname(file.path) !== '.exe' &&
+        path.extname(file.path) !== '.dmg'
     }).then(
       opt_complete_callback);
   }, opt_error_callback);

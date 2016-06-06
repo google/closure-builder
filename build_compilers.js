@@ -138,7 +138,7 @@ BuildCompilers.copyRemoteFile = function(src, dest, opt_callback) {
  */
 BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
   if (buildTools.isFile(dest)) {
-    buildTools.mkdir(buildTools.getFileBase(dest));
+    buildTools.mkdir(path.dirname(dest));
   } else {
     buildTools.mkdir(dest);
   }
