@@ -1,6 +1,6 @@
 {
   "name": "closure-builder",
-  "version": "1.2.9",
+  "version": "1.2.10",
   "description": "Simple Closure, Soy and JavaScript Build system",
   "preferGlobal": true,
   "keywords": [
@@ -20,20 +20,16 @@
   "scripts": {
     "configure": "node configure.js",
     "lint": "eslint .",
-
     "test": "mocha",
     "test-config": "mocha test/build_config_test.js",
     "test-tools": "mocha test/build_tools_test.js",
     "test-types": "mocha test/build_types_test.js",
     "test-compilers": "mocha test/build_compilers_test.js",
     "test-closure-compiler": "mocha test/closure-compiler_test.js",
-
     "pretest": "npm run lint",
     "predeploy": "npm test",
-
     "deploy": "npm version patch && git add package.json",
     "postdeploy": "git push --follow-tags",
-
     "clean": "echo Cleaning up. Please wait ... && npm prune && rimraf resources/*",
     "update": "npm run clean && ncu -u -a && npm install && npm update && npm run configure && npm test",
     "install": "npm run configure"
