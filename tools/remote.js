@@ -29,8 +29,8 @@ var validator = require('validator');
 var buildTools = require('../build_tools.js');
 
 
- /**
- * ClosureCompiler.
+/**
+ * Remote tools.
  * @constructor
  * @struct
  * @final

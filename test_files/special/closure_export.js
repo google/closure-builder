@@ -1,5 +1,5 @@
 /**
- * Closure test dummy two
+ * Closure test dummy export
  */
 goog.provide('closure_test_export');
 
@@ -12,7 +12,7 @@ goog.provide('closure_test_export');
  */
 closure_test_export = function() {
   /** @type {!string} */
-  this.teset = 'Hello Workd';
+  this.test = 'Hello World';
 };
 
 

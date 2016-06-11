@@ -2,3 +2,4 @@ grunt-closure-builder/*
 node_modules/*
 resources/*
 test_files/*
+third_party/*

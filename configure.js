@@ -22,7 +22,6 @@ var path = require('path');
 var packageJson = require('./package.json');
 var buildTools = require('./build_tools.js');
 var remoteTools = require('./tools/remote.js');
-var closureCompiler = require('./compilers/closure-compiler/compiler.js');
 
 console.log('Configuring Closure Builder ' + packageJson.version + ' ...\n');
 

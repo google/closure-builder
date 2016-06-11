@@ -22,6 +22,7 @@ var https = require('https');
 var path = require('path');
 var querystring = require('querystring');
 
+var pathTools = require('../../tools/path.js');
 var buildTools = require('../../build_tools.js');
 
 
@@ -56,7 +57,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
   if (!files) {
     return;
   }
-
+  var i = 0;
   var compiler = path.join(__dirname, '..', '..', 'resources',
     'closure-compiler', 'compiler.jar');
   var compilerOptions = [];
@@ -67,21 +68,61 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     options.compilation_level = 'SIMPLE_OPTIMIZATIONS';
   }
 
+  // Handling files
+  for (i=0; i<files.length; i++) {
+    compilerOptions.push('--js', files[i]);
+  }
+
+  // Handling externs files
+  if (options.externs) {
+    for (i=0; i<options.externs.length; i++) {
+      compilerOptions.push('--externs', options.externs[i]);
+    }
+    delete options.externs;
+  }
+
+  // Closure base file
+  if (options.use_closure_basefile) {
+    if (!options.use_closure_library) {
+      var baseFile = pathTools.getClosureBaseFile();
+      if (baseFile) {
+        compilerOptions.push('--js', baseFile);
+      }
+    }
+    delete options.use_closure_basefile;
+  }
+
+  // Closure library
+  if (options.use_closure_library) {
+    for (i=0; i<options.externs.length; i++) {
+      compilerOptions.push('--js', options.externs[i]);
+    }
+    delete options.use_closure_library;
+  }
+
   // Handling options
   for (var option in options) {
     compilerOptions.push('--' + option, options[option]);
   }
 
-  // Handling files
-  for (var i=0; i<files.length; i++) {
-    compilerOptions.push('--js', files[i]);
-  }
-
   var compilerEvent = function(error, stdout, stderr) {
     var code = stdout;
-    var errors = error;
-    var warnings = false;
-    if (errors) {
+    var errorMsg = stderr || error;
+    var errors = null;
+    var warnings = null;
+    var numErrors = 0;
+    var numWarnings = 0;
+    if (errorMsg) {
+      var parsedErrorMessage = ClosureCompiler.parseErrorMessage(errorMsg);
+      numErrors = parsedErrorMessage.errors;
+      numWarnings = parsedErrorMessage.warnings;
+    }
+
+    if (numErrors == 0 && numWarnings > 0) {
+      warnings = errorMsg;
+      ClosureCompiler.warn(warnings);
+    } else if (numErrors > 0) {
+      errors = errorMsg;
       ClosureCompiler.error(errors);
       code = null;
     }
@@ -105,12 +146,12 @@ ClosureCompiler.remoteCompile = function(files, opt_options, opt_target_file,
     opt_callback) {
   // Handling options
   var unsupportedOptions = {
-    'closure_entry_point': true
+    'entry_point': true
   };
   for (var option in opt_options) {
     if (option in unsupportedOptions) {
-      var errorMsg = option + ' is unsupported by the closure-compiler ' + 
-        'webservice!';
+      var errorMsg = 'ERROR - ' + option + ' is unsupported by the ' +
+        'closure-compiler webservice!';
       ClosureCompiler.error(errorMsg);
       if (opt_callback) {
         opt_callback(errorMsg);
@@ -180,6 +221,41 @@ ClosureCompiler.remoteCompile = function(files, opt_options, opt_target_file,
   console.log(dataString);
   request.write(dataString);
   request.end();
+};
+
+
+/**
+ * @param {string} message
+ * @return {Object} with number of detected errors and warnings
+ */
+ClosureCompiler.parseErrorMessage = function(message) {
+  var errors = 0;
+  var warnings = 0;
+  if (message && message.match) {
+    var message_reg = /([0-9]+) error\(s\), ([0-9]+) warning\(s\)/;
+    var messageInfo = message.match(message_reg);
+    if (messageInfo) {
+      errors = messageInfo[1];
+      warnings = messageInfo[2];
+    } else if (message.indexOf('INTERNAL COMPILER ERROR') !== -1) {
+      errors = 1;
+    } else if (message.toLowerCase().indexOf('error') !== -1) {
+      errors = message.toLowerCase().split('error').length - 1;
+    } else if (message.toLowerCase().indexOf('warning') !== -1) {
+      if (message.indexOf('Java HotSpot\(TM\) Client VM warning') === -1 ||
+          message.toLowerCase().split('warning').length > 2) {
+        warnings = message.toLowerCase().split('warning').length - 1;
+      } else {
+        warnings = 0;
+      }
+    }
+  } else if (message) {
+    errors = 1;
+  }
+  return {
+    errors: errors,
+    warnings: warnings
+  };
 };
 
 
