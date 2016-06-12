@@ -19,11 +19,11 @@
  */
 var fs = require('fs-extra');
 var https = require('https');
-var path = require('path');
 var querystring = require('querystring');
 
 var javaTools = require('../../tools/java.js');
 var pathTools = require('../../tools/path.js');
+
 
 
  /**
@@ -37,12 +37,11 @@ var ClosureCompiler = function() {};
 
 /**
  * @param {!string} files
- * @param {Object=} opt_params
+ * @param {Object=} opt_options
  * @param {string=} opt_target_file
  */
-ClosureCompiler.compile = function(files, opt_params, opt_target_file) {
-  ClosureCompiler.localCompile(files, opt_params, opt_target_file);
-  //ClosureCompiler.remoteCompile([], files, opt_target_file);
+ClosureCompiler.compile = function(files, opt_options, opt_target_file) {
+
 };
 
 
@@ -58,8 +57,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     return;
   }
   var i = 0;
-  var compiler = path.join(__dirname, '..', '..', 'resources',
-    'closure-compiler', 'compiler.jar');
+  var compiler = pathTools.getClosureCompilerJar();
   var compilerOptions = [];
   var options = opt_options || {};
 
@@ -68,9 +66,45 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     options.compilation_level = 'SIMPLE_OPTIMIZATIONS';
   }
 
+  // Compiler warnings
+  if (!options.jscomp_warning) {
+    options.jscomp_warning = ['checkVars', 'conformanceViolations',
+      'deprecated', 'externsValidation', 'fileoverviewTags', 'globalThis',
+      'misplacedTypeAnnotation', 'missingProvide', 'missingRequire',
+      'missingReturn', 'nonStandardJsDocs', 'typeInvalidation', 'uselessCode'];
+  }
+
+  // Handling compiler error
+  if (options.jscomp_error) {
+    for (i = 0; i < options.jscomp_error.length; i++) {
+      compilerOptions.push('--jscomp_error', options.jscomp_error[i]);
+    }
+    delete options.jscomp_warning;
+  }
+
+  // Handling compiler off
+  if (options.jscomp_off) {
+    for (i = 0; i < options.jscomp_off.length; i++) {
+      compilerOptions.push('--jscomp_off', options.jscomp_off[i]);
+    }
+    delete options.jscomp_warning;
+  }
+
+  // Handling compiler warnings
+  if (options.jscomp_warning) {
+    for (i = 0; i < options.jscomp_warning.length; i++) {
+      compilerOptions.push('--jscomp_warning', options.jscomp_warning[i]);
+    }
+    delete options.jscomp_warning;
+  }
+
   // Handling files
+  var dupFile = {};
   for (i = 0; i < files.length; i++) {
-    compilerOptions.push('--js', files[i]);
+    if (!dupFile[files[i]]) {
+      compilerOptions.push('--js', files[i]);
+    }
+    dupFile[files[i]] = true;
   }
 
   // Handling externs files
@@ -79,6 +113,20 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
       compilerOptions.push('--externs', options.externs[i]);
     }
     delete options.externs;
+  }
+
+  // Handling generate_exports
+  if (options.generate_exports && !options.use_closure_basefile) {
+    options.use_closure_basefile = true;
+  }
+
+  // Closure templates
+  if (options.use_closure_templates) {
+    compilerOptions.push('--js=' + pathTools.getClosureSoyUtilsFile());
+    if (!options.use_closure_library) {
+      options.use_closure_library = true;
+    }
+    delete options.use_closure_templates;
   }
 
   // Closure base file
@@ -167,16 +215,28 @@ ClosureCompiler.remoteCompile = function(files, opt_options, opt_target_file,
   var data = {
     'compilation_level' : 'SIMPLE_OPTIMIZATIONS',
     'output_format': 'json',
-    'output_info': ['compiled_code', 'warnings', 'errors', 'statistics']
+    'output_info': ['compiled_code', 'warnings', 'errors', 'statistics'],
+    'js_code': []
   };
 
-  // Handling files
-  var jsCode = '';
-  for (var i = 0; i < files.length; i++) {
-    jsCode += fs.readFileSync(files[i]).toString();
+  // Closure templates
+  if (options.use_closure_templates) {
+    var closureSoyUtilsFile = pathTools.getClosureSoyUtilsFile();
+    if (closureSoyUtilsFile) {
+      data['js_code'].push(fs.readFileSync(closureSoyUtilsFile).toString());
+      if (!options.use_closure_library) {
+        options.use_closure_library = true;
+      }
+    }
+    delete options.use_closure_templates;
   }
-  if (jsCode) {
-    data['js_code'] = jsCode;
+
+  // Handling files
+  for (var i = 0; i < files.length; i++) {
+    var fileContent = fs.readFileSync(files[i]).toString();
+    if (fileContent) {
+      data['js_code'].push(fileContent);
+    }
   }
 
   // Handling externs files
@@ -289,7 +349,8 @@ ClosureCompiler.parseErrorMessage = function(message) {
     if (messageInfo) {
       errors = messageInfo[1];
       warnings = messageInfo[2];
-    } else if (message.indexOf('INTERNAL COMPILER ERROR') !== -1) {
+    } else if (message.indexOf('INTERNAL COMPILER ERROR') !== -1 ||
+               message.indexOf('NullPointerException') !== -1) {
       errors = 1;
     } else if (message.toLowerCase().indexOf('error') !== -1) {
       errors = message.toLowerCase().split('error').length - 1;

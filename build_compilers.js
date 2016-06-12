@@ -18,7 +18,6 @@
  * @author mbordihn@google.com (Markus Bordihn)
  */
 var browserify = require('browserify');
-var closureCompiler = require('closurecompiler');
 var cleanCss = require('clean-css');
 var log = require('loglevel');
 var path = require('path');
@@ -31,7 +30,7 @@ var validator = require('validator');
 var buildTools = require('./build_tools.js');
 var remoteTools = require('./tools/remote.js');
 
-
+var closureCompiler = require('./compilers/closure-compiler/compiler.js');
 
 /**
  * Build Compilers.
@@ -359,22 +358,9 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
     'files to', out, '...');
   log.trace(files);
   var options = opt_options || {};
-  if (!('compilation_level' in options)) {
-    options.compilation_level = 'SIMPLE_OPTIMIZATIONS';
-  }
-  if (!('jscomp_warning' in options)) {
-    options.jscomp_warning = ['checkVars', 'conformanceViolations',
-      'deprecated', 'externsValidation', 'fileoverviewTags', 'globalThis',
-      'misplacedTypeAnnotation', 'missingProvide', 'missingRequire',
-      'missingReturn', 'nonStandardJsDocs', 'typeInvalidation', 'uselessCode'];
-  }
-  options.Xmx = BuildCompilers.SAFE_MEMORY + 'm';
-  options.Xms = '64m';
-
   if (opt_func) {
-    options.only_closure_dependencies = true;
-    options.manage_closure_dependencies = true;
-    options.closure_entry_point = opt_func;
+    options.dependency_mode = 'STRICT';
+    options.entry_point = opt_func;
   }
   if (opt_config) {
     if (opt_config.requireECMAScript6) {
@@ -383,6 +369,12 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
     }
     if (opt_config.requireClosureExport) {
       options.generate_exports = true;
+    }
+    if (opt_config.requireSoyLibrary) {
+      options.use_closure_templates = true;
+    }
+    if (opt_config.requireClosureLibrary) {
+      options.use_closure_library = true;
     }
     if (opt_config.compress) {
       options.compilation_level = 'ADVANCED_OPTIMIZATIONS';
@@ -403,60 +395,21 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
       options.jscomp_error = opt_config.jscompError;
     }
   }
-  var compilerEvent = function(message, result) {
-    var warning_message = false;
-    if (message && message.match) {
-      var errors = 0;
-      var warnings = 0;
-      var message_reg = /([0-9]+) error\(s\), ([0-9]+) warning\(s\)/;
-      var messageInfo = message.match(message_reg);
-      if (messageInfo) {
-        errors = messageInfo[1];
-        warnings = messageInfo[2];
-      } else if (message.indexOf('INTERNAL COMPILER ERROR') !== -1) {
-        errors = 1;
-      } else if (message.toLowerCase().indexOf('error') !== -1) {
-        errors = message.toLowerCase().split('error').length - 1;
-      } else if (message.toLowerCase().indexOf('warning') !== -1) {
-        if (message.indexOf('Java HotSpot\(TM\) Client VM warning') === -1 ||
-            message.toLowerCase().split('warning').length > 2) {
-          warnings = message.toLowerCase().split('warning').length - 1;
-        } else {
-          warnings = 0;
-        }
-      }
-      if (errors == 0 && warnings > 0) {
-        warning_message = warnings + ' warnings for ' + out + ':' + message;
-        this.warnClosureCompiler(warning_message);
-      } else if (errors > 0) {
-        var error_message = errors + ' errors for ' + out + ':' + message;
-        this.errorClosureCompiler(error_message);
-        if (opt_callback) {
-          opt_callback(error_message, false);
-        }
-      }
-    } else if (message) {
-      var unknowErrorMessage = 'Unknown Error: ' + message;
-      this.errorClosureCompiler(unknowErrorMessage);
-      if (opt_callback) {
-        opt_callback(unknowErrorMessage, false);
-      }
-    }
-    if (result) {
-      var content = result;
+  var compilerEvent = function(errors, warnings, target_file, content) {
+    if (errors || warnings) {
+      opt_callback(errors, warnings);
+    } else if (content) {
       if (opt_config) {
         opt_config.setMessage('Saving output to ' + out);
         if (opt_config.license) {
           var license = fs.readFileSync(opt_config.license, 'utf8');
-          content = license + '\n\n' + result;
+          content = license + '\n\n' + content;
         }
       }
-      buildTools.saveContent(out, content, opt_callback, opt_config,
-          warning_message);
+      buildTools.saveContent(out, content, opt_callback, opt_config, warnings);
     }
   }.bind(this);
-  closureCompiler.compile(buildTools.getSafeFileList(files), options,
-      compilerEvent);
+  closureCompiler.localCompile(files, options, null, compilerEvent);
 };
 
 

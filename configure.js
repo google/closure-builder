@@ -25,25 +25,11 @@ var remoteTools = require('./tools/remote.js');
 
 console.log('Configuring Closure Builder ' + packageJson.version + ' ...\n');
 
-// Google Closure Library
-remoteTools.getTarGz(
-  'Google Closure Library',
-  'https://github.com/google/closure-library/tarball/master',
-  path.join('.', 'resources', 'closure-library')
-);
-
-// Google Closure Templates
-remoteTools.getTarGz(
-  'Google Closure Templates',
-  'https://github.com/google/closure-templates/tarball/master',
-  path.join('.', 'resources', 'closure-templates')
-);
-
 // Google Closure Compiler
 remoteTools.getTarGz(
   'Google Closure Compiler',
   'https://dl.google.com/closure-compiler/compiler-latest.tar.gz',
-  path.join('.', 'resources', 'closure-compiler')
+  path.join('.', 'runtime', 'closure-compiler')
 );
 
 // Google Closure Stylesheets
@@ -56,7 +42,7 @@ remoteTools.getFiles(
     gcs + gcsVersion + '/closure-stylesheets-library.jar',
     gcsDoc + 'master/LICENSE',
     gcsDoc + 'master/README.md'],
-  path.join('.', 'resources', 'closure-stylesheets')
+  path.join('.', 'runtime', 'closure-stylesheets')
 );
 
 // JAVA check

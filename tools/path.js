@@ -35,8 +35,8 @@ var PathTools = function() {};
  * @param {string=} opt_name
  * @return {!string}
  */
-PathTools.getResourcePath = function(opt_name) {
-  var resourcePath = path.join(__dirname, '..', 'third_party');
+PathTools.getResourcePath = function(opt_name, opt_resource) {
+  var resourcePath = path.join(__dirname, '..', opt_resource || 'third_party');
   if (!PathTools.existDirectory(resourcePath)) {
     log.error('Resource path was not found at', resourcePath);
     return '';
@@ -50,6 +50,28 @@ PathTools.getResourcePath = function(opt_name) {
     }
   }
   return resourcePath;
+};
+
+
+/**
+ * @return {!string}
+ */
+PathTools.getClosureCompilerPath = function() {
+  return PathTools.getResourcePath('closure-compiler', 'runtime');
+};
+
+
+/**
+ * @return {!string}
+ */
+PathTools.getClosureCompilerJar = function() {
+  var closureCompilerJar = path.join(PathTools.getClosureCompilerPath(),
+    'compiler.jar');
+  if (!PathTools.existFile(closureCompilerJar)) {
+    log.error('Closure compiler jar was not found at', closureCompilerJar);
+    return '';
+  }
+  return closureCompilerJar;
 };
 
 
@@ -102,6 +124,28 @@ PathTools.getClosureBaseFile = function() {
     return '';
   }
   return baseFile;
+};
+
+
+/**
+ * @return {!string}
+ */
+PathTools.getClosureTemplatesPath = function() {
+  return PathTools.getResourcePath('closure-templates');
+};
+
+
+/**
+ * @return {!string}
+ */
+PathTools.getClosureSoyUtilsFile = function() {
+  var soyUtilsFile = path.join(PathTools.getClosureTemplatesPath(),
+    'javascript', 'soyutils_usegoog.js');
+  if (!PathTools.existFile(soyUtilsFile)) {
+    log.error('soyutils_usegoog.js file was not found at', soyUtilsFile);
+    return '';
+  }
+  return soyUtilsFile;
 };
 
 

@@ -18,7 +18,6 @@
  * @author mbordihn@google.com (Markus Bordihn)
  */
 var log = require('loglevel');
-var path = require('path');
 
 var buildConfig = require('./build_config.js');
 var buildTools = require('./build_tools.js');
@@ -49,50 +48,6 @@ var ClosureBuilder = function() {
   /** @type {boolean} */
   this.soyLimit = false;
 
-  /** @type {string} */
-  this.resourcePath = path.join(this.selfPath, 'resources');
-  if (!buildTools.existDirectory(this.resourcePath)) {
-    log.error('Resources where not found!');
-    this.error = true;
-  }
-
-  /** @type {string} */
-  this.closureLibPath = path.join(this.resourcePath, 'closure-library');
-  if (!buildTools.existDirectory(this.closureLibPath)) {
-    log.error('Google Closure Library was not found!');
-    this.error = true;
-  }
-
-  /** @type {string} */
-  this.closureGoogPath = path.join(this.closureLibPath, 'closure', 'goog');
-
-  /** @type {string} */
-  this.closureLibFiles = path.join(this.closureGoogPath, '**.js');
-
-  /** @type {string} */
-  this.closureLibThirdParty = path.join(this.closureLibPath, 'third_party',
-       '**.js');
-
-  /** @type {string} */
-  this.closureBaseFile = path.join(this.closureGoogPath, 'base.js');
-
-  /** @type {string} */
-  this.soyLibPath = path.join(this.resourcePath, 'closure-templates');
-
-  if (!this.soyLibPath) {
-    log.error('Google Closure Templates was not found!');
-    this.error = true;
-  }
-  if (buildTools.existFile(path.join(this.soyLibPath, 'soyutils_usegoog.js'))) {
-    this.soyLibFile = path.join(this.soyLibPath, 'soyutils_usegoog.js');
-  } else if (buildTools.existFile(path.join(this.soyLibPath, 'javascript',
-    'soyutils_usegoog.js'))) {
-    this.soyLibFile = path.join(this.soyLibPath, 'javascript',
-      'soyutils_usegoog.js');
-  } else {
-    log.error('Missing soyutils_usegoog.js!');
-    this.error = true;
-  }
 };
 
 
@@ -244,20 +199,8 @@ ClosureBuilder.prototype.compileSoyTemplates = function(config, opt_callback) {
  */
 ClosureBuilder.prototype.compileClosureFiles = function(config, opt_files,
     opt_callback) {
-  var jsLibs = [];
-  var files = [];
   config.setMessage('Compiling Closure Files');
-  if (config.requireClosureLibrary) {
-    jsLibs.push('"' + this.closureLibFiles + '"');
-    jsLibs.push('"' + this.closureLibThirdParty + '"');
-  }
-  if (config.requireSoyLibrary) {
-    jsLibs.push(this.soyLibFile);
-  }
-  if (config.requireClosureExport && !config.requireClosureLibrary) {
-    files.push(this.closureBaseFile);
-  }
-  files = files.concat(config.getClosureFiles(), jsLibs, opt_files || []);
+  var files = [].concat(config.getClosureFiles(), opt_files || []);
   buildCompilers.compileJsFiles(files, config.getOutFilePath(), config.name,
     config.closureCompilerOptions, opt_callback, config);
 };
