@@ -22,10 +22,13 @@ var buildTools = require('../build_tools.js');
 var closureCompiler = require('../compilers/closure-compiler/compiler.js');
 var glob = buildTools.getGlobFiles;
 
-describe('Closure Compiler', function() {
+var largeMemoryTest = buildTools.checkAvailableMemory(600);
+
+
+describe('Closure Compiler::', function() {
 
   // Remote compiler tests
-  describe('Remote Compiler', function() {
+  describe('Remote Compiler:', function() {
 
     it('Single file', function(done) {
       this.timeout(25000);
@@ -58,7 +61,51 @@ describe('Closure Compiler', function() {
         });
     });
 
-    it('Closure entry point', function(done) {
+    it('Expected Error Message', function(done) {
+      this.timeout(30000);
+      var files =  ['test_files/special/closure_error.js'];
+      var options = {};
+      closureCompiler.remoteCompile(files, options, null,
+        function(errors, warnings, files, content) {
+          assert(errors);
+          assert(!warnings);
+          assert(!content);
+          done();
+        });
+    });
+
+    it('Expected Warning Message', function(done) {
+      this.timeout(30000);
+      var files =  ['test_files/special/closure_warning.js'];
+      var options = {};
+      closureCompiler.remoteCompile(files, options, null,
+        function(errors, warnings, files, content) {
+          assert(!errors);
+          assert(warnings);
+          assert(content);
+          done();
+        });
+    });
+
+    it('Closure Library', function(done) {
+      if (!largeMemoryTest) {
+        return done();
+      }
+      this.timeout(25000);
+      var files =  ['test_files/closure_library_test.js'];
+      var options = {
+        use_closure_library: true
+      };
+      closureCompiler.remoteCompile(files, options, null,
+        function(errors, warnings, files, content) {
+          assert(!errors);
+          assert(!warnings);
+          assert(content);
+          done();
+        });
+    });
+
+    it('Unsupported Closure entry point', function(done) {
       this.timeout(25000);
       var files = glob(['test_files/closure_test_*.js']);
       var options = {
@@ -73,11 +120,26 @@ describe('Closure Compiler', function() {
         });
     });
 
+    it('Unsupported @export handling', function(done) {
+      this.timeout(40000);
+      var files =  ['test_files/special/closure_export.js'];
+      var options = {
+        generate_exports: true
+      };
+      closureCompiler.remoteCompile(files, options, null,
+        function(errors, warnings, files, content) {
+          assert(errors);
+          assert(!warnings);
+          assert(!content);
+          done();
+        });
+    });
+
   });
 
 
   // Local compiler tests
-  describe('Local Compiler', function() {
+  describe('Local Compiler:', function() {
 
     it('Single file', function(done) {
       this.timeout(25000);
@@ -232,7 +294,7 @@ describe('Closure Compiler', function() {
       this.timeout(40000);
       var files =  ['test_files/special/closure_export.js'];
       var options = {
-        dependency_mode: 'LOOSE',
+        dependency_mode: 'STRICT',
         generate_exports: true,
         entry_point: 'closure_test_export',
         use_closure_basefile: true
@@ -240,6 +302,7 @@ describe('Closure Compiler', function() {
       closureCompiler.localCompile(files, options, null,
         function(errors, warnings, files, content) {
           assert(!errors);
+          assert(!warnings);
           assert(content);
           assert(content.indexOf(
             'goog.exportSymbol("closure_test_export"') !== -1);
@@ -252,6 +315,84 @@ describe('Closure Compiler', function() {
           done();
         });
     });
+
+    describe('ECMA Script 6', function() {
+      it('Const', function(done) {
+        this.timeout(40000);
+        var files = glob(['test_files/closure_test_*.js']);
+        var options = {
+          dependency_mode: 'STRICT',
+          entry_point: 'closure_test_ecma6_const',
+          language_in: 'ECMASCRIPT6',
+          language_out: 'ES5_STRICT'
+        };
+        closureCompiler.localCompile(files, options, null,
+          function(errors, warnings, files, content) {
+            assert(!errors);
+            assert(!warnings);
+            assert(content);
+            done();
+          });
+      });
+      it('Let', function(done) {
+        this.timeout(40000);
+        this.timeout(40000);
+        var files = glob(['test_files/closure_test_*.js']);
+        var options = {
+          dependency_mode: 'STRICT',
+          entry_point: 'closure_test_ecma6_let',
+          language_in: 'ECMASCRIPT6',
+          language_out: 'ES5_STRICT'
+        };
+        closureCompiler.localCompile(files, options, null,
+          function(errors, warnings, files, content) {
+            assert(!errors);
+            assert(!warnings);
+            assert(content);
+            done();
+          });
+      });
+      it('No ECMA Script 6', function(done) {
+        this.timeout(40000);
+        var files = [
+          'test_files/closure_test_1.js',
+          'test_files/closure_test_2.js',
+          'test_files/closure_test_no_ecma6.js'
+        ];
+        var options = {
+          dependency_mode: 'STRICT',
+          entry_point: 'closure_test_no_ecma6'
+        };
+        closureCompiler.localCompile(files, options, null,
+          function(errors, warnings, files, content) {
+            assert(!errors);
+            assert(!warnings);
+            assert(content);
+            done();
+          });
+      });
+    });
+
+    it('Closure Library', function(done) {
+      if (!largeMemoryTest) {
+        return done();
+      }
+      this.timeout(140000);
+      var files =  ['test_files/closure_library_test.js'];
+      var options = {
+        dependency_mode: 'STRICT',
+        entry_point: 'closure_library_test',
+        use_closure_library: true
+      };
+      closureCompiler.localCompile(files, options, null,
+        function(errors, warnings, files, content) {
+          assert(!errors);
+          assert(!warnings);
+          assert(content);
+          done();
+        });
+    });
+
 
 
   });

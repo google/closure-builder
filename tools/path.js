@@ -64,9 +64,39 @@ PathTools.getClosureLibraryPath = function() {
 /**
  * @return {!string}
  */
+PathTools.getClosureLibraryFiles = function() {
+  var closureLibraryFiles = path.join(PathTools.getClosureLibraryPath(),
+    'closure', 'goog');
+  if (!PathTools.existDirectory(closureLibraryFiles)) {
+    log.error('Closure library files were not found at', closureLibraryFiles);
+    return [];
+  }
+  var closureLibrary3rdParty = path.join(PathTools.getClosureLibraryPath(),
+    'third_party', 'closure', 'goog');
+  if (!PathTools.existDirectory(closureLibrary3rdParty)) {
+    log.warn('Closure library 3rd party files were not found at',
+      closureLibrary3rdParty);
+    return [
+      path.join(closureLibraryFiles, '**.js'),
+      path.join(closureLibraryFiles, '!**_test.js')
+    ];
+  }
+
+  return [
+    path.join(closureLibraryFiles, '**.js'),
+    path.join(closureLibraryFiles, '!**_test.js'),
+    path.join(closureLibrary3rdParty, '**.js'),
+    path.join(closureLibrary3rdParty, '!**_test.js')
+  ];
+};
+
+
+/**
+ * @return {!string}
+ */
 PathTools.getClosureBaseFile = function() {
-  var closureLibrary = PathTools.getClosureLibraryPath();
-  var baseFile = path.join(closureLibrary, 'closure', 'goog', 'base.js');
+  var baseFile = path.join(PathTools.getClosureLibraryPath(), 'closure', 'goog',
+    'base.js');
   if (!PathTools.existFile(baseFile)) {
     log.error('Closure base file was not found at', baseFile);
     return '';

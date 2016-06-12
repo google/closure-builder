@@ -52,7 +52,7 @@
     "clean-css": "3.4.17",
     "closurecompiler": "https://github.com/MarkusBordihn/ClosureCompiler.js/tarball/master",
     "decompress": "^4.0.0",
-    "follow-redirects": "0.1.0",
+    "follow-redirects": "0.2.0",
     "fs-extra": "0.30.0",
     "glob": "7.0.3",
     "loglevel": "1.4.1",
@@ -64,7 +64,7 @@
     "randomstring": "1.1.5",
     "soynode": "1.1.0",
     "touch": "1.0.0",
-    "validator": "5.3.0"
+    "validator": "5.4.0"
   },
   "devDependencies": {
     "assert": "latest",
