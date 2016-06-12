@@ -352,8 +352,8 @@ BuildCompilers.convertMarkdownFiles = function(files, out, opt_callback,
  * @param {function=} opt_callback
  * @param {BuildConfig=} opt_config
  */
-BuildCompilers.compileJsFiles = function(files, out, opt_func,
-    opt_options, opt_callback, opt_config) {
+BuildCompilers.compileJsFiles = function(files, out,
+    opt_func, opt_options, opt_callback, opt_config) {
   log.debug('Compiling', ((opt_func) ? opt_func + ' with' : ''), files.length,
     'files to', out, '...');
   log.trace(files);
@@ -396,8 +396,10 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
     }
   }
   var compilerEvent = function(errors, warnings, target_file, content) {
-    if (errors || warnings) {
-      opt_callback(errors, warnings);
+    if (errors) {
+      if (opt_callback) {
+        opt_callback(errors, warnings);
+      }
     } else if (content) {
       if (opt_config) {
         opt_config.setMessage('Saving output to ' + out);
@@ -407,6 +409,10 @@ BuildCompilers.compileJsFiles = function(files, out, opt_func,
         }
       }
       buildTools.saveContent(out, content, opt_callback, opt_config, warnings);
+    } else {
+      if (opt_callback) {
+        opt_callback(errors, warnings);
+      }
     }
   }.bind(this);
   closureCompiler.localCompile(files, options, null, compilerEvent);

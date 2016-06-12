@@ -73,18 +73,18 @@ describe('BuildConfig', function() {
   describe('this.out', function() {
     it('path', function() {
       var buildConfig = closureBuilder.getBuildConfig(pathOutConfig);
-      assert.equal(buildConfig.outPath, pathOutConfig.out);
-      assert(buildConfig.outFile);
+      assert.equal(buildConfig.getOutPath(), pathOutConfig.out);
+      assert(buildConfig.getOutFile());
     });
     it('file', function() {
       var buildConfig = closureBuilder.getBuildConfig(fileOutConfig);
-      assert(buildConfig.outPath);
-      assert.equal(buildConfig.outFile, 'file1.txt');
+      assert(buildConfig.getOutPath());
+      assert.equal(buildConfig.getOutFile(), 'file1.txt');
     });
     it('empty', function() {
       var buildConfig = closureBuilder.getBuildConfig(emptyOutConfig);
-      assert(buildConfig.outPath);
-      assert(buildConfig.outFile);
+      assert(buildConfig.getOutPath());
+      assert(buildConfig.getOutFile());
     });
   });
 

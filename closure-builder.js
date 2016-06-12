@@ -183,7 +183,7 @@ ClosureBuilder.prototype.compileSoyTemplates = function(config, opt_callback) {
   }
   config.setMessage('Compiling soy templates');
   var soyPath = (config.getType() === buildType.SOY_CLOSURE) ?
-    config.tempPath : config.outPath;
+    config.getTempPath() : config.getOutPath();
   this.soyLimit = true;
   buildCompilers.compileSoyTemplates(config.getSoyFiles(), soyPath, {
     config: config,
@@ -267,7 +267,7 @@ ClosureBuilder.prototype.compileCssFiles = function(config, opt_callback) {
 ClosureBuilder.prototype.convertMarkdownFiles = function(config, opt_callback) {
   config.setMessage('Converting markdown files ...');
   var files = config.getMarkdownFiles();
-  buildCompilers.convertMarkdownFiles(files, config.outPath, opt_callback,
+  buildCompilers.convertMarkdownFiles(files, config.getOutPath(), opt_callback,
       config);
 };
 

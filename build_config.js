@@ -69,7 +69,7 @@ var BuildConfig = function(config) {
   this.compress = this.config.compress || false;
 
   /** @type {!string} */
-  this.tempPath = BuildTools.getRandomTempPath();
+  this.tempPath = '';
 
   /** @type {!array} */
   this.data = this.config.data || [];
@@ -100,7 +100,7 @@ var BuildConfig = function(config) {
   this.out = this.config.out;
 
   /** @type {!string} */
-  this.outPath = BuildTools.getFilePath(this.out) || this.tempPath;
+  this.outPath = BuildTools.getFilePath(this.out) || '';
 
   /** @type {!string} */
   this.outFile = BuildTools.getPathFile(this.out) || randomString.generate();
@@ -223,12 +223,60 @@ BuildConfig.prototype.getResourceFiles = function() {
   return this.resourceFiles_;
 };
 
+
+/**
+ * @return {!string}
+ */
+BuildConfig.prototype.getTempPath = function() {
+  if (!this.tempPath) {
+    this.tempPath = BuildTools.getRandomTempPath();
+  }
+  return this.tempPath;
+};
+
+
+/**
+ * @return {!string}
+ */
+BuildConfig.prototype.getOutPath = function() {
+  if (!this.outPath) {
+    this.outPath = this.getTempPath();
+  }
+  return this.outPath;
+};
+
+
+/**
+ * @return {!string}
+ */
+BuildConfig.prototype.getOutFilePath = function() {
+  return path.join(this.getOutPath(), this.outFile);
+};
+
+
+/**
+ * @return {!string}
+ */
+BuildConfig.prototype.getOutFile = function() {
+  return this.outFile;
+};
+
+
+/**
+ * @return {!BuildType}
+ */
+BuildConfig.prototype.getType = function() {
+  return this.type;
+};
+
+
 /**
  * @return {!number}
  */
 BuildConfig.prototype.hasClosureFiles = function() {
   return this.closureFiles_.length || 0;
 };
+
 
 /**
  * @return {!number}
@@ -253,6 +301,7 @@ BuildConfig.prototype.hasCssFiles = function() {
   return this.cssFiles_.length || 0;
 };
 
+
 /**
  * @return {!number}
  */
@@ -276,33 +325,6 @@ BuildConfig.prototype.hasResourceFiles = function() {
   return this.resourceFiles_.length || 0;
 };
 
-/**
- * @return {!string}
- */
-BuildConfig.prototype.getOutPath = function() {
-  return this.outPath;
-};
-
-/**
- * @return {!string}
- */
-BuildConfig.prototype.getOutFile = function() {
-  return this.outFile;
-};
-
-/**
- * @return {!string}
- */
-BuildConfig.prototype.getOutFilePath = function() {
-  return path.join(this.outPath, this.outFile);
-};
-
-/**
- * @return {!BuildType}
- */
-BuildConfig.prototype.getType = function() {
-  return this.type;
-};
 
 /**
  * @param {!string} message
