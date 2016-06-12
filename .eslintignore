@@ -1,5 +1,5 @@
 grunt-closure-builder/*
 node_modules/*
-resources/*
+runtime/*
 test_files/*
 third_party/*

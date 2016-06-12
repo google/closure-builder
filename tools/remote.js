@@ -23,6 +23,7 @@ var http = require('follow-redirects').http;
 var https = require('follow-redirects').https;
 var log = require('loglevel');
 var path = require('path');
+var process = require('process');
 var progressBar = require('progress');
 var validator = require('validator');
 
@@ -114,7 +115,6 @@ RemoteTools.getFile = function(url, dest,
   if (dataHandler) {
     dataHandler.get(url, completeEvent)
       .on('response', responseEvent)
-      .on('end', completeEvent)
       .on('error', errorEvent);
   } else {
     log.error('Invalid remote file: ' + url);
@@ -122,6 +122,14 @@ RemoteTools.getFile = function(url, dest,
       opt_error_callback('Invalid file: ' + url);
     }
   }
+};
+
+
+/**
+ * @return {!boolean}
+ */
+RemoteTools.hasProxySettings = function() {
+  return process.env.http_proxy;
 };
 
 
@@ -157,6 +165,42 @@ RemoteTools.getTarGz = function(name, url, dest,
   var filename = buildTools.getUrlFile(url);
   if (filename.indexOf('.tar.gz') == -1) {
     filename = filename + '.tar.gz';
+  }
+  console.log('Downloading', name, '...');
+  RemoteTools.getFile(url, tempPath, filename, function() {
+    console.log('Extracting', name, 'please wait ...');
+    var input = path.join(tempPath, filename);
+    var output = dest;
+    decompress(input, output, {
+      strip: 1,
+      mode: '755',
+      filter: file => path.basename(file.path) !== 'tests' &&
+        path.basename(file.path).indexOf('_test.') === -1 &&
+        path.basename(file.path).indexOf('Test.java') === -1 &&
+        path.extname(file.path) !== '.sh' &&
+        path.extname(file.path) !== '.bat' &&
+        path.extname(file.path) !== '.exe' &&
+        path.extname(file.path) !== '.dmg'
+    }).then(
+      opt_complete_callback);
+  }, opt_error_callback);
+};
+
+
+/**
+ * Copy file from remote to dest.
+ * @param {!string} name
+ * @param {!string} url
+ * @param {!string} dest directory
+ * @param {function=} opt_complete_callback
+ * @param {function=} opt_error_callback
+ */
+RemoteTools.getZip = function(name, url, dest,
+    opt_complete_callback, opt_error_callback) {
+  var tempPath = buildTools.getRandomTempPath();
+  var filename = buildTools.getUrlFile(url);
+  if (filename.indexOf('.zip') == -1) {
+    filename = filename + '.zip';
   }
   console.log('Downloading', name, '...');
   RemoteTools.getFile(url, tempPath, filename, function() {

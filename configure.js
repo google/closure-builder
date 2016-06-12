@@ -24,12 +24,21 @@ var buildTools = require('./build_tools.js');
 var remoteTools = require('./tools/remote.js');
 
 console.log('Configuring Closure Builder ' + packageJson.version + ' ...\n');
+var googdl = 'https://dl.google.com/';
+
 
 // Google Closure Compiler
 remoteTools.getTarGz(
   'Google Closure Compiler',
-  'https://dl.google.com/closure-compiler/compiler-latest.tar.gz',
+  googdl + 'closure-compiler/compiler-latest.tar.gz',
   path.join('.', 'runtime', 'closure-compiler')
+);
+
+// Google Closure Templates Compiler
+remoteTools.getZip(
+  'Google Closure Templates Compiler',
+  googdl + 'closure-templates/closure-templates-for-javascript-latest.zip',
+  path.join('.', 'runtime', 'closure-templates-compiler')
 );
 
 // Google Closure Stylesheets
@@ -44,6 +53,7 @@ remoteTools.getFiles(
     gcsDoc + 'master/README.md'],
   path.join('.', 'runtime', 'closure-stylesheets')
 );
+
 
 // JAVA check
 console.log('Perform basic Java checks ...');
