@@ -90,15 +90,13 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
   }
 
   var compilerEvent = function(error, stdout, stderr) {
-    var code = stdout;
-    var errorMsg = stderr || error;
+    var errorMsg = stderr || error || stdout;
     var errors = null;
     var warnings = null;
     var numErrors = 0;
     var numWarnings = 0;
     if (errorMsg) {
-      var parsedErrorMessage = ClosureTemplates.parseErrorMessage(errorMsg,
-        code);
+      var parsedErrorMessage = ClosureTemplates.parseErrorMessage(errorMsg);
       numErrors = parsedErrorMessage.errors;
       numWarnings = parsedErrorMessage.warnings;
     }
@@ -109,10 +107,10 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
     } else if (numErrors > 0) {
       errors = errorMsg;
       ClosureTemplates.error(errors);
-      code = null;
+      outputFiles = null;
     }
 
-    if (i18nFunction) {
+    if (i18nFunction && !numErrors) {
       fileTools.findAndReplace(
         outputFiles,
         /goog\.getMsg\(/g,
@@ -133,15 +131,17 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
  * @param {string} message
  * @return {Object} with number of detected errors and warnings
  */
-ClosureTemplates.parseErrorMessage = function(message, content) {
+ClosureTemplates.parseErrorMessage = function(message) {
   var errors = 0;
   var warnings = 0;
-  if (message && message.match) {
+  if (message) {
     if (message.indexOf('INTERNAL COMPILER ERROR') !== -1 ||
         message.indexOf('NullPointerException') !== -1) {
       errors = 1;
     } else if (message.toLowerCase().indexOf('error') !== -1) {
       errors = message.toLowerCase().split('error').length - 1;
+    } else if (message.toLowerCase().split('exception') !== -1) {
+      errors = 1;
     } else if (message.toLowerCase().indexOf('warning') !== -1) {
       if (message.indexOf('Java HotSpot\(TM\) Client VM warning') === -1 ||
           message.toLowerCase().split('warning').length > 2) {
@@ -149,11 +149,9 @@ ClosureTemplates.parseErrorMessage = function(message, content) {
       } else {
         warnings = 0;
       }
+    } else {
+      errors = 1;
     }
-  } else if (message) {
-    errors = 1;
-  } else if (content.toLowerCase().indexOf('error:') !== -1) {
-    errors = 1;
   }
   return {
     errors: errors,
