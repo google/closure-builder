@@ -19,7 +19,12 @@
  */
 var fs = require('fs-extra');
 var log = require('loglevel');
+var mkdirp = require('mkdirp');
+var os = require('os');
 var path = require('path');
+var randomstring = require('randomstring');
+var touch = require('touch');
+
 
 
 /**
@@ -146,6 +151,70 @@ PathTools.getClosureSoyUtilsFile = function() {
     return '';
   }
   return soyUtilsFile;
+};
+
+
+/**
+ * @return {!string}
+ */
+PathTools.getClosureTemplatesCompilerPath = function() {
+  return PathTools.getResourcePath('closure-templates-compiler', 'runtime');
+};
+
+
+/**
+ * @return {!string}
+ */
+PathTools.getClosureTemplatesCompilerJar = function() {
+  var closureTemplatesCompilerJar = path.join(
+    PathTools.getClosureTemplatesCompilerPath(), 'SoyToJsSrcCompiler.jar');
+  if (!PathTools.existFile(closureTemplatesCompilerJar)) {
+    log.error('Closure templates compiler jar was not found at',
+      closureTemplatesCompilerJar);
+    return '';
+  }
+  return closureTemplatesCompilerJar;
+};
+
+
+/**
+ * @param {string=} opt_name
+ * @return {string} Temp dir path.
+ */
+PathTools.getRandomTempPath = function(opt_name) {
+  var name = (opt_name || 'closure-builder') + '-' + randomstring.generate(7);
+  return PathTools.getTempPath(name);
+};
+
+
+/**
+ * @param {string=} opt_name
+ * @return {string} Temp dir path.
+ */
+PathTools.getTempPath = function(opt_name) {
+  var tempPath = path.join(os.tmpdir(), opt_name || '');
+  PathTools.mkdir(tempPath);
+  return tempPath;
+};
+
+
+/**
+ * @param {string} dir_path
+ */
+PathTools.mkdir = function(dir_path) {
+  if (!PathTools.existDirectory(dir_path)) {
+    mkdirp.sync(dir_path);
+  }
+};
+
+
+/**
+ * @param {string} file_path
+ */
+PathTools.mkfile = function(file_path) {
+  var dir_path = path.dirname(file_path);
+  PathTools.mkdir(dir_path);
+  touch.sync(file_path);
 };
 
 

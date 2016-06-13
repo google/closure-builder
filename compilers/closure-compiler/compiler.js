@@ -1,5 +1,5 @@
 /**
- * @fileoverview Closure Builder - Closure online compiler
+ * @fileoverview Closure Builder - Closure compilers (online/local)
  *
  * @license Copyright 2016 Google Inc. All Rights Reserved.
  *

@@ -19,18 +19,19 @@
  */
 var browserify = require('browserify');
 var cleanCss = require('clean-css');
-var log = require('loglevel');
-var path = require('path');
 var fs = require('fs-extra');
-var glob = require('glob');
+var log = require('loglevel');
 var marked = require('marked');
-var soyCompiler = require('soynode');
+var path = require('path');
 var validator = require('validator');
 
 var buildTools = require('./build_tools.js');
 var remoteTools = require('./tools/remote.js');
 
 var closureCompiler = require('./compilers/closure-compiler/compiler.js');
+var closureTemplatesCompiler = require(
+  './compilers/closure-templates/compiler.js');
+
 
 /**
  * Build Compilers.
@@ -196,36 +197,26 @@ BuildCompilers.compileSoyTemplates = function(files, out,
   var options = {
     shouldProvideRequireSoyNamespaces: true
   };
+
   if (opt_options && opt_options.options) {
     options = opt_options.options;
   }
-  options.uniqueDir = false;
-  options.outputDir = out;
+
   buildTools.mkdir(out);
-  var compilerEvent = function(errors) {
-    if (errors) {
-      var error_message = 'Failed for ' + out + ':' + errors;
-      this.errorSoyCompiler(error_message);
-      if (opt_callback) {
-        opt_callback(error_message, false);
-      }
-    } else {
-      var soyFiles = glob.sync(path.join(out, '**/*.soy.js'));
-      var success_message = 'Compiled ' + soyFiles.length + ' soy files to ' +
+  var compilerEvent = function(errors, warnings, files) {
+    if (!errors) {
+      var success_message = 'Compiled ' + files.length + ' soy files to ' +
         buildTools.getTruncateText(out);
       if (buildConfig) {
         buildConfig.setMessage(success_message);
-      } else {
-        this.infoSoyCompiler(success_message);
       }
-      if (opt_callback) {
-        opt_callback(false, false, soyFiles);
-      }
+    }
+    if (opt_callback) {
+      opt_callback(errors, warnings, files);
     }
   }.bind(this);
 
-  soyCompiler.setOptions(options);
-  soyCompiler.compileTemplateFiles(files, compilerEvent);
+  closureTemplatesCompiler.compile(files, options, out, compilerEvent);
 };
 
 
@@ -422,54 +413,10 @@ BuildCompilers.compileJsFiles = function(files, out,
 /**
  * @param {string} msg
  */
-BuildCompilers.infoSoyCompiler = function(msg) {
-  if (msg) {
-    log.info('[Soy Compiler]', msg);
-  }
-};
-
-
-/**
- * @param {string} msg
- */
-BuildCompilers.infoClosureCompiler = function(msg) {
-  if (msg) {
-    log.info('[Closure Compiler]', msg);
-  }
-};
-
-
-/**
- * @param {string} msg
- */
 BuildCompilers.infoCssCompiler = function(msg) {
   if (msg) {
     log.info('[Css Compiler]', msg);
   }
-};
-
-
-/**
- * @param {string} msg
- */
-BuildCompilers.warnClosureCompiler = function(msg) {
-  log.error('[Closure Compiler Warn]', msg);
-};
-
-
-/**
- * @param {string} msg
- */
-BuildCompilers.errorSoyCompiler = function(msg) {
-  log.error('[Soy Compiler Error]', msg);
-};
-
-
-/**
- * @param {string} msg
- */
-BuildCompilers.errorClosureCompiler = function(msg) {
-  log.error('[Closure Compiler Error]', msg);
 };
 
 

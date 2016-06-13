@@ -108,8 +108,11 @@ describe('ClosureBuilder', function() {
   describe('Soy file', function() {
     it('compile', function(done) {
       this.timeout(30000);
-      closureBuilder.build(testConfigs.soyTestConfig, function(errors) {
+      closureBuilder.build(testConfigs.soyTestConfig, function(errors,
+          warnings, files) {
         assert(!errors);
+        assert(!warnings);
+        assert(files);
         done();
       });
     });

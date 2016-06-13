@@ -26,6 +26,7 @@
     "test-types": "mocha test/build_types_test.js",
     "test-compilers": "mocha test/build_compilers_test.js",
     "test-closure-compiler": "mocha test/closure-compiler_test.js",
+    "test-closure-templates": "mocha test/closure-templates_test.js",
     "pretest": "npm run lint && npm run clean && npm run configure",
     "predeploy": "npm test",
     "deploy": "npm version patch && git add package.json",
@@ -61,7 +62,7 @@
     "path-parse": "1.0.5",
     "progress": "1.1.8",
     "randomstring": "1.1.5",
-    "soynode": "1.1.0",
+    "replace": "0.3.0",
     "touch": "1.0.0",
     "validator": "5.4.0"
   },

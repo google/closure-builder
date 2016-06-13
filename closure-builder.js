@@ -45,9 +45,6 @@ var ClosureBuilder = function() {
   /** @type {Object} */
   this.nameCache = {};
 
-  /** @type {boolean} */
-  this.soyLimit = false;
-
 };
 
 
@@ -176,11 +173,6 @@ ClosureBuilder.prototype.showConfigInformation = function(config) {
  * @param {function=} opt_callback
  */
 ClosureBuilder.prototype.compileSoyTemplates = function(config, opt_callback) {
-  if (this.soyLimit) {
-    log.error('\nYou can only run one Soy compiler per file instance!');
-    config.bar.terminate();
-    return;
-  }
   config.setMessage('Compiling soy templates');
   var soyPath = (config.getType() === buildType.SOY_CLOSURE) ?
     config.getTempPath() : config.getOutPath();

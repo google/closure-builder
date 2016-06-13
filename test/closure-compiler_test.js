@@ -442,5 +442,3 @@ describe('Closure Compiler::', function() {
   });
 
 });
-
-

@@ -1,0 +1,190 @@
+/**
+ * @fileoverview Closure Compilers - Closure Compiler
+ *
+ * @license Copyright 2016 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @author mbordihn@google.com (Markus Bordihn)
+ */
+var assert = require('assert');
+var fs = require('fs');
+
+var closureTemplates = require('../compilers/closure-templates/compiler.js');
+
+
+
+describe('Closure Templates::', function() {
+
+  it('Single file', function(done) {
+    this.timeout(25000);
+    var files = ['test_files/soy_test_1.soy'];
+    closureTemplates.compile(files, null, null,
+      function(errors, warnings, files) {
+        assert(!errors);
+        assert(!warnings);
+        var content = fs.readFileSync(files[0]).toString();
+        assert(content.indexOf('soy_test_1.helloName') !== -1);
+        assert(content.indexOf('goog.provide(\'soy_test_1\');') === -1);
+        done();
+      });
+  });
+
+  it('Two files', function(done) {
+    this.timeout(25000);
+    var files = [
+      'test_files/soy_test_1.soy',
+      'test_files/soy_test_2.soy'
+    ];
+    closureTemplates.compile(files, null, null,
+      function(errors, warnings, files) {
+        assert(!errors);
+        assert(!warnings);
+        var content1 = fs.readFileSync(files[0]).toString();
+        var content2 = fs.readFileSync(files[1]).toString();
+        assert(content1.indexOf('soy_test_1.helloName') !== -1);
+        assert(content1.indexOf('goog.provide(\'soy_test_1\');') === -1);
+        assert(content2.indexOf('soy_test_2.helloName') !== -1);
+        assert(content2.indexOf('soy_test_2.helloNames') !== -1);
+        assert(content2.indexOf('goog.provide(\'soy_test_2\');') === -1);
+        done();
+      });
+  });
+
+  it('shouldProvideRequireSoyNamespaces', function(done) {
+    this.timeout(25000);
+    var files = ['test_files/soy_test_1.soy'];
+    var options = {
+      shouldProvideRequireSoyNamespaces: true
+    };
+    closureTemplates.compile(files, options, null,
+      function(errors, warnings, files) {
+        assert(!errors);
+        assert(!warnings);
+        var content = fs.readFileSync(files[0]).toString();
+        assert(content.indexOf('soy_test_1.helloName') !== -1);
+        assert(content.indexOf('goog.provide(\'soy_test_1\');') !== -1);
+        done();
+      });
+  });
+
+  describe('shouldGenerateGoogMsgDefs', function() {
+
+    it('bidiGlobalDir', function(done) {
+      this.timeout(25000);
+      var files = ['test_files/soy_test_3.soy'];
+      var options = {
+        shouldGenerateGoogMsgDefs: true,
+        bidiGlobalDir: 1
+      };
+      closureTemplates.compile(files, options, null,
+        function(errors, warnings, files) {
+          assert(!errors);
+          assert(!warnings);
+          var content = fs.readFileSync(files[0]).toString();
+          assert(content.indexOf('var soy_test_3 = {}') !== -1);
+          assert(content.indexOf('goog.getMsg(') !== -1);
+          done();
+        });
+    });
+
+    it('useGoogIsRtlForBidiGlobalDir', function(done) {
+      this.timeout(25000);
+      var files = ['test_files/soy_test_3.soy'];
+      var options = {
+        shouldGenerateGoogMsgDefs: true,
+        shouldProvideRequireSoyNamespaces: true,
+        useGoogIsRtlForBidiGlobalDir: true
+      };
+      closureTemplates.compile(files, options, null,
+        function(errors, warnings, files) {
+          assert(!errors);
+          assert(!warnings);
+          var content = fs.readFileSync(files[0]).toString();
+          assert(content.indexOf('goog.provide(\'soy_test_3\');') !== -1);
+          assert(content.indexOf('goog.require(\'goog.i18n.bidi\');') !== -1);
+          assert(content.indexOf('goog.getMsg(') !== -1);
+          assert(content.indexOf('MSG_EXTERNAL_') === -1);
+          done();
+        });
+    });
+
+    it('googMsgsAreExternal', function(done) {
+      this.timeout(25000);
+      var files = ['test_files/soy_test_3.soy'];
+      var options = {
+        shouldGenerateGoogMsgDefs: true,
+        shouldProvideRequireSoyNamespaces: true,
+        googMsgsAreExternal: true,
+        useGoogIsRtlForBidiGlobalDir: true
+      };
+      closureTemplates.compile(files, options, null,
+        function(errors, warnings, files) {
+          assert(!errors);
+          assert(!warnings);
+          var content = fs.readFileSync(files[0]).toString();
+          assert(content.indexOf('goog.provide(\'soy_test_3\');') !== -1);
+          assert(content.indexOf('goog.require(\'goog.i18n.bidi\');') !== -1);
+          assert(content.indexOf('goog.getMsg(') !== -1);
+          assert(content.indexOf('MSG_EXTERNAL_') !== -1);
+          done();
+        });
+    });
+
+    it('googMsgsAreExternal - bidiGlobalDir', function(done) {
+      this.timeout(25000);
+      var files = ['test_files/soy_test_3.soy'];
+      var options = {
+        shouldGenerateGoogMsgDefs: true,
+        shouldProvideRequireSoyNamespaces: true,
+        googMsgsAreExternal: true,
+        bidiGlobalDir: 1
+      };
+      closureTemplates.compile(files, options, null,
+        function(errors, warnings, files) {
+          assert(!errors);
+          assert(!warnings);
+          var content = fs.readFileSync(files[0]).toString();
+          assert(content.indexOf('goog.provide(\'soy_test_3\');') !== -1);
+          assert(content.indexOf('goog.require(\'goog.i18n.bidi\');') === -1);
+          assert(content.indexOf('goog.getMsg(') !== -1);
+          assert(content.indexOf('MSG_EXTERNAL_') !== -1);
+          done();
+        });
+    });
+
+  });
+
+
+  it('Custom i18n function', function(done) {
+    this.timeout(25000);
+    var files = ['test_files/soy_test_3.soy'];
+    var options = {
+      i18n: 'i18nTest'
+    };
+    closureTemplates.compile(files, options, null,
+      function(errors, warnings, files) {
+        assert(!errors);
+        assert(!warnings);
+        var content = fs.readFileSync(files[0]).toString();
+        assert(content.indexOf('goog.provide(\'soy_test_3\');') !== -1);
+        assert(content.indexOf('goog.require(\'goog.i18n.bidi\');') === -1);
+        assert(content.indexOf('goog.getMsg(') === -1);
+        assert(content.indexOf('i18nTest(') !== -1);
+        assert(content.indexOf('MSG_EXTERNAL_') !== -1);
+        done();
+      });
+  });
+
+
+});
