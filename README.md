@@ -21,7 +21,7 @@ static files as well.
   * [Compile closure JavaScript files](#compile-closure-javascript-files)
   * [Compile closure Javascript files with soy files](#compile-closure-javascript-files-with-soy-files)
   * [Compile closure Javascript files with externs](#compile-closure-javascript-files-with-externs)
-  * [Compile closure JavaScript files with remote service](#compile-closure-javascript-files-with-remote-service)
+  * [Compile closure JavaScript files over remote service](#compile-closure-javascript-files-over-remote-service)
   * [Compile soy files](#compile-soy-files)
   * [Compile JavaScript files](#compile-javascript-files)
   * [Compile Node.js files](#compile-node-js-files)
@@ -129,11 +129,11 @@ The following options are partially implemented and should not be used:
 
 Function Callback
 -----------------
-For performance reasons the tasks will be executed asynchrone whenever it
+For performance reasons the tasks will be executed asynchronous whenever it
 is possible.
 
 If you need to know exactly if an tasks has finished you could add a callback
-as well.
+function as well.
 
 ```javascript
 var closureBuilder = require('closure-builder');
@@ -212,7 +212,7 @@ closureBuilder.build({
 });
 ```
 
-#### Compile Closure JavaScript files with Soy files ####
+#### Compile Closure JavaScript files over remote service ####
 Compiling Closure JavaScript files with the remote service to a single
 javascript file.
 Please keep in mind that the remote service is not supporting all features and
@@ -227,6 +227,7 @@ closureBuilder.build({
   deps: [...],
   out: 'genfiles/compiled.js'
 });
+```
 
 #### Compile Soy files ####
 Compiling Soy files into Soy JavaScript files to an targeted directory.
@@ -344,7 +345,7 @@ Example package.json:
     "build-remote-files": "node build/remote_files.js",
     "build-extra-files": "node build/extra_files.js",
     "build-cwc-files": "node build/cwc_files.js",
- }
+ },
 ```
 
 
