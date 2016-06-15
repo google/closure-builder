@@ -45,6 +45,16 @@ TestConfigs.closureLibraryConfig = {
 };
 
 
+TestConfigs.closureLibraryConfigRemoteService = {
+  name: 'closure_library_test',
+  srcs: [
+    'test_files/closure_library_test.js'
+  ],
+  remote_service: true,
+  out: path.join(testDirectory, 'closure-library')
+};
+
+
 TestConfigs.soyTestConfig = {
   name: 'soy_test',
   srcs: [

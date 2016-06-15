@@ -25,13 +25,19 @@ var pathTools = require('../../tools/path.js');
 
 
 
- /**
+/**
  * ClosureTemplates.
  * @constructor
  * @struct
  * @final
  */
 var ClosureTemplates = function() {};
+
+
+/**
+ * @type {boolean}
+ */
+ClosureTemplates.DEBUG = false;
 
 
 /**
@@ -95,6 +101,8 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
     var warnings = null;
     var numErrors = 0;
     var numWarnings = 0;
+
+    // Handling Error messages
     if (errorMsg) {
       var parsedErrorMessage = ClosureTemplates.parseErrorMessage(errorMsg);
       numErrors = parsedErrorMessage.errors;
@@ -123,7 +131,8 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
     }
   };
 
-  javaTools.execJavaJar(compiler, compilerOptions, compilerEvent);
+  javaTools.execJavaJar(compiler, compilerOptions, compilerEvent, null,
+    ClosureTemplates.DEBUG);
 };
 
 
@@ -136,7 +145,8 @@ ClosureTemplates.parseErrorMessage = function(message) {
   var warnings = 0;
   if (message) {
     if (message.indexOf('INTERNAL COMPILER ERROR') !== -1 ||
-        message.indexOf('NullPointerException') !== -1) {
+        message.indexOf('NullPointerException') !== -1 ||
+        message.indexOf('java.lang.NoSuchMethodError' !== -1)) {
       errors = 1;
     } else if (message.toLowerCase().indexOf('error') !== -1) {
       errors = message.toLowerCase().split('error').length - 1;
@@ -151,6 +161,12 @@ ClosureTemplates.parseErrorMessage = function(message) {
       }
     } else {
       errors = 1;
+    }
+
+    // Provide hints for common errors.
+    if (message.indexOf('java.lang.NoSuchMethodError: ' +
+      'com.google.common.io.Files.newReaderSupplier' !== -1)) {
+      ClosureTemplates.info('There is an problem with your guava library!\n');
     }
   }
   return {

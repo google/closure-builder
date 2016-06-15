@@ -349,11 +349,17 @@ BuildCompilers.compileJsFiles = function(files, out,
     'files to', out, '...');
   log.trace(files);
   var options = opt_options || {};
+  var useRemoteService = false;
   if (opt_func) {
     options.dependency_mode = 'STRICT';
     options.entry_point = opt_func;
   }
   if (opt_config) {
+    if (opt_config.remoteService) {
+      useRemoteService = true;
+      delete options.entry_point;
+      delete options.dependency_mode;
+    }
     if (opt_config.requireECMAScript6) {
       options.language_in = 'ECMASCRIPT6';
       options.language_out = 'ES5_STRICT';
@@ -406,7 +412,8 @@ BuildCompilers.compileJsFiles = function(files, out,
       }
     }
   }.bind(this);
-  closureCompiler.localCompile(files, options, null, compilerEvent);
+  closureCompiler.compile(files, options, null, compilerEvent,
+    useRemoteService);
 };
 
 

@@ -63,6 +63,7 @@ buildTools.execJava(['-version'], function(error, stdout, stderr) {
     var version = stderr.match(versionReg)[1];
     console.log('Found global Java ...', version);
   } else {
-    console.warn('No global Java available ...');
+    console.warn('No global Java available!!!\n' +
+      'Please install an Java Runtime (JRE) to be able to use all features!');
   }
 });

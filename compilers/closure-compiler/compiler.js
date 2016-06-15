@@ -26,7 +26,7 @@ var pathTools = require('../../tools/path.js');
 
 
 
- /**
+/**
  * ClosureCompiler.
  * @constructor
  * @struct
@@ -36,12 +36,27 @@ var ClosureCompiler = function() {};
 
 
 /**
+ * @type {boolean}
+ */
+ClosureCompiler.DEBUG = false;
+
+
+/**
  * @param {!string} files
  * @param {Object=} opt_options
  * @param {string=} opt_target_file
+ * @param {function=} opt_callback
+ * @param {boolean=} opt_remote_service
  */
-ClosureCompiler.compile = function(files, opt_options, opt_target_file) {
-
+ClosureCompiler.compile = function(files, opt_options, opt_target_file,
+    opt_callback, opt_remote_service) {
+  if (opt_remote_service) {
+    ClosureCompiler.remoteCompile(files, opt_options, opt_target_file,
+      opt_callback);
+  } else {
+    ClosureCompiler.localCompile(files, opt_options, opt_target_file,
+      opt_callback);
+  }
 };
 
 
@@ -181,7 +196,8 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     }
   };
 
-  javaTools.execJavaJar(compiler, compilerOptions, compilerEvent);
+  javaTools.execJavaJar(compiler, compilerOptions, compilerEvent, null,
+    ClosureCompiler.DEBUG);
 };
 
 

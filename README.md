@@ -13,18 +13,22 @@ This simple build system could be also used for normal css, js, nodejs  and
 static files as well.
 
 * [Installation](#installation)
+* [Requirements](#requirements)
 * [Basic Usage](#basic-usage)
 * [Options](#options)
 * [Function callback](#function-callback)
 * [Example build configurations](#example-build-configurations)
   * [Compile closure JavaScript files](#compile-closure-javascript-files)
   * [Compile closure Javascript files with soy files](#compile-closure-javascript-files-with-soy-files)
+  * [Compile closure Javascript files with externs](#compile-closure-javascript-files-with-externs)
+  * [Compile closure JavaScript files with remote service](#compile-closure-javascript-files-with-remote-service)
   * [Compile soy files](#compile-soy-files)
   * [Compile JavaScript files](#compile-javascript-files)
   * [Compile Node.js files](#compile-node-js-files)
   * [Compile css files](#compile-css-files)
   * [Copy Resources](#copy-resources)
   * [Copy Remote Resources](#copy-remote-resources)
+  * [Convert Markdown (.md) to .html file](#convert-markdown-md-to-html-file)
 * [Best practise](#best-practise)
 * [Development](#development)
 * [Disclaimer](#disclaimer)
@@ -36,6 +40,12 @@ Installation
 ------------
 Use NPM using `npm install closure-builder` or fork, clone download the source
 on GitHub to get the latest version.
+
+
+Requirements
+------------
+To be able to use all available features and options, please make sure to
+install the Java Runtime Environment (JRE).
 
 
 Basic Usage
@@ -73,7 +83,6 @@ For copying files the required options are:
 - `resources` Resource files which will be copied to the out folder
 - `out` Output path / output file for the compiled Soy, Closure or JavaScript files
 
-
 #### Additional ####
 These options could be used for adding additional information:
 - `deps` Dependencies like additional closure files or additional file for the compiler
@@ -81,6 +90,7 @@ These options could be used for adding additional information:
 - `debug` If true display additional debug informations
 - `trace` If true display additional trace informations
 - `externs` Additional JavaScript externs for the compiler
+- `remote_service` If true use online remote services instead of local tools
 
 #### Options ####
 The following options are available for the closure and soy compiler:
@@ -201,6 +211,22 @@ closureBuilder.build({
   out: 'genfiles/compiled.js'
 });
 ```
+
+#### Compile Closure JavaScript files with Soy files ####
+Compiling Closure JavaScript files with the remote service to a single
+javascript file.
+Please keep in mind that the remote service is not supporting all features and
+options of the closure compiler.
+```javascript
+closureBuilder.build({
+  name: 'goog.namespace',
+  srcs: glob([
+    'src/**/*.js',
+  ]),
+  remote_service: true,
+  deps: [...],
+  out: 'genfiles/compiled.js'
+});
 
 #### Compile Soy files ####
 Compiling Soy files into Soy JavaScript files to an targeted directory.
