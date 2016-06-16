@@ -91,11 +91,6 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     options.compilation_level = 'SIMPLE_OPTIMIZATIONS';
   }
 
-  // Language out
-  if (!options.language_out) {
-    options.language_out = 'ES5_STRICT';
-  }
-
   // Handling warnings
   if (options.no_warnings) {
     showWarnings = false;

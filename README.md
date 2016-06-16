@@ -115,7 +115,7 @@ closureBuilder.build({
   options: {
     closure : {
       jscomp_error: ['deprecated', 'extraRequire',
-      'missingProvide', 'missingRequire', 'newCheckTypes']
+        'missingProvide', 'missingRequire', 'newCheckTypes']
     }
   },
   ...
