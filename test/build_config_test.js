@@ -36,6 +36,16 @@ var strucConfig = {
   jscomp_error: ['3', '1', '1']
 };
 
+var configTypeJavaScript = {
+  'debug': true,
+  'name': 'test1',
+  'sources': [
+    'test_files/test1.js'
+  ],
+  'options': {},
+  'type': closureBuilder.buildType.JAVASCRIPT
+};
+
 var pathOutConfig = {'out': 'folder1/folder2/'};
 var fileOutConfig = {'out': 'folder1/folder2/file1.txt'};
 var emptyOutConfig = {'out': ''};
@@ -70,6 +80,14 @@ describe('BuildConfig', function() {
       assert.equal(buildConfig.jscompError, strucConfig.jscomp_error);
     });
   });
+
+  describe('this.type', function() {
+    it('JAVASCRIPT', function() {
+      var buildConfig = closureBuilder.getBuildConfig(configTypeJavaScript);
+      assert.equal(buildConfig.getType(), configTypeJavaScript.type);
+    });
+  });
+
   describe('this.out', function() {
     it('path', function() {
       var buildConfig = closureBuilder.getBuildConfig(pathOutConfig);

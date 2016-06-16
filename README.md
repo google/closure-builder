@@ -90,6 +90,7 @@ These options could be used for adding additional information:
 - `debug` If true display additional debug informations
 - `trace` If true display additional trace informations
 - `externs` Additional JavaScript externs for the compiler
+- `type` Overwrites the automatic type detection
 - `remote_service` If true use online remote services instead of local tools
 
 #### Options ####

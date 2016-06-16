@@ -38,7 +38,7 @@ var ClosureCompiler = function() {};
 /**
  * @type {boolean}
  */
-ClosureCompiler.DEBUG = false;
+ClosureCompiler.DEBUG = true;
 
 
 /**
@@ -50,6 +50,15 @@ ClosureCompiler.DEBUG = false;
  */
 ClosureCompiler.compile = function(files, opt_options, opt_target_file,
     opt_callback, opt_remote_service) {
+  if (!files || files.length == 0) {
+    var errorMessage = 'No valid files are provided!';
+    ClosureCompiler.error(errorMessage);
+    if (opt_callback) {
+      opt_callback(errorMessage);
+    }
+    return;
+  }
+
   if (opt_remote_service) {
     ClosureCompiler.remoteCompile(files, opt_options, opt_target_file,
       opt_callback);

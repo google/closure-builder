@@ -54,7 +54,7 @@ var BuildConfig = function(config) {
   this.options = this.config.options || {};
 
   /** @type {!BuildType} */
-  this.type = BuildType.UNKNOWN;
+  this.type = this.config.type || BuildType.UNKNOWN;
 
   /** @type {!boolean} */
   this.excludeTest = this.options.exclude_test || false;
@@ -172,7 +172,7 @@ var BuildConfig = function(config) {
   /** @private {!array} */
   this.resourceFiles_ = this.resources;
 
-  if (!this.type) {
+  if (!this.type || this.type === BuildType.UNKNOWN) {
     this.type = BuildTools.detectType(this);
   }
 };

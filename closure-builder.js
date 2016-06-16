@@ -206,6 +206,9 @@ ClosureBuilder.prototype.compileJavaScriptFiles = function(config,
     opt_callback) {
   config.setMessage('Compiling JavaScript files ...');
   var files = config.getJavaScriptFiles();
+  if (files.length == 0) {
+    files = config.getNodeFiles();
+  }
   buildCompilers.compileJsFiles(files, config.getOutFilePath(), null,
     config.closureCompilerOptions, opt_callback, config);
 };

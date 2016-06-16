@@ -245,9 +245,22 @@ describe('ClosureBuilder', function() {
 
   describe('NodeJs', function() {
     it('compile', function(done) {
-      this.timeout(120000);
+      this.timeout(30000);
       closureBuilder.build(testConfigs.nodeTestConfig, function(errors) {
         assert(!errors);
+        done();
+      });
+    });
+  });
+
+  describe('NodeJs - Type overwrite', function() {
+    it('compile', function(done) {
+      this.timeout(25000);
+      closureBuilder.build(testConfigs.nodeToJsTestConfig, function(errors,
+          warnings, files, content) {
+        assert(!errors);
+        assert(!warnings);
+        assert(content);
         done();
       });
     });
