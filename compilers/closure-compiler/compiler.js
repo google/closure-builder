@@ -84,18 +84,32 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
   var compiler = pathTools.getClosureCompilerJar();
   var compilerOptions = [];
   var options = opt_options || {};
+  var showWarnings = true;
 
   // Compilation level
   if (!options.compilation_level) {
     options.compilation_level = 'SIMPLE_OPTIMIZATIONS';
   }
 
-  // Compiler warnings
-  if (!options.jscomp_warning) {
-    options.jscomp_warning = ['checkVars', 'conformanceViolations',
-      'deprecated', 'externsValidation', 'fileoverviewTags', 'globalThis',
-      'misplacedTypeAnnotation', 'missingProvide', 'missingRequire',
-      'missingReturn', 'nonStandardJsDocs', 'typeInvalidation', 'uselessCode'];
+  // Language out
+  if (!options.language_out) {
+    options.language_out = 'ES5_STRICT';
+  }
+
+  // Handling warnings
+  if (options.no_warnings) {
+    showWarnings = false;
+    delete options.jscomp_warnings;
+    delete options.no_warnings;
+  } else {
+    // Compiler warnings
+    if (!options.jscomp_warning) {
+      options.jscomp_warning = ['checkVars', 'conformanceViolations',
+        'deprecated', 'externsValidation', 'fileoverviewTags', 'globalThis',
+        'misplacedTypeAnnotation', 'missingProvide', 'missingRequire',
+        'missingReturn', 'nonStandardJsDocs', 'typeInvalidation',
+        'uselessCode'];
+    }
   }
 
   // Handling compiler error
@@ -191,7 +205,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
       numWarnings = parsedErrorMessage.warnings;
     }
 
-    if (numErrors == 0 && numWarnings > 0) {
+    if (numErrors == 0 && numWarnings > 0 && showWarnings) {
       warnings = errorMsg;
       ClosureCompiler.warn(warnings);
     } else if (numErrors > 0) {
@@ -243,6 +257,7 @@ ClosureCompiler.remoteCompile = function(files, opt_options, opt_target_file,
     'output_info': ['compiled_code', 'warnings', 'errors', 'statistics'],
     'js_code': []
   };
+  var showWarnings = true;
 
   // Closure templates
   if (options.use_closure_templates) {
@@ -274,6 +289,12 @@ ClosureCompiler.remoteCompile = function(files, opt_options, opt_target_file,
       data['js_externs'] = externsCode;
     }
     delete options.externs;
+  }
+
+  // Handling warnings
+  if (options.no_warnings) {
+    showWarnings = false;
+    delete options.no_warnings;
   }
 
   // Handling options
@@ -314,7 +335,7 @@ ClosureCompiler.remoteCompile = function(files, opt_options, opt_target_file,
         errors = ClosureCompiler.parseJsonError(errorMsg);
         ClosureCompiler.error(errors);
         code = '';
-      } else if (warningMsg) {
+      } else if (warningMsg && showWarnings) {
         warnings = ClosureCompiler.parseJsonError(warningMsg);
         ClosureCompiler.warn(warnings);
       }

@@ -194,6 +194,16 @@ TestConfigs.closureTestWarningConfig = {
 };
 
 
+TestConfigs.closureTestWarningDisabledConfig = {
+  name: 'closure_test_warning',
+  srcs: glob([
+    'test_files/special/closure_warning.js'
+  ]),
+  warn: false,
+  out: path.join(testDirectory, 'closure-warning')
+};
+
+
 TestConfigs.closureTestExportConfig = {
   name: 'closure_test_export',
   srcs: glob([

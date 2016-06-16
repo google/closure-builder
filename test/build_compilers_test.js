@@ -224,6 +224,15 @@ describe('ClosureBuilder', function() {
         done();
       });
     });
+    it('Disabled Warning Message', function(done) {
+      this.timeout(30000);
+      closureBuilder.build(testConfigs.closureTestWarningDisabledConfig,
+        function(errors, warnings) {
+          assert(!errors);
+          assert(!warnings);
+          done();
+        });
+    });
     it('Automatic @export handling', function(done) {
       this.timeout(40000);
       closureBuilder.build(testConfigs.closureTestExportConfig, function(

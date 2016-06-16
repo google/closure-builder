@@ -379,6 +379,9 @@ BuildCompilers.compileJsFiles = function(files, out,
     if (opt_config.externs) {
       options.externs = opt_config.externs;
     }
+    if (!opt_config.warn) {
+      options.no_warnings = true;
+    }
     if (opt_config.jscompOff !== undefined &&
         opt_config.jscompOff.length > 0) {
       options.jscomp_off = opt_config.jscompOff;

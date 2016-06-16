@@ -51,14 +51,15 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
   if (!files) {
     return;
   }
-  var i = 0;
-  var i18nFunction = null;
   var compiler = pathTools.getClosureTemplatesCompilerJar();
   var compilerOptions = [];
+  var i = 0;
+  var i18nFunction = null;
   var options = opt_options || {};
+  var outputFiles = [];
+  var showWarnings = true;
   var targetDir = opt_target_dir || pathTools.getRandomTempPath(
     'closure-builder-templates');
-  var outputFiles = [];
 
   // Output Path Format
   if (!options.outputPathFormat) {
@@ -95,6 +96,12 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
     }
   }
 
+  // Handling warnings
+  if (options.no_warnings) {
+    showWarnings = false;
+    delete options.no_warnings;
+  }
+
   var compilerEvent = function(error, stdout, stderr) {
     var errorMsg = stderr || error || stdout;
     var errors = null;
@@ -109,7 +116,7 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
       numWarnings = parsedErrorMessage.warnings;
     }
 
-    if (numErrors == 0 && numWarnings > 0) {
+    if (numErrors == 0 && numWarnings > 0 && showWarnings) {
       warnings = errorMsg;
       ClosureTemplates.warn(warnings);
     } else if (numErrors > 0) {

@@ -45,6 +45,9 @@ var BuildConfig = function(config) {
   this.trace = this.config.trace || false;
 
   /** @type {!boolean} */
+  this.warn = this.config.warn !== undefined ? this.config.warn : true;
+
+  /** @type {!boolean} */
   this.remoteService = this.config.remote_service || false;
 
   /** @type {!string} */
