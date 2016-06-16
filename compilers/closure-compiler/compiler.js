@@ -38,7 +38,7 @@ var ClosureCompiler = function() {};
 /**
  * @type {boolean}
  */
-ClosureCompiler.DEBUG = true;
+ClosureCompiler.DEBUG = false;
 
 
 /**
