@@ -27,6 +27,12 @@
     "test-compilers": "mocha test/build_compilers_test.js",
     "test-closure-compiler": "mocha test/closure-compiler_test.js",
     "test-closure-templates": "mocha test/closure-templates_test.js",
+
+    "test-file-tools": "mocha test/file_tools_test.js",
+    "test-java-tools": "mocha test/java_tools_test.js",
+    "test-path-tools": "mocha test/path_tools_test.js",
+    "test-remote-tools": "mocha test/remote_tools_test.js",
+
     "pretest": "npm run lint && npm run clean && npm run configure",
     "predeploy": "npm test",
     "deploy": "npm version patch && git add package.json",

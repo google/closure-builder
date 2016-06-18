@@ -1,0 +1,41 @@
+{namespace soy_test_i18n autoescape="strict"}
+
+
+
+/**
+ * Hello Names.
+ */
+{template .helloNames}
+  {@param additionalNames: list<string>}
+
+  // Greet the person.
+  {call .helloName data="all" /}<br>
+  // Greet the additional people.
+  {foreach $additionalName in $additionalNames}
+    {call .helloName}
+      {param name: $additionalName /}
+    {/call}
+    {if not isLast($additionalName)}
+      <br>  // break after every line except the last
+    {/if}
+  {ifempty}
+    {i18n}
+      No additional people to greet.
+    {/i18n}
+  {/foreach}
+{/template}
+
+
+/**
+ * Hello Name.
+ */
+{template .helloName}
+  {@param name: string}
+  {@param? greetingWord: string}
+
+  {if not $greetingWord}
+    {i18n}Hello {$name}!{/i18n}
+  {else}
+    {$greetingWord} {$name}!
+  {/if}
+{/template}

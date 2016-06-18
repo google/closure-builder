@@ -186,5 +186,27 @@ describe('Closure Templates::', function() {
       });
   });
 
+/**
+  it('Custom i18n tags', function(done) {
+    this.timeout(25000);
+    var files = ['test_files/special/soy_test_i18n.soy'];
+    var options = {
+      use_i18n: true
+    };
+    closureTemplates.compile(files, options, null,
+      function(errors, warnings, files) {
+        assert(!errors);
+        assert(!warnings);
+        var content = fs.readFileSync(files[0]).toString();
+        assert(content.indexOf('goog.provide(\'soy_test_i18n\');') !== -1);
+        assert(content.indexOf('{i18n}') === -1);
+        assert(content.indexOf('{/i18n}') === -1);
+        assert(content.indexOf('goog.getMsg(') === -1);
+        assert(content.indexOf('i18nTest(') !== -1);
+        assert(content.indexOf('MSG_EXTERNAL_') !== -1);
+        done();
+      });
+  });
+*/
 
 });

@@ -93,6 +93,7 @@ These options could be used for adding additional information:
 - `externs` Additional JavaScript externs for the compiler
 - `type` Overwrites the automatic type detection
 - `remote_service` If true use online remote services instead of local tools
+- `entry_point` Closure namespace if not already defined under `name`
 
 #### Options ####
 The following options are available for the closure and soy compiler:

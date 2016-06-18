@@ -19,10 +19,11 @@
  */
 var path = require('path');
 
-var buildTools = require('../build_tools.js');
 var closureBuilder = require('../closure-builder');
+var pathTools = require('../tools/path.js');
 var glob = closureBuilder.globSupport();
-var testDirectory = buildTools.getTempPath('closure-builder-test');
+var testDirectory = pathTools.getTempPath('closure-builder-test');
+
 var resourceUrl= 'raw.githubusercontent.com/google/closure-builder/master/' +
   'test_files/resources/';
 
@@ -61,6 +62,16 @@ TestConfigs.soyTestConfig = {
     'test_files/test.soy'
   ],
   out: path.join(testDirectory, 'soy')
+};
+
+
+TestConfigs.soyTesti18nConfig = {
+  name: 'soy_test_i18n',
+  srcs: [
+    'test_files/test.soy',
+    'test_files/special/soy_test_i18n.soy'
+  ],
+  out: path.join(testDirectory, 'soyi18n')
 };
 
 

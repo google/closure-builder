@@ -19,8 +19,8 @@
  */
 var path = require('path');
 
+var javaTools = require('./tools/java.js');
 var packageJson = require('./package.json');
-var buildTools = require('./build_tools.js');
 var remoteTools = require('./tools/remote.js');
 
 console.log('Configuring Closure Builder ' + packageJson.version + ' ...\n');
@@ -57,7 +57,7 @@ remoteTools.getFiles(
 
 // JAVA check
 console.log('Perform basic Java checks ...');
-buildTools.execJava(['-version'], function(error, stdout, stderr) {
+javaTools.execJava(['-version'], function(error, stdout, stderr) {
   if (!error && stderr && stderr.indexOf('java version') >= 0) {
     var versionReg = /java version \"?([0-9_.-]+)\"?/;
     var version = stderr.match(versionReg)[1];

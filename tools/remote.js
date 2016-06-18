@@ -27,7 +27,9 @@ var process = require('process');
 var progressBar = require('progress');
 var validator = require('validator');
 
-var buildTools = require('../build_tools.js');
+var pathTools = require('./path.js');
+var fileTools = require('./file.js');
+
 
 
 /**
@@ -49,8 +51,8 @@ var RemoteTools = function() {};
  */
 RemoteTools.getFile = function(url, dest,
     opt_filename, opt_complete_callback, opt_error_callback) {
-  buildTools.mkdir(dest);
-  var destFilename = opt_filename || buildTools.getUrlFile(url);
+  fileTools.mkdir(dest);
+  var destFilename = opt_filename || pathTools.getUrlFile(url);
   var destFile = path.join(dest, destFilename);
 
   var completeEvent = function(response) {
@@ -161,8 +163,8 @@ RemoteTools.getFiles = function(name, urls, dest,
  */
 RemoteTools.getTarGz = function(name, url, dest,
     opt_complete_callback, opt_error_callback) {
-  var tempPath = buildTools.getRandomTempPath();
-  var filename = buildTools.getUrlFile(url);
+  var tempPath = pathTools.getRandomTempPath();
+  var filename = pathTools.getUrlFile(url);
   if (filename.indexOf('.tar.gz') == -1) {
     filename = filename + '.tar.gz';
   }
@@ -197,8 +199,8 @@ RemoteTools.getTarGz = function(name, url, dest,
  */
 RemoteTools.getZip = function(name, url, dest,
     opt_complete_callback, opt_error_callback) {
-  var tempPath = buildTools.getRandomTempPath();
-  var filename = buildTools.getUrlFile(url);
+  var tempPath = pathTools.getRandomTempPath();
+  var filename = pathTools.getUrlFile(url);
   if (filename.indexOf('.zip') == -1) {
     filename = filename + '.zip';
   }

@@ -17,16 +17,8 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var childProcess = require('child_process');
 var fs = require('fs-extra');
-var glob = require('glob');
-var mkdirp = require('mkdirp');
 var os = require('os');
-var path = require('path');
-var pathParse = require('path-parse');
-var randomstring = require('randomstring');
-var touch = require('touch');
-var url = require('url');
 
 var BuildType = require('./build_types.js');
 
@@ -106,29 +98,33 @@ BuildTools.sortFiles = function(files, opt_all, opt_exclude_test) {
 
 
 /**
+ * Returns the needed build requirements for the given config.
  * @param {BuildConfig} config
+ * @return {Object} Build requirements
  */
 BuildTools.getBuildRequirements = function(config) {
   var depsConfig = this.scanFiles(config.deps);
-  var srcsConfig = this.scanFiles(config.srcs);
+  var srcsConfig = this.scanFiles(config.srcs, config.name);
   var soyConfig = this.scanFiles(config.soy);
   var mdConfig = this.scanFiles(config.markdown);
 
   return {
     closureFiles: [].concat(depsConfig.closureFiles, srcsConfig.closureFiles),
-    jsFiles: [].concat(depsConfig.jsFiles, srcsConfig.jsFiles),
     cssFiles: [].concat(srcsConfig.cssFiles),
+    jsFiles: [].concat(depsConfig.jsFiles, srcsConfig.jsFiles),
+    markdownFiles: [].concat(mdConfig.markdownFiles),
+    nodeFiles: [].concat(srcsConfig.nodeFiles),
     soyFiles: [].concat(depsConfig.soyFiles, soyConfig.soyFiles,
       srcsConfig.soyFiles),
-    nodeFiles: [].concat(srcsConfig.nodeFiles),
-    markdownFiles: [].concat(mdConfig.markdownFiles),
+    entryPoint: (depsConfig.entryPoint || srcsConfig.entryPoint),
     requireClosureExport: (srcsConfig.requireClosureExport),
     requireClosureLibrary: (depsConfig.requireClosureLibrary ||
       srcsConfig.requireClosureLibrary),
+    requireECMAScript6: (depsConfig.requireECMAScript6 ||
+      srcsConfig.requireECMAScript6),
     requireSoyLibrary: (depsConfig.requireSoyLibrary ||
       srcsConfig.requireSoyLibrary || soyConfig.requireSoyLibrary),
-    requireECMAScript6: (depsConfig.requireECMAScript6 ||
-      srcsConfig.requireECMAScript6)
+    requireSoyi18n: (soyConfig.requireSoyi18n || srcsConfig.requireSoyi18n)
   };
 };
 
@@ -136,25 +132,33 @@ BuildTools.getBuildRequirements = function(config) {
 /**
  * Scan files for certain file types and return list of files and requirements.
  * @param {array} files
+ * @param {string=} opt_entry_point
  * @return {Object}
  */
-BuildTools.scanFiles = function(files) {
+BuildTools.scanFiles = function(files, opt_entry_point) {
   var closureFiles = [];
-  var jsFiles = [];
   var cssFiles = [];
-  var soyFiles = [];
-  var nodeFiles = [];
+  var jsFiles = [];
   var markdownFiles = [];
-  var requireClosureLibrary = false;
+  var nodeFiles = [];
+  var soyFiles = [];
+  var entryPoint = '';
   var requireClosureExport = false;
-  var requireSoyLibrary = false;
+  var requireClosureLibrary = false;
   var requireECMAScript6 = false;
+  var requireSoyLibrary = false;
+  var requireSoyi18n = false;
 
   for (var i = files.length - 1; i >= 0; i--) {
     var file = files[i];
     if (file.indexOf('.soy') !== -1 && file.indexOf('.soy.js') === -1) {
-      soyFiles.push(file);
+      var soyContent = fs.readFileSync(file, 'utf8');
+      if (soyContent.indexOf('{i18n}') !== -1 &&
+          soyContent.indexOf('{/i18n}') !== -1) {
+        requireSoyi18n = true;
+      }
       requireSoyLibrary = true;
+      soyFiles.push(file);
     } else if (file.indexOf('.js') !== -1) {
       var fileContent = fs.readFileSync(file, 'utf8');
       if (fileContent.indexOf('goog.provide(') !== -1 ||
@@ -170,9 +174,17 @@ BuildTools.scanFiles = function(files) {
       } else {
         jsFiles.push(file);
       }
+      if (opt_entry_point && fileContent.indexOf(
+          'goog.provide(\'' + opt_entry_point + '\'') !== -1) {
+        entryPoint = opt_entry_point;
+      }
       if (fileContent.indexOf('goog.require(\'goog.') !== -1 ||
           fileContent.indexOf('goog.require("goog.') !== -1) {
         requireClosureLibrary = true;
+      }
+      if (fileContent.indexOf('goog.require(\'soy') !== -1 ||
+          fileContent.indexOf('goog.require(\'soydata') !== -1) {
+        requireSoyLibrary = true;
       }
       if (/(let|const)\s+\w+\s?=/.test(fileContent)) {
         requireECMAScript6 = true;
@@ -185,14 +197,16 @@ BuildTools.scanFiles = function(files) {
   }
   return {
     closureFiles: closureFiles,
-    jsFiles: jsFiles,
     cssFiles: cssFiles,
-    soyFiles: soyFiles,
+    entryPoint: entryPoint,
+    jsFiles: jsFiles,
     nodeFiles: nodeFiles,
+    soyFiles: soyFiles,
     markdownFiles: markdownFiles,
     requireClosureExport: requireClosureExport,
     requireClosureLibrary: requireClosureLibrary,
     requireSoyLibrary: requireSoyLibrary,
+    requireSoyi18n: requireSoyi18n,
     requireECMAScript6: requireECMAScript6
   };
 };
@@ -251,20 +265,6 @@ BuildTools.filterTestFiles = function(files) {
 
 
 /**
- * @param {string|array} Files with glob syntax.
- * @return {array}
- */
-BuildTools.getGlobFiles = function(files) {
-  var fileList = [];
-  var filesToGlob = (files.constructor === String) ? [files] : files;
-  for (var i = filesToGlob.length - 1; i >= 0; i--) {
-    fileList = fileList.concat(glob.sync(filesToGlob[i]));
-  }
-  return fileList;
-};
-
-
-/**
  * @param {array} files
  * @return {array}
  */
@@ -285,121 +285,6 @@ BuildTools.getSafeFileList = function(files) {
     }
   }
   return result;
-};
-
-
-/**
- * @param {string=} opt_name
- * @return {string} Node module path.
- */
-BuildTools.getModulePath = function(opt_name) {
-  var npm = 'npm';
-  var modules = 'node_modules';
-  var modulePath = path.join(path.dirname(module.filename), modules);
-  if (!opt_name) {
-    return modulePath;
-  }
-  if (BuildTools.existDirectory(path.join(modulePath, opt_name))) {
-    return path.join(modulePath, opt_name);
-  }
-  for (var i in require.main.paths) {
-    if (BuildTools.existDirectory(path.join(require.main.paths[i], opt_name))) {
-      return path.join(require.main.paths[i], opt_name);
-    }
-  }
-  if (process.env.APPDATA) {
-    if (BuildTools.existDirectory(path.join(process.env.APPDATA, npm, modules,
-        opt_name))) {
-      return path.join(process.env.APPDATA, npm, modules, opt_name);
-    }
-  } else if (BuildTools.existDirectory(path.join('/usr/lib/', npm, modules,
-      opt_name))) {
-    return path.join('/usr/lib/', npm, modules, opt_name);
-  }
-  console.warn('Cannot find module:', opt_name, 'in:', modulePath, 'and',
-    require.main.paths);
-  return '';
-};
-
-
-/**
- * @param {string} file
- * @return {string} file path
- */
-BuildTools.getFilePath = function(file) {
-  return (file && pathParse(file).ext) ? pathParse(file).dir : file;
-};
-
-
-/**
- * @param {string} file_path
- * @return {string} file
- */
-BuildTools.getPathFile = function(file_path) {
-  return (file_path && pathParse(file_path).ext) ?
-     pathParse(file_path).base : '';
-};
-
-
-/**
- * @param {string} file
- * @return {string} base folder
- */
-BuildTools.getFileBase = function(file) {
-  return pathParse(file).base;
-};
-
-
-/**
- * @param {string} file_url
- * @return {string} file
- */
-BuildTools.getUrlFile = function(file_url) {
-  return path.basename(url.parse(file_url).pathname);
-};
-
-
-/**
- * @param {string=} opt_name
- * @return {string} Temp dir path.
- */
-BuildTools.getRandomTempPath = function(opt_name) {
-  var name = (opt_name || 'closure-builder') + '-' + randomstring.generate(7);
-  return BuildTools.getTempPath(name);
-};
-
-
-/**
- * @param {string=} opt_name
- * @return {string} Temp dir path.
- */
-BuildTools.getTempPath = function(opt_name) {
-  var tempPath = path.join(os.tmpdir(), opt_name || '');
-  BuildTools.mkdir(tempPath);
-  return tempPath;
-};
-
-
-/**
- * @param {array} args
- * @param {function} callback
- * @param {string=} opt_java
- */
-BuildTools.execJava = function(args, callback, opt_java) {
-  var javaBin = opt_java || 'java';
-  childProcess.execFile(javaBin, args, callback);
-};
-
-
-/**
- * @param {string} jar
- * @param {array} args
- * @param {function} callback
- * @param {string=} opt_java
- */
-BuildTools.execJavaJar = function(jar, args, callback, opt_java) {
-  var javaBin = opt_java || 'java';
-  childProcess.execFile(javaBin, ['-jar', jar].concat(args), callback);
 };
 
 
@@ -437,88 +322,6 @@ BuildTools.getSafeMemory = function() {
     return 1024;
   }
   return safeMemory;
-};
-
-
-/**
- * @param {string} path
- * @return {boolean} True if path could be accessed.
- */
-BuildTools.access = function(path) {
-  if (!fs.accessSync) {
-    try {
-      fs.statSync(path);
-    } catch (err) {
-      if (err.code == 'ENOENT') {
-        return false;
-      }
-    }
-    return true;
-  }
-  try {
-    fs.accessSync(path);
-    return true;
-  } catch (err) {
-    return false;
-  }
-};
-
-
-/**
- * @param {string} dir_path
- * @return {boolean} Directory exists.
- */
-BuildTools.existDirectory = function(dir_path) {
-  try {
-    return fs.statSync(dir_path).isDirectory();
-  } catch (err) {
-    return false;
-  }
-};
-
-
-/**
- * @param {string} file_path
- * @return {boolean} File exists.
- */
-BuildTools.existFile = function(file_path) {
-  try {
-    return fs.statSync(file_path).isFile();
-  } catch (err) {
-    return false;
-  }
-};
-
-
-/**
- * @param {string} file_path
- * @return {boolean} True of possible file.
- */
-BuildTools.isFile = function(file_path) {
-  if (path.extname(file_path)) {
-    return true;
-  }
-  return false;
-};
-
-
-/**
- * @param {string} dir_path
- */
-BuildTools.mkdir = function(dir_path) {
-  if (!BuildTools.existDirectory(dir_path)) {
-    mkdirp.sync(dir_path);
-  }
-};
-
-
-/**
- * @param {string} file_path
- */
-BuildTools.mkfile = function(file_path) {
-  var dir_path = path.dirname(file_path);
-  BuildTools.mkdir(dir_path);
-  touch.sync(file_path);
 };
 
 

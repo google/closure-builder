@@ -26,6 +26,8 @@ var path = require('path');
 var validator = require('validator');
 
 var buildTools = require('./build_tools.js');
+var fileTools = require('./tools/file.js');
+var pathTools = require('./tools/path.js');
 var remoteTools = require('./tools/remote.js');
 
 var closureCompiler = require('./compilers/closure-compiler/compiler.js');
@@ -63,7 +65,7 @@ BuildCompilers.TEST_MODE = typeof global.it === 'function';
  * @param {function=} opt_callback
  */
 BuildCompilers.copyFile = function(src, dest, opt_callback) {
-  if (!buildTools.access(src)) {
+  if (!fileTools.access(src)) {
     var message = 'No access to resource ' + src;
     log.error(message);
     if (opt_callback) {
@@ -71,8 +73,8 @@ BuildCompilers.copyFile = function(src, dest, opt_callback) {
     }
     return;
   }
-  var destFile = path.join(dest, buildTools.getFileBase(src));
-  if (buildTools.isFile(dest)) {
+  var destFile = path.join(dest, pathTools.getFileBase(src));
+  if (pathTools.isFile(dest)) {
     destFile = dest;
   }
   var fileEvent = function(error) {
@@ -99,7 +101,7 @@ BuildCompilers.copyFile = function(src, dest, opt_callback) {
  * @param {function=} opt_callback
  */
 BuildCompilers.copyRemoteFile = function(src, dest, opt_callback) {
-  var destFile = buildTools.getUrlFile(src);
+  var destFile = pathTools.getUrlFile(src);
   var completeEvent = function(response) {
     if (!opt_callback) {
       return;
@@ -137,10 +139,10 @@ BuildCompilers.copyRemoteFile = function(src, dest, opt_callback) {
  * @param {function=} opt_callback
  */
 BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
-  if (buildTools.isFile(dest)) {
-    buildTools.mkdir(path.dirname(dest));
+  if (pathTools.isFile(dest)) {
+    fileTools.mkdir(path.dirname(dest));
   } else {
-    buildTools.mkdir(dest);
+    fileTools.mkdir(dest);
   }
   var errors_ = [];
   var warnings_ = [];
@@ -185,30 +187,35 @@ BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
  */
 BuildCompilers.compileSoyTemplates = function(files, out,
     opt_options, opt_callback) {
-  var buildConfig = (opt_options && opt_options.config) ?
+  var options = (opt_options && opt_options.options) ?
+    opt_options.options : {};
+  var config = (opt_options && opt_options.config) ?
     opt_options.config : false;
   var message = 'Compiling ' + files.length + ' soy files to ' + out;
-  if (buildConfig) {
-    buildConfig.setMessage(message);
+  if (typeof options.shouldProvideRequireSoyNamespaces === 'undefined') {
+    options.shouldProvideRequireSoyNamespaces = true;
+  }
+  if (config) {
+    config.setMessage(message);
+    if (config.i18n) {
+      options.i18n = config.i18n;
+    }
+    if (config.requireSoyi18n) {
+      options.i18n = true;
+      options.use_i18n = config.requireSoyi18n;
+    }
   } else {
     log.debug(message);
     log.trace(files);
   }
-  var options = {
-    shouldProvideRequireSoyNamespaces: true
-  };
 
-  if (opt_options && opt_options.options) {
-    options = opt_options.options;
-  }
-
-  buildTools.mkdir(out);
+  fileTools.mkdir(out);
   var compilerEvent = function(errors, warnings, files) {
     if (!errors) {
       var success_message = 'Compiled ' + files.length + ' soy files to ' +
         buildTools.getTruncateText(out);
-      if (buildConfig) {
-        buildConfig.setMessage(success_message);
+      if (config) {
+        config.setMessage(success_message);
       }
     }
     if (opt_callback) {
@@ -259,7 +266,7 @@ BuildCompilers.compileNodeFiles = function(files, out, opt_callback,
     opt_config) {
   var nodeCompiler = browserify();
   nodeCompiler.add(files);
-  buildTools.mkfile(out);
+  fileTools.mkfile(out);
   var bufferEvent = function(errors) {
     if (errors) {
       var error_message = 'Was not able to write file ' + out + ':' + errors;
@@ -301,7 +308,7 @@ BuildCompilers.convertMarkdownFile = function(file, out, opt_callback,
   var markdown = fs.readFileSync(file, 'utf8');
   var content = marked(markdown);
   var destFile = path.join(out,
-    buildTools.getPathFile(file).replace('.md', '.html'));
+    pathTools.getPathFile(file).replace('.md', '.html'));
   buildTools.saveContent(destFile, content, opt_callback, opt_config);
 };
 
@@ -312,8 +319,8 @@ BuildCompilers.convertMarkdownFile = function(file, out, opt_callback,
  * @param {function=} opt_callback
  * @param {BuildConfig=} opt_config
  */
-BuildCompilers.convertMarkdownFiles = function(files, out, opt_callback,
-    opt_config) {
+BuildCompilers.convertMarkdownFiles = function(files, out,
+    opt_callback, opt_config) {
   var foundError = false;
   var outFiles = [];
   var errorEvent = function(error, warning, file) {
@@ -338,61 +345,60 @@ BuildCompilers.convertMarkdownFiles = function(files, out, opt_callback,
 /**
  * @param {Array} files
  * @param {string=} output
- * @param {string=} opt_func
- * @param {object=} opt_options
+ * @param {object=} opt_options Additional options for the compiler.
+ *   opt_options.config = BuildConfig
+ *   opt_options.options = Additional compiler options
  * @param {function=} opt_callback
- * @param {BuildConfig=} opt_config
  */
 BuildCompilers.compileJsFiles = function(files, out,
-    opt_func, opt_options, opt_callback, opt_config) {
-  log.debug('Compiling', ((opt_func) ? opt_func + ' with' : ''), files.length,
-    'files to', out, '...');
+    opt_options, opt_callback) {
+  var options = (opt_options && opt_options.options) ?
+    opt_options.options : {};
+  var config = (opt_options && opt_options.config) ?
+    opt_options.config : false;
+  log.debug('Compiling', files.length, 'files to', out, '...');
   log.trace(files);
-  var options = opt_options || {};
   var useRemoteService = false;
-  if (opt_func) {
-    options.dependency_mode = 'STRICT';
-    options.entry_point = opt_func;
-  }
-  if (opt_config) {
-    if (opt_config.remoteService) {
+  if (config) {
+    if (config.entryPoint) {
+      options.dependency_mode = 'STRICT';
+      options.entry_point = config.entryPoint;
+    }
+    if (config.remoteService) {
       useRemoteService = true;
       delete options.entry_point;
       delete options.dependency_mode;
     }
-    if (opt_config.requireECMAScript6) {
+    if (config.requireECMAScript6) {
       options.language_in = 'ECMASCRIPT6';
       options.language_out = 'ES5_STRICT';
     }
-    if (opt_config.requireClosureExport) {
+    if (config.requireClosureExport) {
       options.generate_exports = true;
     }
-    if (opt_config.requireSoyLibrary) {
+    if (config.requireSoyLibrary) {
       options.use_closure_templates = true;
     }
-    if (opt_config.requireClosureLibrary) {
+    if (config.requireClosureLibrary) {
       options.use_closure_library = true;
     }
-    if (opt_config.compress) {
+    if (config.compress) {
       options.compilation_level = 'ADVANCED_OPTIMIZATIONS';
     }
-    if (opt_config.externs) {
-      options.externs = opt_config.externs;
+    if (config.externs) {
+      options.externs = config.externs;
     }
-    if (!opt_config.warn) {
+    if (!config.warn) {
       options.no_warnings = true;
     }
-    if (opt_config.jscompOff !== undefined &&
-        opt_config.jscompOff.length > 0) {
-      options.jscomp_off = opt_config.jscompOff;
+    if (config.jscompOff !== undefined && config.jscompOff.length > 0) {
+      options.jscomp_off = config.jscompOff;
     }
-    if (opt_config.jscompWarning !== undefined &&
-        opt_config.jscompWarning.length > 0) {
-      options.jscomp_warning = opt_config.jscompWarning;
+    if (config.jscompWarning !== undefined && config.jscompWarning.length > 0) {
+      options.jscomp_warning = config.jscompWarning;
     }
-    if (opt_config.jscompError !== undefined &&
-        opt_config.jscompError.length > 0) {
-      options.jscomp_error = opt_config.jscompError;
+    if (config.jscompError !== undefined && config.jscompError.length > 0) {
+      options.jscomp_error = config.jscompError;
     }
   }
   var compilerEvent = function(errors, warnings, target_file, content) {
@@ -401,14 +407,14 @@ BuildCompilers.compileJsFiles = function(files, out,
         opt_callback(errors, warnings);
       }
     } else if (content) {
-      if (opt_config) {
-        opt_config.setMessage('Saving output to ' + out);
-        if (opt_config.license) {
-          var license = fs.readFileSync(opt_config.license, 'utf8');
+      if (config) {
+        config.setMessage('Saving output to ' + out);
+        if (config.license) {
+          var license = fs.readFileSync(config.license, 'utf8');
           content = license + '\n\n' + content;
         }
       }
-      buildTools.saveContent(out, content, opt_callback, opt_config, warnings);
+      buildTools.saveContent(out, content, opt_callback, config, warnings);
     } else {
       if (opt_callback) {
         opt_callback(errors, warnings);

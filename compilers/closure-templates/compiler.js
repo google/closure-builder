@@ -61,10 +61,30 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
   var targetDir = opt_target_dir || pathTools.getRandomTempPath(
     'closure-builder-templates');
 
+  // Pre-convert custom {i18n} tag.
+  if (options.use_i18n) {
+    fileTools.copySync(files, targetDir);
+    fileTools.findAndReplace(
+      [targetDir],
+      /{i18n}/g,
+      '{msg desc=""}',
+      true
+    );
+    fileTools.findAndReplace(
+      [targetDir],
+      /{\/i18n}/g,
+      '{/msg}',
+      true
+    );
+
+    files = fileTools.getGlobFiles(targetDir +  '/**/*.soy');
+    delete options.use_i18n;
+  }
+
   // Output Path Format
   if (!options.outputPathFormat) {
-    options.outputPathFormat = targetDir +
-      '/{INPUT_DIRECTORY}{INPUT_FILE_NAME}.js';
+    options.outputPathFormat = path.join(targetDir,
+      '{INPUT_DIRECTORY}{INPUT_FILE_NAME}.js');
   }
 
   // Handling files

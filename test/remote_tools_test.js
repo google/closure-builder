@@ -19,8 +19,8 @@
  */
 var path = require('path');
 
-var buildTools = require('../build_tools.js');
-var testDirectory = path.join(buildTools.getTempPath('closure-builder-test'),
+var pathTools = require('../tools/path.js');
+var testDirectory = path.join(pathTools.getTempPath('closure-builder-test'),
   'remote-tools/');
 
 var remoteTools = require('../tools/remote.js');

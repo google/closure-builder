@@ -21,6 +21,7 @@ var path = require('path');
 var progressBar = require('progress');
 var randomString = require('randomstring');
 
+var pathTools = require('./tools/path.js');
 var BuildType = require('./build_types.js');
 var BuildTools = require('./build_tools.js');
 
@@ -59,6 +60,9 @@ var BuildConfig = function(config) {
   /** @type {!BuildType} */
   this.type = this.config.type || BuildType.UNKNOWN;
 
+  /** @type {!string} */
+  this.i18n = this.config.i18n || '';
+
   /** @type {!boolean} */
   this.excludeTest = this.options.exclude_test || false;
 
@@ -70,6 +74,9 @@ var BuildConfig = function(config) {
 
   /** @private */
   this.runTime_ = Date.now();
+
+  /** @private {!boolean} */
+  this.showMessages_ = true;
 
   /** @type {!boolean} */
   this.compress = this.config.compress || false;
@@ -106,10 +113,10 @@ var BuildConfig = function(config) {
   this.out = this.config.out;
 
   /** @type {!string} */
-  this.outPath = BuildTools.getFilePath(this.out) || '';
+  this.outPath = pathTools.getFilePath(this.out) || '';
 
   /** @type {!string} */
-  this.outFile = BuildTools.getPathFile(this.out) || randomString.generate();
+  this.outFile = pathTools.getPathFile(this.out) || randomString.generate();
 
   /** @type {!object} */
   this.soyCompilerOptions = this.options.soy || {
@@ -144,6 +151,12 @@ var BuildConfig = function(config) {
 
   /** @type {boolean} */
   this.requireSoyLibrary = requirements.requireSoyLibrary;
+
+  /** @type {boolean} */
+  this.requireSoyi18n = requirements.requireSoyi18n;
+
+  /** @type {!string} */
+  this.entryPoint = this.config.entryPoint || requirements.entryPoint;
 
   /** @type {!array} */
   this.jscompOff = this.config.jscomp_off || [];
@@ -235,7 +248,7 @@ BuildConfig.prototype.getResourceFiles = function() {
  */
 BuildConfig.prototype.getTempPath = function() {
   if (!this.tempPath) {
-    this.tempPath = BuildTools.getRandomTempPath();
+    this.tempPath =pathTools.getRandomTempPath();
   }
   return this.tempPath;
 };
@@ -333,17 +346,27 @@ BuildConfig.prototype.hasResourceFiles = function() {
 
 
 /**
+ * @param {!boolean} show
+ */
+BuildConfig.prototype.showMessages = function(show) {
+  this.showMessages_ = show;
+};
+
+
+/**
  * @param {!string} message
  * @param {number=} opt_percent
  */
 BuildConfig.prototype.setMessage = function(message, opt_percent) {
-  var messageBlock = {
-    'message': message
-  };
-  if (opt_percent) {
-    this.bar_.tick(opt_percent, messageBlock);
-  } else {
-    this.bar_.tick(messageBlock);
+  if (this.showMessages_) {
+    var messageBlock = {
+      'message': message
+    };
+    if (opt_percent) {
+      this.bar_.tick(opt_percent, messageBlock);
+    } else {
+      this.bar_.tick(messageBlock);
+    }
   }
 };
 

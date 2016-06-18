@@ -19,6 +19,7 @@
  */
 var log = require('loglevel');
 
+var fileTools = require('./tools/file.js');
 var buildConfig = require('./build_config.js');
 var buildTools = require('./build_tools.js');
 var buildType = require('./build_types.js');
@@ -37,13 +38,13 @@ var ClosureBuilder = function() {
   this.logLevel = 'info';
 
   /** @type {string} */
-  this.modulePath = buildTools.getModulePath();
-
-  /** @type {string} */
   this.selfPath = __dirname;
 
   /** @type {Object} */
   this.nameCache = {};
+
+  /** @private {boolean} */
+  this.showMessages_ = true;
 
 };
 
@@ -57,6 +58,14 @@ ClosureBuilder.prototype.setLogLevel = function(loglevel) {
     log.warn('Set loglevel to', loglevel);
     log.setLevel(loglevel);
   }
+};
+
+
+/**
+ * @param {!boolean} show
+ */
+ClosureBuilder.prototype.showMessages = function(show) {
+  this.showMessages_ = show;
 };
 
 
@@ -96,7 +105,10 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
     return;
   }
 
+  // Show additional status messages
+  config.showMessages(this.showMessages_);
   config.setMessage('Collecting file informations ...');
+
   this.showConfigInformation(config);
 
   config.setMessage('Compiler Type: ' + type);
@@ -142,8 +154,10 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
 ClosureBuilder.prototype.showConfigInformation = function(config) {
   log.debug('Type:', config.type);
   log.debug('Closure namespace:', config.closureNamespace);
-  log.debug('Require closure library:', config.requireClosureLibrary);
+  log.debug('Require ECMAScript6:', config.requireECMAScript6);
   log.debug('Require closure export:', config.requireClosureExport);
+  log.debug('Require closure library:', config.requireClosureLibrary);
+  log.debug('Require soy i18n:', config.requireSoyi18n);
   log.debug('Require soy library:', config.requireSoyLibrary);
   log.debug('License file:', config.license);
 
@@ -193,8 +207,10 @@ ClosureBuilder.prototype.compileClosureFiles = function(config, opt_files,
     opt_callback) {
   config.setMessage('Compiling Closure Files');
   var files = [].concat(config.getClosureFiles(), opt_files || []);
-  buildCompilers.compileJsFiles(files, config.getOutFilePath(), config.name,
-    config.closureCompilerOptions, opt_callback, config);
+  buildCompilers.compileJsFiles(files, config.getOutFilePath(), {
+    config: config,
+    options: config.closureCompilerOptions
+  }, opt_callback);
 };
 
 
@@ -209,8 +225,10 @@ ClosureBuilder.prototype.compileJavaScriptFiles = function(config,
   if (files.length == 0) {
     files = config.getNodeFiles();
   }
-  buildCompilers.compileJsFiles(files, config.getOutFilePath(), null,
-    config.closureCompilerOptions, opt_callback, config);
+  buildCompilers.compileJsFiles(files, config.getOutFilePath(), {
+    config: config,
+    options: config.closureCompilerOptions
+  }, opt_callback);
 };
 
 
@@ -311,7 +329,7 @@ ClosureBuilder.prototype.copyResources = function(config, opt_callback) {
  * @return {function}
  */
 ClosureBuilder.prototype.globSupport = function() {
-  return buildTools.getGlobFiles;
+  return fileTools.getGlobFiles;
 };
 
 

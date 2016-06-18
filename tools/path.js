@@ -19,11 +19,11 @@
  */
 var fs = require('fs-extra');
 var log = require('loglevel');
-var mkdirp = require('mkdirp');
 var os = require('os');
 var path = require('path');
+var pathParse = require('path-parse');
 var randomstring = require('randomstring');
-var touch = require('touch');
+var url = require('url');
 
 
 
@@ -193,28 +193,44 @@ PathTools.getRandomTempPath = function(opt_name) {
  */
 PathTools.getTempPath = function(opt_name) {
   var tempPath = path.join(os.tmpdir(), opt_name || '');
-  PathTools.mkdir(tempPath);
   return tempPath;
 };
 
 
 /**
- * @param {string} dir_path
+ * @param {string} file
+ * @return {string} file path
  */
-PathTools.mkdir = function(dir_path) {
-  if (!PathTools.existDirectory(dir_path)) {
-    mkdirp.sync(dir_path);
-  }
+PathTools.getFilePath = function(file) {
+  return (file && pathParse(file).ext) ? pathParse(file).dir : file;
 };
 
 
 /**
  * @param {string} file_path
+ * @return {string} file
  */
-PathTools.mkfile = function(file_path) {
-  var dir_path = path.dirname(file_path);
-  PathTools.mkdir(dir_path);
-  touch.sync(file_path);
+PathTools.getPathFile = function(file_path) {
+  return (file_path && pathParse(file_path).ext) ?
+     pathParse(file_path).base : '';
+};
+
+
+/**
+ * @param {string} file_url
+ * @return {string} file
+ */
+PathTools.getUrlFile = function(file_url) {
+  return path.basename(url.parse(file_url).pathname);
+};
+
+
+/**
+ * @param {string} file
+ * @return {string} base folder
+ */
+PathTools.getFileBase = function(file) {
+  return pathParse(file).base;
 };
 
 

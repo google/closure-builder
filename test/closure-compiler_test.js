@@ -20,7 +20,8 @@
 var assert = require('assert');
 var buildTools = require('../build_tools.js');
 var closureCompiler = require('../compilers/closure-compiler/compiler.js');
-var glob = buildTools.getGlobFiles;
+var fileTools = require('../tools/file.js');
+var glob = fileTools.getGlobFiles;
 
 var largeMemoryTest = buildTools.checkAvailableMemory(600);
 var onlineStatus = true;

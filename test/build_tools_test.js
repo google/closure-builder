@@ -18,74 +18,18 @@
  * @author mbordihn@google.com (Markus Bordihn)
  */
 var assert = require('assert');
-var os = require('os');
-var buildTools = require('../build_tools');
-var path = require('path');
 
-var pathWin = 'C:\\path\\dir\\subdir';
-var pathUnix = '/home/user/dir/subdir';
-var fileWin = 'C:\\path\\dir\\index.html';
-var fileUnix = '/home/user/dir/file.txt';
-var fileMarkdownWin = 'C:\\path\\dir\\index.md';
-var fileMarkdownUnix = '/home/user/dir/file.md';
-var fileRemote = 'http://www.example.com:80/dir/subdir/file.xml?test=1&test=2';
-var fileRemoteHash = 'https://www.example.com:80/dir/subdir/file.xml#dummy';
+var buildTools = require('../build_tools');
+var fileTools = require('../tools/file.js');
+
 var testFilesPath = 'test_files/resources/';
-var testDirectory = buildTools.getTempPath('closure-builder-test');
 
 
 describe('buildTools', function() {
 
-  describe('Path', function() {
-    it('getModulePath', function() {
-      var modulePath = buildTools.getModulePath();
-      assert(modulePath.indexOf('node_modules') != -1);
-    });
-    it('getFilePath', function() {
-      assert.equal(buildTools.getFilePath(pathUnix), pathUnix);
-      assert.equal(buildTools.getFilePath(fileUnix), '/home/user/dir');
-      assert.equal(buildTools.getFilePath(fileMarkdownUnix), '/home/user/dir');
-      if (os.platform() == 'win32') {
-        assert.equal(buildTools.getFilePath(pathWin), pathWin);
-        assert.equal(buildTools.getFilePath(fileWin), 'C:\\path\\dir');
-        assert.equal(buildTools.getFilePath(fileMarkdownWin), 'C:\\path\\dir');
-      }
-    });
-    it('getPathFile', function() {
-      assert.equal(buildTools.getPathFile(fileUnix), 'file.txt');
-      assert.equal(buildTools.getPathFile(fileMarkdownUnix), 'file.md');
-      if (os.platform() == 'win32') {
-        assert.equal(buildTools.getPathFile(fileWin), 'index.html');
-        assert.equal(buildTools.getPathFile(fileMarkdownWin), 'index.md');
-      }
-    });
-    it('getTempPath', function() {
-      assert.equal(buildTools.getTempPath(), os.tmpdir());
-      assert(buildTools.getTempPath('test123').indexOf('test123') != -1);
-    });
-    it('getRandomTempPath', function() {
-      var path1 = buildTools.getRandomTempPath();
-      var path2 = buildTools.getRandomTempPath();
-      assert(path1 !== path2);
-      assert(path1.indexOf(os.tmpdir()) !== -1);
-      assert(path2.indexOf(os.tmpdir()) !== -1);
-    });
-  });
-
-  describe('Url', function() {
-    it('getUrlFile', function() {
-      assert.equal(buildTools.getUrlFile(fileRemote), 'file.xml');
-      assert.equal(buildTools.getUrlFile(fileRemoteHash), 'file.xml');
-    });
-  });
-
   describe('Files', function() {
-    it ('getGlobFiles', function() {
-      var files = buildTools.getGlobFiles(testFilesPath + '*');
-      assert(files.length >= 9);
-    });
     it('sortFiles', function() {
-      var files = buildTools.getGlobFiles(testFilesPath + '*');
+      var files = fileTools.getGlobFiles(testFilesPath + '*');
       var sortedFilesAll = buildTools.sortFiles(files, true);
       var sortedFiles = buildTools.sortFiles(files);
       var sortedFilesWithoutTest = buildTools.sortFiles(files, false, true);
@@ -94,12 +38,7 @@ describe('buildTools', function() {
       assert(sortedFiles.length > sortedFilesWithoutTest.length);
       assert(sortedFilesWithoutTest.length > 5);
     });
-    it('mkfile', function() {
-      var file = path.join(testDirectory, 'tools', 'example-file');
-      buildTools.mkfile(file);
-      assert(buildTools.existFile(file));
-      assert(!buildTools.existDirectory(file));
-    });
+
     it('getSafeFileList', function() {
       var files = ['a1', 'a2', 'a3', 'a4', 'a5', 'b2', 'a4'];
       var expectedFiles = ['"a1"', '"a2"', '"a3"', '"a4"', '"a5"', '"b2"'];
@@ -109,20 +48,12 @@ describe('buildTools', function() {
     });
   });
 
-  describe('Directory', function() {
-    it('mkdir', function() {
-      var folder = path.join(testDirectory, 'tools', 'example-folder');
-      buildTools.mkdir(folder);
-      assert(!buildTools.existFile(folder));
-      assert(buildTools.existDirectory(folder));
-    });
-  });
-
   describe('Misc', function() {
     it ('getMemory', function() {
       var memory = buildTools.getMemory();
       assert(memory > 16);
     });
+
     it ('checkAvailableMemory', function() {
       var largeMemory = buildTools.checkAvailableMemory(
         buildTools.getMemory() + 128);

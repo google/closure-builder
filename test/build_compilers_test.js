@@ -26,13 +26,17 @@ var testConfigs = require('../test/test_configs.js');
 var largeMemoryTest = buildTools.checkAvailableMemory(600);
 
 describe('ClosureBuilder', function() {
+  closureBuilder.showMessages(false);
 
   describe('Structure', function() {
     it('Object', function() {
       assert.equal(typeof closureBuilder, 'object');
     });
-    it('function', function() {
+    it('build', function() {
       assert.equal(typeof closureBuilder.build, 'function');
+    });
+    it('showMessages', function() {
+      assert.equal(typeof closureBuilder.showMessages, 'function');
     });
   });
 
@@ -116,6 +120,18 @@ describe('ClosureBuilder', function() {
         done();
       });
     });
+
+    /**it('i18n', function(done) {
+      this.timeout(30000);
+      closureBuilder.build(testConfigs.soyTesti18nConfig, function(errors,
+          warnings, files) {
+        assert(!errors);
+        assert(!warnings);
+        assert(files);
+        done();
+      });
+    });*/
+
   });
 
   describe('ECMA Script 6', function() {
