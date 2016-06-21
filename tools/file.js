@@ -161,7 +161,8 @@ FileTools.findAndReplace = function(files, regex, replacement, opt_recursive) {
     regex: regex,
     replacement: replacement,
     paths: files,
-    recursive: opt_recursive
+    recursive: opt_recursive,
+    silent: true
   });
 };
 
