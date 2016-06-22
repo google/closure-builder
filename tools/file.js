@@ -22,6 +22,7 @@ var glob = require('glob');
 var mkdirp = require('mkdirp');
 var path = require('path');
 var replace = require('replace');
+var rimraf = require('rimraf');
 var touch = require('touch');
 
 var pathTools = require('./path.js');
@@ -151,9 +152,9 @@ FileTools.makeTempDir = function(opt_name) {
 
 
 /**
- * @param {array} args
- * @param {function} callback
- * @param {string=} opt_java
+ * @param {!(string|array)} files
+ * @param {!string} regex
+ * @param {!string=} replacement
  * @param {boolean=} opt_recursive
  */
 FileTools.findAndReplace = function(files, regex, replacement, opt_recursive) {
@@ -164,6 +165,18 @@ FileTools.findAndReplace = function(files, regex, replacement, opt_recursive) {
     recursive: opt_recursive,
     silent: true
   });
+};
+
+
+/**
+ * @param {array} files
+ * @param {function} opt_callback
+ */
+FileTools.removeFiles = function(files, opt_callback) {
+  if (opt_callback) {
+    rimraf(files, {}, opt_callback);
+  }
+  rimraf.sync(files,  { nosort: true, silent: false });
 };
 
 

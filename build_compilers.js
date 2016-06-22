@@ -238,7 +238,7 @@ BuildCompilers.compileCssFiles = function(files, out, opt_callback,
   var compilerEvent = function(errors, minified) {
     if (errors) {
       var errorsMessage = 'Failed for ' + out + ':' + errors;
-      this.errorCssCompiler(errorsMessage);
+      BuildCompilers.errorCssCompiler(errorsMessage);
       if (opt_config) {
         opt_config.setMessage(errorsMessage);
       }
@@ -423,16 +423,6 @@ BuildCompilers.compileJsFiles = function(files, out,
   }.bind(this);
   closureCompiler.compile(files, options, null, compilerEvent,
     useRemoteService);
-};
-
-
-/**
- * @param {string} msg
- */
-BuildCompilers.infoCssCompiler = function(msg) {
-  if (msg) {
-    log.info('[Css Compiler]', msg);
-  }
 };
 
 

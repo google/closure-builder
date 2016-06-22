@@ -19,6 +19,7 @@
  */
 var path = require('path');
 
+var fileTools = require('./tools/file.js');
 var javaTools = require('./tools/java.js');
 var packageJson = require('./package.json');
 var remoteTools = require('./tools/remote.js');
@@ -54,6 +55,16 @@ remoteTools.getFiles(
   path.join('.', 'runtime', 'closure-stylesheets')
 );
 
+// Google Closure Library
+console.log('Optimized Google Closure Library ...');
+var closureLibrary = path.join('.', 'third_party', 'closure-library', '**');
+fileTools.removeFiles(path.join(closureLibrary, '*_test.js'));
+fileTools.removeFiles(path.join(closureLibrary, '*_test.html'));
+fileTools.removeFiles(path.join(closureLibrary, 'test_module.js'));
+fileTools.removeFiles(path.join(closureLibrary, 'test_module_dep.js'));
+
+// Google Closure Templates
+console.log('Optimized Google Closure Templates ...');
 
 // JAVA check
 console.log('Perform basic Java checks ...');
