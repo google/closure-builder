@@ -151,47 +151,65 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
 
   for (var i = files.length - 1; i >= 0; i--) {
     var file = files[i];
-    if (file.indexOf('.soy') !== -1 && file.indexOf('.soy.js') === -1) {
+
+    // Handling soy files.
+    if (file.endsWith('.soy')) {
       var soyContent = fs.readFileSync(file, 'utf8');
-      if (soyContent.indexOf('{i18n}') !== -1 &&
-          soyContent.indexOf('{/i18n}') !== -1) {
+      if (soyContent.includes('{i18n}') &&
+          soyContent.includes('{/i18n}')) {
         requireSoyi18n = true;
       }
       requireSoyLibrary = true;
       soyFiles.push(file);
-    } else if (file.indexOf('.js') !== -1) {
+
+    // Handling JavaScript files.
+    } else if (file.endsWith('.js')) {
       var fileContent = fs.readFileSync(file, 'utf8');
-      if (fileContent.indexOf('goog.provide(') !== -1 ||
-          fileContent.indexOf('goog.require(') !== -1 ||
-          fileContent.indexOf('goog.module(') !== -1) {
-        if (fileContent.indexOf(' * @export') !== -1) {
+      if (fileContent.includes('goog.provide(') ||
+          fileContent.includes('goog.require(') ||
+          fileContent.includes('goog.module(')) {
+        if (fileContent.includes(' * @export')) {
           requireClosureExport = true;
         }
         closureFiles.push(file);
-      } else if (fileContent.indexOf('require(' !== -1) &&
-        fileContent.indexOf('module.exports') !== -1) {
+      } else if (fileContent.includes('require(') &&
+                 fileContent.includes('module.exports')) {
         nodeFiles.push(file);
       } else {
         jsFiles.push(file);
       }
-      if (opt_entry_point && fileContent.indexOf(
-          'goog.provide(\'' + opt_entry_point + '\'') !== -1) {
-        entryPoint = opt_entry_point;
+
+      // Validating possible entry points.
+      if (opt_entry_point) {
+        if (fileContent.includes('goog.provide(\'' + opt_entry_point + '\'') ||
+            fileContent.includes('goog.module(\'' + opt_entry_point + '\'')) {
+          entryPoint = opt_entry_point;
+        }
       }
-      if (fileContent.indexOf('goog.require(\'goog.') !== -1 ||
-          fileContent.indexOf('goog.require("goog.') !== -1) {
+
+      // Require closure library ?
+      if (fileContent.includes('goog.require(\'goog.') ||
+          fileContent.includes('goog.require("goog.')) {
         requireClosureLibrary = true;
       }
-      if (fileContent.indexOf('goog.require(\'soy') !== -1 ||
-          fileContent.indexOf('goog.require(\'soydata') !== -1) {
+
+      // Require soy library ?
+      if (fileContent.includes('goog.require(\'soy') ||
+          fileContent.includes('goog.require(\'soydata')) {
         requireSoyLibrary = true;
       }
+
+      // ECMAScript6
       if (/(let|const)\s+\w+\s?=/.test(fileContent)) {
         requireECMAScript6 = true;
       }
-    } else if (file.indexOf('.css') !== -1) {
+
+    // Handling CSS files.
+    } else if (file.endsWith('.css')) {
       cssFiles.push(file);
-    } else if (file.indexOf('.md') !== -1) {
+
+    // Handling Markdown files.
+    } else if (file.endsWith('.md')) {
       markdownFiles.push(file);
     }
   }

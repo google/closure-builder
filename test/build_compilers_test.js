@@ -121,17 +121,6 @@ describe('ClosureBuilder', function() {
       });
     });
 
-    /**it('i18n', function(done) {
-      this.timeout(30000);
-      closureBuilder.build(testConfigs.soyTesti18nConfig, function(errors,
-          warnings, files) {
-        assert(!errors);
-        assert(!warnings);
-        assert(files);
-        done();
-      });
-    });*/
-
   });
 
   describe('ECMA Script 6', function() {
@@ -195,15 +184,16 @@ describe('ClosureBuilder', function() {
         done();
       });
     });
-    /**it('Module files', function(done) {
+    it('Module files', function(done) {
       this.timeout(30000);
       closureBuilder.build(testConfigs.closureTestModuleConfig, function(
           errors, warnings) {
+        console.log(errors, warnings);
         assert(!errors);
         assert(!warnings);
         done();
       });
-    });*/
+    });
     it('Duplicate input files', function(done) {
       this.timeout(25000);
       closureBuilder.build(testConfigs.closureTestDuplicateConfig, function(

@@ -70,13 +70,17 @@ PathTools.getClosureCompilerPath = function() {
  * @return {!string}
  */
 PathTools.getClosureCompilerJar = function() {
-  var closureCompilerJar = path.join(PathTools.getClosureCompilerPath(),
-    'compiler.jar');
-  if (!PathTools.existFile(closureCompilerJar)) {
-    log.error('Closure compiler jar was not found at', closureCompilerJar);
+  var searchPath = PathTools.getClosureCompilerPath();
+  var compilerJar = path.join(searchPath, 'compiler.jar');
+  if (!PathTools.existFile(compilerJar)) {
+    compilerJar = PathTools.searchFile(
+      searchPath, 'closure-compiler-v', '.jar');
+  }
+  if (!PathTools.existFile(compilerJar)) {
+    log.error('Closure compiler jar was not found at', searchPath);
     return '';
   }
-  return closureCompilerJar;
+  return compilerJar;
 };
 
 
@@ -166,14 +170,39 @@ PathTools.getClosureTemplatesCompilerPath = function() {
  * @return {!string}
  */
 PathTools.getClosureTemplatesCompilerJar = function() {
-  var closureTemplatesCompilerJar = path.join(
+  var compilerJar = path.join(
     PathTools.getClosureTemplatesCompilerPath(), 'SoyToJsSrcCompiler.jar');
-  if (!PathTools.existFile(closureTemplatesCompilerJar)) {
-    log.error('Closure templates compiler jar was not found at',
-      closureTemplatesCompilerJar);
+  if (!PathTools.existFile(compilerJar)) {
+    log.error('Closure templates compiler jar was not found at', compilerJar);
     return '';
   }
-  return closureTemplatesCompilerJar;
+  return compilerJar;
+};
+
+
+/**
+ * @return {!string}
+ */
+PathTools.getClosureStylesheetsCompilerPath = function() {
+  return PathTools.getResourcePath('closure-stylesheets', 'runtime');
+};
+
+
+/**
+ * @return {!string}
+ */
+PathTools.getClosureStylesheetsJar = function() {
+  var searchPath = PathTools.getClosureStylesheetsCompilerPath();
+  var compilerJar = path.join(searchPath, 'closure-stylesheets.jar');
+  if (!PathTools.existFile(compilerJar)) {
+    compilerJar = PathTools.searchFile(
+      searchPath, 'closure-stylesheets', '.jar');
+  }
+  if (!PathTools.existFile(compilerJar)) {
+    log.error('Closure stylesheets jar was not found at', searchPath);
+    return '';
+  }
+  return compilerJar;
 };
 
 
@@ -248,8 +277,8 @@ PathTools.existDirectory = function(dir_path) {
 
 
 /**
- * @param {string} file_path
- * @return {boolean} File exists.
+ * @param {!string} file_path
+ * @return {!boolean} File exists.
  */
 PathTools.existFile = function(file_path) {
   try {
@@ -261,14 +290,34 @@ PathTools.existFile = function(file_path) {
 
 
 /**
- * @param {string} file_path
- * @return {boolean} True of possible file.
+ * @param {!string} file_path
+ * @return {!boolean} True of possible file.
  */
 PathTools.isFile = function(file_path) {
   if (path.extname(file_path)) {
     return true;
   }
   return false;
+};
+
+
+/**
+ * @param {!string} file_path
+ * @param {!string} name
+ * @param {string=} opt_extension
+ * @return {string} file_path
+ */
+PathTools.searchFile = function(file_path, name, opt_extension) {
+  var files = fs.readdirSync(file_path);
+  var result = '';
+  files.forEach(function(file) {
+    if (file.indexOf(name) !== -1 &&
+        (!opt_extension || file.endsWith(opt_extension))) {
+      result = path.join(file_path, file);
+      return;
+    }
+  });
+  return result;
 };
 
 

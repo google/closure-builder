@@ -29,140 +29,6 @@ var onlineStatus = true;
 
 describe('Closure Compiler::', function() {
 
-  // Remote compiler tests
-  describe('Remote Compiler:', function() {
-
-    if (onlineStatus) {
-
-      it('Single file', function(done) {
-        this.timeout(25000);
-        var files = ['test_files/closure_test_1.js'];
-        closureCompiler.remoteCompile(files, null, null,
-          function(errors, warnings, file, content) {
-            assert(!errors);
-            assert(!warnings);
-            assert.equal(content,
-              'var closure_test_1=function(){return"_CLOSURE_TEST_1"};\n');
-            done();
-          });
-      });
-
-      it('Two files', function(done) {
-        this.timeout(25000);
-        var files = [
-          'test_files/closure_test_1.js',
-          'test_files/closure_test_2.js'
-        ];
-        closureCompiler.remoteCompile(files, null, null,
-          function(errors, warnings, file, content) {
-            assert(!errors);
-            assert(!warnings);
-            assert.equal(content,
-              'var closure_test_1=function(){return"_CLOSURE_TEST_1"};' +
-              'var closure_test_2=function(){return closure_test_1()+' +
-              '"_CLOSURE_TEST_2"};\n');
-            done();
-          });
-      });
-
-      it('Expected Error Message', function(done) {
-        this.timeout(30000);
-        var files =  ['test_files/special/closure_error.js'];
-        var options = {};
-        closureCompiler.remoteCompile(files, options, null,
-          function(errors, warnings, files, content) {
-            assert(errors);
-            assert(!warnings);
-            assert(!content);
-            done();
-          });
-      });
-
-      it('Expected Warning Message', function(done) {
-        this.timeout(30000);
-        var files =  ['test_files/special/closure_warning.js'];
-        var options = {};
-        closureCompiler.remoteCompile(files, options, null,
-          function(errors, warnings, files, content) {
-            assert(!errors);
-            assert(warnings);
-            assert(content);
-            done();
-          });
-      });
-
-      it('Closure Library', function(done) {
-        if (!largeMemoryTest) {
-          return done();
-        }
-        this.timeout(25000);
-        var files =  ['test_files/closure_library_test.js'];
-        var options = {
-          use_closure_library: true
-        };
-        closureCompiler.remoteCompile(files, options, null,
-          function(errors, warnings, files, content) {
-            assert(!errors);
-            assert(!warnings);
-            assert(content);
-            done();
-          });
-      });
-
-      it('Soy file', function(done) {
-        this.timeout(25000);
-        var files =  [
-          'test_files/special/closure_soy_test.js',
-          'test_files/special/closure_soy_test.soy.js'
-        ];
-        var options = {
-          use_closure_templates: true
-        };
-        closureCompiler.remoteCompile(files, options, null,
-          function(errors, warnings, files, content) {
-            assert(!errors);
-            assert(!warnings);
-            assert(content);
-            done();
-          });
-      });
-
-      it('Unsupported Closure entry point', function(done) {
-        this.timeout(25000);
-        var files = glob(['test_files/closure_test_*.js']);
-        var options = {
-          entry_point: 'closure_test_group'
-        };
-        closureCompiler.remoteCompile(files, options, null,
-          function(errors, warnings, files, content) {
-            assert(errors);
-            assert(!warnings);
-            assert(!content);
-            done();
-          });
-      });
-
-      it('Unsupported @export handling', function(done) {
-        this.timeout(40000);
-        var files =  ['test_files/special/closure_export.js'];
-        var options = {
-          generate_exports: true
-        };
-        closureCompiler.remoteCompile(files, options, null,
-          function(errors, warnings, files, content) {
-            assert(errors);
-            assert(!warnings);
-            assert(!content);
-            done();
-          });
-      });
-
-    } else {
-      console.warn('Skipping online tests...');
-    }
-
-  });
-
   // Local compiler tests
   describe('Local Compiler:', function() {
 
@@ -266,22 +132,26 @@ describe('Closure Compiler::', function() {
         });
     });
 
-    /**it('Module files', function(done) {
+    it('Module files', function(done) {
       this.timeout(30000);
       var files =  glob(['test_files/closure_test_*.js']);
       var options = {
         dependency_mode: 'STRICT',
         entry_point: 'closure_test_require_module',
-        use_closure_basefile: true
       };
       closureCompiler.localCompile(files, options, null,
         function(errors, warnings, files, content) {
           assert(!errors);
           assert(!warnings);
           assert(content);
+          assert(content.indexOf('_CLOSURE_TEST_MODULE') !== -1);
+          assert(content.indexOf(
+            'var module$exports$closure_test_module={') !== -1);
+          assert(content.indexOf(
+            'var module$exports$closure_test_require_module=function') !== -1);
           done();
         });
-    });*/
+    });
 
     it('Expected Error Message', function(done) {
       this.timeout(30000);
@@ -439,6 +309,140 @@ describe('Closure Compiler::', function() {
           done();
         });
     });
+
+  });
+
+  // Remote compiler tests
+  describe('Remote Compiler:', function() {
+
+    if (onlineStatus) {
+
+      it('Single file', function(done) {
+        this.timeout(25000);
+        var files = ['test_files/closure_test_1.js'];
+        closureCompiler.remoteCompile(files, null, null,
+          function(errors, warnings, file, content) {
+            assert(!errors);
+            assert(!warnings);
+            assert.equal(content,
+              'var closure_test_1=function(){return"_CLOSURE_TEST_1"};\n');
+            done();
+          });
+      });
+
+      it('Two files', function(done) {
+        this.timeout(25000);
+        var files = [
+          'test_files/closure_test_1.js',
+          'test_files/closure_test_2.js'
+        ];
+        closureCompiler.remoteCompile(files, null, null,
+          function(errors, warnings, file, content) {
+            assert(!errors);
+            assert(!warnings);
+            assert.equal(content,
+              'var closure_test_1=function(){return"_CLOSURE_TEST_1"};' +
+              'var closure_test_2=function(){return closure_test_1()+' +
+              '"_CLOSURE_TEST_2"};\n');
+            done();
+          });
+      });
+
+      it('Expected Error Message', function(done) {
+        this.timeout(30000);
+        var files =  ['test_files/special/closure_error.js'];
+        var options = {};
+        closureCompiler.remoteCompile(files, options, null,
+          function(errors, warnings, files, content) {
+            assert(errors);
+            assert(!warnings);
+            assert(!content);
+            done();
+          });
+      });
+
+      it('Expected Warning Message', function(done) {
+        this.timeout(30000);
+        var files =  ['test_files/special/closure_warning.js'];
+        var options = {};
+        closureCompiler.remoteCompile(files, options, null,
+          function(errors, warnings, files, content) {
+            assert(!errors);
+            assert(warnings);
+            assert(content);
+            done();
+          });
+      });
+
+      it('Closure Library', function(done) {
+        if (!largeMemoryTest) {
+          return done();
+        }
+        this.timeout(25000);
+        var files =  ['test_files/closure_library_test.js'];
+        var options = {
+          use_closure_library: true
+        };
+        closureCompiler.remoteCompile(files, options, null,
+          function(errors, warnings, files, content) {
+            assert(!errors);
+            assert(!warnings);
+            assert(content);
+            done();
+          });
+      });
+
+      it('Soy file', function(done) {
+        this.timeout(25000);
+        var files =  [
+          'test_files/special/closure_soy_test.js',
+          'test_files/special/closure_soy_test.soy.js'
+        ];
+        var options = {
+          use_closure_templates: true
+        };
+        closureCompiler.remoteCompile(files, options, null,
+          function(errors, warnings, files, content) {
+            assert(!errors);
+            assert(!warnings);
+            assert(content);
+            done();
+          });
+      });
+
+      it('Unsupported Closure entry point', function(done) {
+        this.timeout(25000);
+        var files = glob(['test_files/closure_test_*.js']);
+        var options = {
+          entry_point: 'closure_test_group'
+        };
+        closureCompiler.remoteCompile(files, options, null,
+          function(errors, warnings, files, content) {
+            assert(errors);
+            assert(!warnings);
+            assert(!content);
+            done();
+          });
+      });
+
+      it('Unsupported @export handling', function(done) {
+        this.timeout(40000);
+        var files =  ['test_files/special/closure_export.js'];
+        var options = {
+          generate_exports: true
+        };
+        closureCompiler.remoteCompile(files, options, null,
+          function(errors, warnings, files, content) {
+            assert(errors);
+            assert(!warnings);
+            assert(!content);
+            done();
+          });
+      });
+
+    } else {
+      console.warn('Skipping online tests...');
+    }
 
   });
 

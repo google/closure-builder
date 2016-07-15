@@ -189,12 +189,6 @@ ClosureTemplates.parseErrorMessage = function(message) {
     } else {
       errors = 1;
     }
-
-    // Provide hints for common errors.
-    if (message.indexOf('java.lang.NoSuchMethodError: ' +
-      'com.google.common.io.Files.newReaderSupplier' !== -1)) {
-      ClosureTemplates.info('There is an problem with your guava library!\n');
-    }
   }
   return {
     errors: errors,
