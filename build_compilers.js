@@ -412,6 +412,12 @@ BuildCompilers.compileJsFiles = function(files, out,
     } else if (content) {
       if (config) {
         config.setMessage('Saving output to ' + out);
+        if (config.prependText) {
+          content = config.prependText + '\n' + content;
+        }
+        if (config.appendText) {
+          content = content + '\n' + config.appendText;
+        }
         if (config.license) {
           var license = fs.readFileSync(config.license, 'utf8');
           content = license + '\n\n' + content;

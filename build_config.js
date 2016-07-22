@@ -140,6 +140,12 @@ var BuildConfig = function(config) {
   /** @type {!string} */
   this.errors = '';
 
+  /** @type {!string} */
+  this.appendText = this.config.append || '';
+
+  /** @type {!string} */
+  this.prependText = this.config.prepend || '';
+
   // Checking requirements and make sure correct options are set.
   var requirements = BuildTools.getBuildRequirements(this);
 

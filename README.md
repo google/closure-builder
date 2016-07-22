@@ -91,6 +91,8 @@ These options could be used for adding additional information.
 
 - `type` Overwrites the automatic type detection
 - `out_source_map` Stores possible source map to the given out put file
+- `append` Append the given text to the final output
+- `prepend` Prepend the given text to the final output
 
 ##### Closure compiler options #####
 - `deps` Dependencies like additional closure files or additional file for the compiler
