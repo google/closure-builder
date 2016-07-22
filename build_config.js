@@ -118,6 +118,9 @@ var BuildConfig = function(config) {
   /** @type {!string} */
   this.outFile = pathTools.getPathFile(this.out) || randomString.generate();
 
+  /** @type {!string} */
+  this.outSourceMap = this.config.out_source_map || '';
+
   /** @type {!object} */
   this.soyCompilerOptions = this.options.soy || {
     shouldProvideRequireSoyNamespaces: true

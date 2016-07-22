@@ -68,7 +68,7 @@
     "randomstring": "1.1.5",
     "replace": "0.3.0",
     "touch": "1.0.0",
-    "validator": "5.4.0"
+    "validator": "5.5.0"
   },
   "devDependencies": {
     "assert": "latest",

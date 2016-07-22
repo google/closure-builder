@@ -391,6 +391,9 @@ BuildCompilers.compileJsFiles = function(files, out,
     if (!config.warn) {
       options.no_warnings = true;
     }
+    if (config.outSourceMap) {
+      options.create_source_map = config.outSourceMap;
+    }
     if (config.jscompOff !== undefined && config.jscompOff.length > 0) {
       options.jscomp_off = config.jscompOff;
     }

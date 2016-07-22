@@ -21,8 +21,11 @@ var assert = require('assert');
 var buildTools = require('../build_tools.js');
 var closureCompiler = require('../compilers/closure-compiler/compiler.js');
 var fileTools = require('../tools/file.js');
+var path = require('path');
 var glob = fileTools.getGlobFiles;
+var pathTools = require('../tools/path.js');
 
+var testDirectory = pathTools.getTempPath('closure-compiler-test');
 var largeMemoryTest = buildTools.checkAvailableMemory(600);
 var onlineStatus = true;
 
@@ -310,7 +313,28 @@ describe('Closure Compiler::', function() {
         });
     });
 
+    it('Create Source Map', function(done) {
+      this.timeout(40000);
+      var files =  ['test_files/special/closure_export.js'];
+      var options = {
+        dependency_mode: 'STRICT',
+        compilation_level: 'ADVANCED',
+        generate_exports: true,
+        entry_point: 'closure_test_export',
+        create_source_map: path.join(testDirectory, 'source_maps',
+          'closure_test_source_map.map')
+      };
+      closureCompiler.localCompile(files, options, null,
+        function(errors, warnings, files, content) {
+          assert(!errors);
+          assert(!warnings);
+          assert(content);
+          done();
+        });
+    });
+
   });
+
 
   // Remote compiler tests
   describe('Remote Compiler:', function() {

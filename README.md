@@ -18,6 +18,7 @@ static files as well.
 * [Requirements](#requirements)
 * [Basic Usage](#basic-usage)
 * [Options](#options)
+   * [Closure compiler options](#closure-compiler-options)
 * [Function callback](#function-callback)
 * [Example build configurations](#example-build-configurations)
   * [Compile closure JavaScript files](#compile-closure-javascript-files)
@@ -86,16 +87,22 @@ For copying files the required options are:
 - `out` Output path / output file for the compiled Soy, Closure or JavaScript files
 
 #### Additional ####
-These options could be used for adding additional information:
+These options could be used for adding additional information.
+
+- `type` Overwrites the automatic type detection
+- `out_source_map` Stores possible source map to the given out put file
+
+##### Closure compiler options #####
 - `deps` Dependencies like additional closure files or additional file for the compiler
+- `entry_point` Closure namespace if not already defined under `name`
+- `externs` Additional JavaScript externs for the compiler
 - `license` Additional license header file which will be include as header to the compiled files
+- `remote_service` If true use online remote services instead of local tools
+
+#### Verbose ####
 - `warn` If false disable all warning messages
 - `debug` If true display additional debug informations
 - `trace` If true display additional trace informations
-- `externs` Additional JavaScript externs for the compiler
-- `type` Overwrites the automatic type detection
-- `remote_service` If true use online remote services instead of local tools
-- `entry_point` Closure namespace if not already defined under `name`
 
 #### Options ####
 The following options are available for the closure and soy compiler:
