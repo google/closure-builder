@@ -93,6 +93,7 @@ These options could be used for adding additional information.
 - `out_source_map` Stores possible source map to the given out put file
 - `append` Append the given text to the final output
 - `prepend` Prepend the given text to the final output
+- `replace` Replace the given text on the final output
 
 ##### Closure compiler options #####
 - `deps` Dependencies like additional closure files or additional file for the compiler

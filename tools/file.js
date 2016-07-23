@@ -25,6 +25,7 @@ var replace = require('replace');
 var rimraf = require('rimraf');
 var touch = require('touch');
 
+var textTools = require('./text.js');
 var pathTools = require('./path.js');
 
 
@@ -123,6 +124,59 @@ FileTools.copySync = function(srcs, dest) {
     console.log(destFile);
     fs.copySync(srcs[i], destFile);
   }
+};
+
+
+/**
+ * @param {string!} file
+ * @param {string!} content
+ * @param {function=} opt_callback
+ * @param {BuildConfig=} opt_config
+ * @param {?} opt_warning
+ */
+FileTools.saveContent = function(file, content, opt_callback, opt_config,
+    opt_warning) {
+  var config = opt_config || false;
+  if (config) {
+    if (config) {
+      config.setMessage('Saving output to ' + file);
+    }
+    if (config.replaceText) {
+      content = textTools.replace(content, config.replaceText);
+    }
+    if (config.prependText) {
+      content = config.prependText + '\n' + content;
+    }
+    if (config.appendText) {
+      content = content + '\n' + config.appendText;
+    }
+    if (config.license) {
+      var license = fs.readFileSync(config.license, 'utf8');
+      content = license + '\n\n' + content;
+    }
+  }
+  var fileEvent = function(error) {
+    if (error) {
+      var errorMessage = 'Was not able to write file ' + file + ':' + error;
+      if (opt_config) {
+        opt_config.setMessage(errorMessage);
+      }
+      if (opt_callback) {
+        opt_callback('Was not able to write file ' + file + ':' + error,
+          opt_warning);
+      }
+    } else {
+      var successMessage = 'Saved file ' +
+        textTools.getTruncateText(file) + ' ( ' + content.length + ' )';
+      if (config) {
+        config.setMessage(successMessage);
+      }
+      if (opt_callback) {
+        opt_callback(false, opt_warning, file, content);
+      }
+    }
+  };
+  fs.outputFile(file, content, fileEvent.bind(this));
 };
 
 

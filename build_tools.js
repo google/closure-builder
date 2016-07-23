@@ -231,40 +231,6 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
 
 
 /**
- * @param {string!} file
- * @param {string!} content
- * @param {function=} opt_callback
- * @param {BuildConfig=} opt_config
- * @param {?} opt_warning
- */
-BuildTools.saveContent = function(file, content, opt_callback, opt_config,
-    opt_warning) {
-  var fileEvent = function(error) {
-    if (error) {
-      var errorMessage = 'Was not able to write file ' + file + ':' + error;
-      if (opt_config) {
-        opt_config.setMessage(errorMessage);
-      }
-      if (opt_callback) {
-        opt_callback('Was not able to write file ' + file + ':' + error,
-          opt_warning);
-      }
-    } else {
-      var successMessage = 'Saved file ' +
-        BuildTools.getTruncateText(file) + ' ( ' + content.length + ' )';
-      if (opt_config) {
-        opt_config.setMessage(successMessage);
-      }
-      if (opt_callback) {
-        opt_callback(false, opt_warning, file, content);
-      }
-    }
-  };
-  fs.outputFile(file, content, fileEvent.bind(this));
-};
-
-
-/**
  * @param {array} files
  * @return {array}
  */
@@ -342,23 +308,5 @@ BuildTools.getSafeMemory = function() {
   return safeMemory;
 };
 
-
-/**
- * Trucate a text in the middle.
- * @param {!string} text
- * @param {number=} opt_max_length
- * @param {string=} opt_seperator
- * @return {!string}
- */
-BuildTools.getTruncateText = function(text, opt_max_length, opt_seperator) {
-  var max_length = opt_max_length || 40;
-  if (text.length <= max_length) {
-    return text;
-  }
-  var seperator = opt_seperator || '…';
-  var textFront = text.substr(0, Math.ceil(max_length/2) - seperator.length);
-  var textEnd = text.substr(text.length - Math.floor(max_length/2));
-  return textFront + seperator + textEnd;
-};
 
 module.exports = BuildTools;

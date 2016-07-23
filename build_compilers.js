@@ -29,6 +29,7 @@ var buildTools = require('./build_tools.js');
 var fileTools = require('./tools/file.js');
 var pathTools = require('./tools/path.js');
 var remoteTools = require('./tools/remote.js');
+var textTools = require('./tools/text.js');
 
 var closureCompiler = require('./compilers/closure-compiler/compiler.js');
 var closureTemplatesCompiler = require(
@@ -213,7 +214,7 @@ BuildCompilers.compileSoyTemplates = function(files, out,
   var compilerEvent = function(errors, warnings, files) {
     if (!errors) {
       var success_message = 'Compiled ' + files.length + ' soy files to ' +
-        buildTools.getTruncateText(out);
+        textTools.getTruncateText(out);
       if (config) {
         config.setMessage(success_message);
       }
@@ -246,10 +247,7 @@ BuildCompilers.compileCssFiles = function(files, out, opt_callback,
         opt_callback(errors, false);
       }
     } else if (minified) {
-      if (opt_config) {
-        opt_config.setMessage('Saving output to ' + out);
-      }
-      buildTools.saveContent(out, minified.styles, opt_callback, opt_config);
+      fileTools.saveContent(out, minified.styles, opt_callback, opt_config);
     }
   }.bind(this);
   new cleanCss().minify(files, compilerEvent);
@@ -309,7 +307,7 @@ BuildCompilers.convertMarkdownFile = function(file, out, opt_callback,
   var content = marked(markdown);
   var destFile = path.join(out,
     pathTools.getPathFile(file).replace('.md', '.html'));
-  buildTools.saveContent(destFile, content, opt_callback, opt_config);
+  fileTools.saveContent(destFile, content, opt_callback, opt_config);
 };
 
 
@@ -352,10 +350,8 @@ BuildCompilers.convertMarkdownFiles = function(files, out,
  */
 BuildCompilers.compileJsFiles = function(files, out,
     opt_options, opt_callback) {
-  var options = (opt_options && opt_options.options) ?
-    opt_options.options : {};
-  var config = (opt_options && opt_options.config) ?
-    opt_options.config : false;
+  var options = (opt_options && opt_options.options) ? opt_options.options : {};
+  var config = (opt_options && opt_options.config) ? opt_options.config : false;
   log.debug('Compiling', files.length, 'files to', out, '...');
   log.trace(files);
   var useRemoteService = false;
@@ -410,20 +406,7 @@ BuildCompilers.compileJsFiles = function(files, out,
         opt_callback(errors, warnings);
       }
     } else if (content) {
-      if (config) {
-        config.setMessage('Saving output to ' + out);
-        if (config.prependText) {
-          content = config.prependText + '\n' + content;
-        }
-        if (config.appendText) {
-          content = content + '\n' + config.appendText;
-        }
-        if (config.license) {
-          var license = fs.readFileSync(config.license, 'utf8');
-          content = license + '\n\n' + content;
-        }
-      }
-      buildTools.saveContent(out, content, opt_callback, config, warnings);
+      fileTools.saveContent(out, content, opt_callback, config, warnings);
     } else {
       if (opt_callback) {
         opt_callback(errors, warnings);
