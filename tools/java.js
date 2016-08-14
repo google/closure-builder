@@ -35,6 +35,45 @@ JavaTools.maxBuffer = 10 * 1024 * 1024;  // 10MB
 
 
 /**
+ * @type {!number};
+ */
+JavaTools.minBuffer = 1024 * 1024;  // 1MB
+
+
+/**
+ * @return {boolean}
+ */
+JavaTools.hasJava = function() {
+  var result = JavaTools.execJavaSync(['-version']);
+  if (result && result.stderr &&
+      result.stderr.toString().toLowerCase().includes('java')) {
+    return true;
+  }
+  console.error(result);
+  return false;
+};
+
+
+/**
+ * @return {string}
+ */
+JavaTools.getJavaVersion = function() {
+  if (JavaTools.hasJava()) {
+    var result = JavaTools.execJavaSync(['-version']);
+    if (result && result.stderr) {
+      var version = result.stderr.toString();
+      if (version.toLowerCase().includes('java version')) {
+        return version.match(/java version \"?([0-9_.-]+)\"?/)[1];
+      } else {
+        return 'unknown';
+      }
+    }
+  }
+  return '';
+};
+
+
+/**
  * @param {array} args
  * @param {function} callback
  * @param {string=} opt_java
@@ -42,14 +81,27 @@ JavaTools.maxBuffer = 10 * 1024 * 1024;  // 10MB
 JavaTools.execJava = function(args, callback, opt_java) {
   var javaBin = opt_java || 'java';
   childProcess.execFile(javaBin, args, {
-    'maxBuffer': JavaTools.maxBuffer }, callback);
+    'maxBuffer': JavaTools.maxBuffer
+  }, callback);
+};
+
+
+/**
+ * @param {array} args
+ * @param {string=} opt_java
+ */
+JavaTools.execJavaSync = function(args, opt_java) {
+  var javaBin = opt_java || 'java';
+  return childProcess.spawnSync(javaBin, args, {
+    'minBuffer': JavaTools.maxBuffer
+  });
 };
 
 
 /**
  * @param {string} jar
  * @param {array} args
- * @param {function} callback
+ * @param {function} callback (error, stdout, stderr)
  * @param {string=} opt_java
  * @param {boolean=} opt_debug
  */

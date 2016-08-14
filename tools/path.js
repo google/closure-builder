@@ -311,7 +311,7 @@ PathTools.searchFile = function(file_path, name, opt_extension) {
   var files = fs.readdirSync(file_path);
   var result = '';
   files.forEach(function(file) {
-    if (file.indexOf(name) !== -1 &&
+    if (file.includes(name) &&
         (!opt_extension || file.endsWith(opt_extension))) {
       result = path.join(file_path, file);
       return;

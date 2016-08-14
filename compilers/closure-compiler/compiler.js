@@ -51,12 +51,7 @@ ClosureCompiler.DEBUG = false;
 ClosureCompiler.compile = function(files, opt_options, opt_target_file,
     opt_callback, opt_remote_service) {
   if (!files || files.length == 0) {
-    var errorMessage = 'No valid files are provided!';
-    ClosureCompiler.error(errorMessage);
-    if (opt_callback) {
-      opt_callback(errorMessage);
-    }
-    return;
+    return ClosureCompiler.error('No valid files are provided!', opt_callback);
   }
 
   if (opt_remote_service) {
@@ -78,8 +73,12 @@ ClosureCompiler.compile = function(files, opt_options, opt_target_file,
 ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     opt_callback) {
   if (!files) {
-    return;
+    return ClosureCompiler.error('No valid files are provided!', opt_callback);
   }
+  if (!javaTools.hasJava()) {
+    return ClosureCompiler.error('Java (JRE) is needed!', opt_callback);
+  }
+
   var i = 0;
   var compiler = pathTools.getClosureCompilerJar();
   var compilerOptions = [];
@@ -227,6 +226,10 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
  */
 ClosureCompiler.remoteCompile = function(files, opt_options, opt_target_file,
     opt_callback) {
+  if (!files) {
+    return ClosureCompiler.error('No valid files are provided!', opt_callback);
+  }
+
   // Handling options
   var unsupportedOptions = {
     'entry_point': true,
@@ -237,11 +240,7 @@ ClosureCompiler.remoteCompile = function(files, opt_options, opt_target_file,
     if (option in unsupportedOptions) {
       var errorMsg = 'ERROR - ' + option + ' is unsupported by the ' +
         'closure-compiler webservice!';
-      ClosureCompiler.error(errorMsg);
-      if (opt_callback) {
-        opt_callback(errorMsg);
-      }
-      return;
+      return ClosureCompiler.error(errorMsg, opt_callback);
     }
   }
 
@@ -344,10 +343,7 @@ ClosureCompiler.remoteCompile = function(files, opt_options, opt_target_file,
   });
 
   request.on('error', function(e) {
-    ClosureCompiler.error('HTTP request error:', e.message);
-    if (opt_callback) {
-      opt_callback(e.message);
-    }
+    ClosureCompiler.error('HTTP request error:' + e.message, opt_callback);
   });
 
   request.write(dataString);
@@ -390,13 +386,13 @@ ClosureCompiler.parseErrorMessage = function(message) {
     if (messageInfo) {
       errors = messageInfo[1];
       warnings = messageInfo[2];
-    } else if (message.indexOf('INTERNAL COMPILER ERROR') !== -1 ||
-               message.indexOf('NullPointerException') !== -1) {
+    } else if (message.includes('INTERNAL COMPILER ERROR') ||
+               message.includes('NullPointerException')) {
       errors = 1;
-    } else if (message.toLowerCase().indexOf('error') !== -1) {
+    } else if (message.toLowerCase().includes('error')) {
       errors = message.toLowerCase().split('error').length - 1;
-    } else if (message.toLowerCase().indexOf('warning') !== -1) {
-      if (message.indexOf('Java HotSpot\(TM\) Client VM warning') === -1 ||
+    } else if (message.toLowerCase().includes('warning')) {
+      if (!message.includes('Java HotSpot\(TM\) Client VM warning') ||
           message.toLowerCase().split('warning').length > 2) {
         warnings = message.toLowerCase().split('warning').length - 1;
       } else {
@@ -433,9 +429,13 @@ ClosureCompiler.warn = function(msg) {
 
 /**
  * @param {string} msg
+ * @param {function=} opt_callback
  */
-ClosureCompiler.error = function(msg) {
+ClosureCompiler.error = function(msg, opt_callback) {
   console.error('[Closure Compiler Error]', msg);
+  if (opt_callback) {
+    opt_callback(msg);
+  }
 };
 
 

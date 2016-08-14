@@ -165,7 +165,7 @@ RemoteTools.getTarGz = function(name, url, dest,
     opt_complete_callback, opt_error_callback) {
   var tempPath = pathTools.getRandomTempPath();
   var filename = pathTools.getUrlFile(url);
-  if (filename.indexOf('.tar.gz') == -1) {
+  if (!filename.endsWith('.tar.gz')) {
     filename = filename + '.tar.gz';
   }
   console.log('Downloading', name, '...');
@@ -177,8 +177,8 @@ RemoteTools.getTarGz = function(name, url, dest,
       strip: 1,
       mode: '755',
       filter: file => path.basename(file.path) !== 'tests' &&
-        path.basename(file.path).indexOf('_test.') === -1 &&
-        path.basename(file.path).indexOf('Test.java') === -1 &&
+        !path.basename(file.path).includes('_test.') &&
+        !path.basename(file.path).includes('Test.java') &&
         path.extname(file.path) !== '.sh' &&
         path.extname(file.path) !== '.bat' &&
         path.extname(file.path) !== '.exe' &&
@@ -201,7 +201,7 @@ RemoteTools.getZip = function(name, url, dest,
     opt_complete_callback, opt_error_callback) {
   var tempPath = pathTools.getRandomTempPath();
   var filename = pathTools.getUrlFile(url);
-  if (filename.indexOf('.zip') == -1) {
+  if (!filename.endsWith('.zip')) {
     filename = filename + '.zip';
   }
   console.log('Downloading', name, '...');
@@ -213,8 +213,8 @@ RemoteTools.getZip = function(name, url, dest,
       strip: 1,
       mode: '755',
       filter: file => path.basename(file.path) !== 'tests' &&
-        path.basename(file.path).indexOf('_test.') === -1 &&
-        path.basename(file.path).indexOf('Test.java') === -1 &&
+        !path.basename(file.path).includes('_test.') &&
+        !path.basename(file.path).includes('Test.java') &&
         path.extname(file.path) !== '.sh' &&
         path.extname(file.path) !== '.bat' &&
         path.extname(file.path) !== '.exe' &&

@@ -49,8 +49,13 @@ ClosureTemplates.DEBUG = false;
 ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
     opt_callback) {
   if (!files) {
-    return;
+    return ClosureTemplates.error('No valid files are provided!', opt_callback);
   }
+
+  if (!javaTools.hasJava()) {
+    return ClosureTemplates.error('Java (JRE) is needed!', opt_callback);
+  }
+
   var compiler = pathTools.getClosureTemplatesCompilerJar();
   var compilerOptions = [];
   var i = 0;
@@ -171,16 +176,16 @@ ClosureTemplates.parseErrorMessage = function(message) {
   var errors = 0;
   var warnings = 0;
   if (message) {
-    if (message.indexOf('INTERNAL COMPILER ERROR') !== -1 ||
-        message.indexOf('NullPointerException') !== -1 ||
-        message.indexOf('java.lang.NoSuchMethodError' !== -1)) {
+    if (message.includes('INTERNAL COMPILER ERROR') ||
+        message.includes('NullPointerException') ||
+        message.includes('java.lang.NoSuchMethodError')) {
       errors = 1;
-    } else if (message.toLowerCase().indexOf('error') !== -1) {
+    } else if (message.toLowerCase().includes('error')) {
       errors = message.toLowerCase().split('error').length - 1;
     } else if (message.toLowerCase().split('exception') !== -1) {
       errors = 1;
-    } else if (message.toLowerCase().indexOf('warning') !== -1) {
-      if (message.indexOf('Java HotSpot\(TM\) Client VM warning') === -1 ||
+    } else if (message.toLowerCase().includes('warning')) {
+      if (!message.includes('Java HotSpot\(TM\) Client VM warning') ||
           message.toLowerCase().split('warning').length > 2) {
         warnings = message.toLowerCase().split('warning').length - 1;
       } else {
@@ -217,9 +222,13 @@ ClosureTemplates.warn = function(msg) {
 
 /**
  * @param {string} msg
+ * @param {function=} opt_callback
  */
-ClosureTemplates.error = function(msg) {
+ClosureTemplates.error = function(msg, opt_callback) {
   console.error('[Closure Templates Error]', msg);
+  if (opt_callback) {
+    opt_callback(msg);
+  }
 };
 
 

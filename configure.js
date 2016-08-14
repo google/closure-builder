@@ -68,13 +68,10 @@ console.log('Optimized Google Closure Templates ...');
 
 // JAVA check
 console.log('Perform basic Java checks ...');
-javaTools.execJava(['-version'], function(error, stdout, stderr) {
-  if (!error && stderr && stderr.indexOf('java version') >= 0) {
-    var versionReg = /java version \"?([0-9_.-]+)\"?/;
-    var version = stderr.match(versionReg)[1];
-    console.log('Found global Java ...', version);
-  } else {
-    console.warn('No global Java available!!!\n' +
-      'Please install an Java Runtime (JRE) to be able to use all features!');
-  }
-});
+if (javaTools.hasJava()) {
+  console.log('Found global Java ...', javaTools.getJavaVersion());
+} else {
+  console.warn('\nWARNING!!!\nFound no global JRE!\n' +
+    'Please install an Java Runtime Environment (JRE), to be able to use' +
+    ' all features!\n');
+}
