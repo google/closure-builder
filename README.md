@@ -369,6 +369,25 @@ Development
 There are some automated scripts which will help you for development on the
 closure-builder project.
 
+### Get the sources
+Download the source files manual from GitHub or with git by running:
+```bash
+git clone --recursive git://github.com/google/closure-builder.git
+```
+
+#### Init / update submodules
+In some cases you need to init and update the submodules manually by:
+```bash
+git submodule init
+git submodule update
+```
+
+#### Get required packages
+Enter the "closure-builder" directory and get the required packages by:
+```bash
+npm install
+```
+
 ### Updating dependencies ###
 Before you start working, run `npm run update` to update the dependencies to
 the latest package versions.

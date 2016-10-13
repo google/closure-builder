@@ -29,6 +29,39 @@ var testDirectory = pathTools.getTempPath('closure-builder-test');
 
 describe('fileTools', function() {
 
+  describe('copyFile', function() {
+
+    it('Copy single file', function() {
+      var srcFile = path.join(testFilesPath, 'file.jpg');
+      var targetFile = testDirectory;
+      fileTools.copyFile(srcFile, targetFile, function() {
+        assert(pathTools.existFile(srcFile));
+        assert(pathTools.existFile(path.join(targetFile, 'file.jpg')));
+      });
+    });
+
+    it('Copy single file with different name', function() {
+      var srcFile = path.join(testFilesPath, 'file.jpg');
+      var targetFile = path.join(testDirectory, 'file123.jpg');
+      fileTools.copyFile(srcFile, targetFile, function() {
+        assert(pathTools.existFile(srcFile));
+        assert(pathTools.existFile(targetFile));
+      });
+    });
+
+    it('Copy multiple files', function() {
+      var srcFiles = testFilesPath;
+      var targetDir = path.join(testDirectory, 'example-files');
+      fileTools.copyFile(srcFiles, targetDir, function() {
+        assert(pathTools.existFile(path.join(targetDir, 'file')));
+        assert(pathTools.existFile(path.join(targetDir, 'file.htm')));
+        assert(pathTools.existFile(path.join(targetDir, 'file.jpg')));
+        assert(pathTools.existFile(path.join(targetDir, 'file_test.js')));
+      });
+    });
+
+  });
+
   it ('getGlobFiles', function() {
     var files = fileTools.getGlobFiles(testFilesPath + '*');
     assert(files.length >= 9);
