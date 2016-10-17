@@ -21,7 +21,6 @@ var fs = require('fs-extra');
 var glob = require('glob');
 var mkdirp = require('mkdirp');
 var path = require('path');
-var replace = require('replace');
 var rimraf = require('rimraf');
 var touch = require('touch');
 
@@ -86,7 +85,7 @@ FileTools.copyFile = function(src, dest, opt_callback) {
   if (pathTools.isFile(dest)) {
     destFile = dest;
   }
-  var fileEvent = function(error) {
+  var fileEvent = (error) => {
     if (error) {
       var message = 'Resource ' + src + ' failed to copy to ' + destFile;
       console.error(message);
@@ -116,7 +115,7 @@ FileTools.copySync = function(srcs, dest) {
   } else {
     FileTools.mkdir(dest);
   }
-  for (var i = numFiles_ - 1; i >= 0; i--) {
+  for (let i = numFiles_ - 1; i >= 0; i--) {
     var destFile = path.join(dest, pathTools.getFileBase(srcs[i]));
     if (pathTools.isFile(dest)) {
       destFile = dest;
@@ -155,7 +154,7 @@ FileTools.saveContent = function(file, content, opt_callback, opt_config,
       content = license + '\n\n' + content;
     }
   }
-  var fileEvent = function(error) {
+  var fileEvent = (error) => {
     if (error) {
       var errorMessage = 'Was not able to write file ' + file + ':' + error;
       if (opt_config) {
@@ -187,7 +186,7 @@ FileTools.saveContent = function(file, content, opt_callback, opt_config,
 FileTools.getGlobFiles = function(files) {
   var fileList = [];
   var filesToGlob = (files.constructor === String) ? [files] : files;
-  for (var i = filesToGlob.length - 1; i >= 0; i--) {
+  for (let i = filesToGlob.length - 1; i >= 0; i--) {
     fileList = fileList.concat(glob.sync(filesToGlob[i]));
   }
   return fileList;
@@ -212,13 +211,95 @@ FileTools.makeTempDir = function(opt_name) {
  * @param {boolean=} opt_recursive
  */
 FileTools.findAndReplace = function(files, regex, replacement, opt_recursive) {
-  replace({
-    regex: regex,
-    replacement: replacement,
-    paths: files,
-    recursive: opt_recursive,
-    silent: true
-  });
+  if (typeof files === 'string') {
+    files = [files];
+  }
+
+  for (let i = 0; i < files.length; i++) {
+    var file = files[i];
+    if (FileTools.isSymbolicLink(file)) {
+      console.warn('Will not search in symbolic links:', file);
+    } else if (FileTools.isFile(file)) {
+      var content = FileTools.readFile(file);
+      if (content) {
+        FileTools.writeFile(file, content.replace(regex, replacement));
+      }
+    } else if (FileTools.isDirectory(file) && opt_recursive) {
+      var directoryFiles = FileTools.readDir(file);
+      for (let i = 0; i < directoryFiles.length; i++) {
+        var directoryFile = path.join(file, directoryFiles[i]);
+        FileTools.findAndReplace(
+          directoryFile, regex, replacement, opt_recursive);
+      }
+    }
+  }
+
+};
+
+
+/**
+ * @param {!string} file
+ * @return {!array}
+ */
+FileTools.readDir = function(file) {
+  return fs.readdirSync(file) || [];
+};
+
+
+/**
+ * @param {!string} file
+ * @return {!string}
+ */
+FileTools.readFile = function(file) {
+  return fs.readFileSync(file, 'utf8') || '';
+};
+
+
+/**
+ * @param {!string} file
+ * @param {!string} content
+ */
+FileTools.writeFile = function(file, content) {
+  fs.writeFileSync(file, content);
+};
+
+
+/**
+ * @param {!string} file
+ * @return {!boolean}
+ */
+FileTools.isFile = function(file) {
+  try {
+    return fs.statSync(file).isFile();
+  } catch (err) {
+    return false;
+  }
+};
+
+
+/**
+ * @param {!string} file
+ * @return {!boolean}
+ */
+FileTools.isDirectory = function(file) {
+  try {
+    return fs.statSync(file).isDirectory();
+  } catch (err) {
+    return false;
+  }
+};
+
+
+/**
+ * @param {!string} file
+ * @return {!boolean}
+ */
+FileTools.isSymbolicLink = function(file) {
+  try {
+    return fs.statSync(file).isSymbolicLink();
+  } catch (err) {
+    return false;
+  }
 };
 
 

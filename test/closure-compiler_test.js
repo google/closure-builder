@@ -18,16 +18,18 @@
  * @author mbordihn@google.com (Markus Bordihn)
  */
 var assert = require('assert');
-var buildTools = require('../build_tools.js');
-var closureCompiler = require('../compilers/closure-compiler/compiler.js');
-var fileTools = require('../tools/file.js');
 var path = require('path');
-var glob = fileTools.getGlobFiles;
+
+var fileTools = require('../tools/file.js');
+var memoryTools = require('../tools/memory.js');
 var pathTools = require('../tools/path.js');
 
-var testDirectory = pathTools.getTempPath('closure-compiler-test');
-var largeMemoryTest = buildTools.checkAvailableMemory(600);
+var closureCompiler = require('../compilers/closure-compiler/compiler.js');
+
+var glob = fileTools.getGlobFiles;
+var largeMemoryTest = memoryTools.checkAvailableMemory(600);
 var onlineStatus = true;
+var testDirectory = pathTools.getTempPath('closure-compiler-test');
 
 
 describe('Closure Compiler::', function() {

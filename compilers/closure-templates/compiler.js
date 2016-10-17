@@ -58,7 +58,6 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
 
   var compiler = pathTools.getClosureTemplatesCompilerJar();
   var compilerOptions = [];
-  var i = 0;
   var i18nFunction = null;
   var options = opt_options || {};
   var outputFiles = [];
@@ -94,7 +93,7 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
 
   // Handling files
   var dupFile = {};
-  for (i = 0; i < files.length; i++) {
+  for (let i = 0; i < files.length; i++) {
     if (!dupFile[files[i]]) {
       compilerOptions.push('--srcs', files[i]);
       outputFiles.push(path.join(targetDir, files[i] + '.js'));
@@ -113,7 +112,7 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
   }
 
   // Handling options
-  for (var option in options) {
+  for (let option in options) {
     if (options[option] === true) {
       compilerOptions.push('--' + option);
     } else {
@@ -127,7 +126,7 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
     delete options.no_warnings;
   }
 
-  var compilerEvent = function(error, stdout, stderr) {
+  var compilerEvent = (error, stdout, stderr) => {
     var errorMsg = stderr || error || stdout;
     var errors = null;
     var warnings = null;

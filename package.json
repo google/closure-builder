@@ -11,6 +11,7 @@
     "minifier",
     "js",
     "css",
+    "template",
     "resources",
     "compressor",
     "javascript",
@@ -34,6 +35,7 @@
     "test-config": "mocha test/build_config_test.js",
     "test-file-tools": "mocha test/file_tools_test.js",
     "test-java-tools": "mocha test/java_tools_test.js",
+    "test-nodejs-compiler": "mocha test/nodejs-compiler_test.js",
     "test-path-tools": "mocha test/path_tools_test.js",
     "test-remote-tools": "mocha test/remote_tools_test.js",
     "test-tools": "mocha test/build_tools_test.js",
@@ -66,10 +68,8 @@
     "rimraf": "^2.5.4",
     "path-parse": "1.0.5",
     "progress": "1.1.8",
-    "randomstring": "1.1.5",
-    "replace": "0.3.0",
     "touch": "1.0.0",
-    "validator": "6.0.0"
+    "validator": "6.1.0"
   },
   "devDependencies": {
     "assert": "latest",

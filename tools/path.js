@@ -22,8 +22,9 @@ var log = require('loglevel');
 var os = require('os');
 var path = require('path');
 var pathParse = require('path-parse');
-var randomstring = require('randomstring');
 var url = require('url');
+
+var textTools = require('./text.js');
 
 
 
@@ -211,7 +212,8 @@ PathTools.getClosureStylesheetsJar = function() {
  * @return {string} Temp dir path.
  */
 PathTools.getRandomTempPath = function(opt_name) {
-  var name = (opt_name || 'closure-builder') + '-' + randomstring.generate(7);
+  var name = (opt_name || 'closure-builder') + '-' +
+    textTools.getRandomString(7);
   return PathTools.getTempPath(name);
 };
 

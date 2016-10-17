@@ -1,10 +1,10 @@
 /**
  * NodeJs test dummy
  */
-var randomString = require('randomstring');
+var textTools = require('../../tools/text.js');
 
 var getRandomString = function() {
-  return randomString.generate();
+  return textTools.getRandomString() + 'hello';
 };
 
 module.exports = getRandomString();

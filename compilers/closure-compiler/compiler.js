@@ -186,7 +186,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     compilerOptions.push('--' + option, options[option]);
   }
 
-  var compilerEvent = function(error, stdout, stderr) {
+  var compilerEvent = (error, stdout, stderr) => {
     var code = stdout;
     var errorMsg = stderr || error;
     var errors = null;
@@ -266,7 +266,7 @@ ClosureCompiler.remoteCompile = function(files, opt_options, opt_target_file,
   }
 
   // Handling files
-  for (var i = 0; i < files.length; i++) {
+  for (let i = 0; i < files.length; i++) {
     var fileContent = fs.readFileSync(files[i]).toString();
     if (fileContent) {
       data['js_code'].push(fileContent);
@@ -276,7 +276,7 @@ ClosureCompiler.remoteCompile = function(files, opt_options, opt_target_file,
   // Handling externs files
   if (options.externs) {
     var externsCode = '';
-    for (i = 0; i < options.externs.length; i++) {
+    for (let i = 0; i < options.externs.length; i++) {
       externsCode += fs.readFileSync(options.externs[i]).toString();
     }
     if (externsCode) {
@@ -357,7 +357,7 @@ ClosureCompiler.remoteCompile = function(files, opt_options, opt_target_file,
  */
 ClosureCompiler.parseJsonError = function(data) {
   var message = '';
-  for (var i=0; i<data.length; i++) {
+  for (let i=0; i<data.length; i++) {
     var msg = data[i].error || data[i].warning;
     var type = (data[i].error) ? 'ERROR' : 'WARNING';
     if (data.file && data.file !== 'Input_0') {

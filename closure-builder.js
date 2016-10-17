@@ -112,7 +112,7 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
   this.showConfigInformation(config);
 
   config.setMessage('Compiler Type: ' + type);
-  var callback = function(errors, warnings, files, results) {
+  var callback = (errors, warnings, files, results) => {
     if (opt_callback) {
       opt_callback(errors, warnings, files, results);
     }
@@ -123,7 +123,7 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
     } else {
       config.setMessage('\u001b[93m[\u001b[32mDone\u001b[93m]\u001b[0m', 100);
     }
-  }.bind(this);
+  };
 
   config.setMessage('Working ...', 10);
   if (type === buildType.SOY) {
@@ -238,14 +238,14 @@ ClosureBuilder.prototype.compileJavaScriptFiles = function(config,
  */
 ClosureBuilder.prototype.compileClosureWithSoyFiles = function(config,
     opt_callback) {
-  var compilerEvent = function(errors, warnings, files) {
+  var compilerEvent = (errors, warnings, files) => {
     if (errors) {
       opt_callback(errors, warnings);
     } else if (files) {
       this.compileClosureFiles(config, files, opt_callback);
     }
   };
-  this.compileSoyTemplates(config, compilerEvent.bind(this));
+  this.compileSoyTemplates(config, compilerEvent);
 };
 
 
@@ -256,8 +256,8 @@ ClosureBuilder.prototype.compileClosureWithSoyFiles = function(config,
 ClosureBuilder.prototype.compileNodeFiles = function(config, opt_callback) {
   config.setMessage('Compiling Node files ...');
   var files = config.getNodeFiles();
-  buildCompilers.compileNodeFiles(files, config.getOutFilePath(), opt_callback,
-      config);
+  buildCompilers.compileNodeFiles(files, config.getOutFilePath(), config,
+      opt_callback);
 };
 
 
@@ -304,7 +304,7 @@ ClosureBuilder.prototype.copyResources = function(config, opt_callback) {
   var files = config.getResourceFiles();
   var errors_ = 0;
   var warnings_ = 0;
-  var callback = function(errors, warnings) {
+  var callback = (errors, warnings) => {
     if (errors && errors.length >= 1) {
       errors_ += 1;
     }
@@ -312,7 +312,7 @@ ClosureBuilder.prototype.copyResources = function(config, opt_callback) {
       config.setMessage(warnings);
       warnings_ += 1;
     }
-  }.bind(this);
+  };
   buildCompilers.copyFiles(files, config.out, callback);
   if (files.length == 1) {
     config.setMessage('Copied resource file to ' + config.out, 100);

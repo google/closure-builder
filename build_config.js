@@ -19,9 +19,10 @@
  */
 var path = require('path');
 var progressBar = require('progress');
-var randomString = require('randomstring');
 
 var pathTools = require('./tools/path.js');
+var textTools = require('./tools/text.js');
+
 var BuildType = require('./build_types.js');
 var BuildTools = require('./build_tools.js');
 
@@ -116,7 +117,7 @@ var BuildConfig = function(config) {
   this.outPath = pathTools.getFilePath(this.out) || '';
 
   /** @type {!string} */
-  this.outFile = pathTools.getPathFile(this.out) || randomString.generate();
+  this.outFile = pathTools.getPathFile(this.out) || textTools.getRandomString();
 
   /** @type {!string} */
   this.outSourceMap = this.config.out_source_map || '';

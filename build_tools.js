@@ -18,7 +18,6 @@
  * @author mbordihn@google.com (Markus Bordihn)
  */
 var fs = require('fs-extra');
-var os = require('os');
 
 var BuildType = require('./build_types.js');
 
@@ -71,7 +70,7 @@ BuildTools.detectType = function(config) {
 BuildTools.sortFiles = function(files, opt_all, opt_exclude_test) {
   var fileList = [];
   var knownFile = {};
-  for (var i = files.length - 1; i >= 0; i--) {
+  for (let i = files.length - 1; i >= 0; i--) {
     var file = files[i];
     if (file.constructor === Array) {
       for (var i2 = file.length - 1; i2 >= 0; i2--) {
@@ -149,7 +148,7 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
   var requireSoyLibrary = false;
   var requireSoyi18n = false;
 
-  for (var i = files.length - 1; i >= 0; i--) {
+  for (let i = files.length - 1; i >= 0; i--) {
     var file = files[i];
 
     // Handling soy files.
@@ -235,7 +234,7 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
  * @return {array}
  */
 BuildTools.filterTestFiles = function(files) {
-  for (var i = files.length - 1; i >= 0; i--) {
+  for (let i = files.length - 1; i >= 0; i--) {
     var file = files[i];
     if (file.indexOf('_test.js') !== -1 ||
         file.indexOf('_testhelper.js') !== -1 ||
@@ -255,7 +254,7 @@ BuildTools.filterTestFiles = function(files) {
 BuildTools.getSafeFileList = function(files) {
   var result = [];
   var cache = {};
-  for (var file in files) {
+  for (let file in files) {
     var fileEntry = files[file];
     var safeFileEntry = '"' + fileEntry + '"';
     if (fileEntry && !(fileEntry in cache || safeFileEntry in cache)) {
@@ -269,43 +268,6 @@ BuildTools.getSafeFileList = function(files) {
     }
   }
   return result;
-};
-
-
-/**
- * @param {!number} size in megabyte.
- * @return {!boolean}
- */
-BuildTools.checkAvailableMemory = function(size) {
-  return size <= BuildTools.getMemory();
-};
-
-
-/**
- * @param {boolean=} opt_raw
- * @return {!number} Available memory in megabyte.
- */
-BuildTools.getMemory = function(opt_raw) {
-  var memory = os.freemem() / 1000000;
-  if (memory > 512 && process.env.C9_PROJECT) {
-    memory = 384;
-  }
-  if (opt_raw) {
-    return memory;
-  }
-  return Math.floor(memory);
-};
-
-
-/**
- * @return {number} 90% of the available memory in megabyte and max of 1024.
- */
-BuildTools.getSafeMemory = function() {
-  var safeMemory = Math.floor(BuildTools.getMemory(true) * 0.9);
-  if (safeMemory > 1024) {
-    return 1024;
-  }
-  return safeMemory;
 };
 
 

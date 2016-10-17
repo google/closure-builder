@@ -17,7 +17,6 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var browserify = require('browserify');
 var cleanCss = require('clean-css');
 var fs = require('fs-extra');
 var log = require('loglevel');
@@ -25,8 +24,8 @@ var marked = require('marked');
 var path = require('path');
 var validator = require('validator');
 
-var buildTools = require('./build_tools.js');
 var fileTools = require('./tools/file.js');
+var memoryTools = require('./tools/memory.js');
 var pathTools = require('./tools/path.js');
 var remoteTools = require('./tools/remote.js');
 var textTools = require('./tools/text.js');
@@ -34,6 +33,8 @@ var textTools = require('./tools/text.js');
 var closureCompiler = require('./compilers/closure-compiler/compiler.js');
 var closureTemplatesCompiler = require(
   './compilers/closure-templates/compiler.js');
+var nodejsCompiler = require('./compilers/nodejs/compiler.js');
+
 
 
 /**
@@ -49,7 +50,7 @@ var BuildCompilers = function() {};
  * Avalible memory to avoid "Out of memory" issues.
  * @type {number}
  */
-BuildCompilers.SAFE_MEMORY = buildTools.getSafeMemory() || 512;
+BuildCompilers.SAFE_MEMORY = memoryTools.getSafeMemory() || 512;
 
 
 /**
@@ -78,7 +79,7 @@ BuildCompilers.copyFile = function(src, dest, opt_callback) {
   if (pathTools.isFile(dest)) {
     destFile = dest;
   }
-  var fileEvent = function(error) {
+  var fileEvent = (error) => {
     if (error) {
       var message = 'Resource ' + src + ' failed to copy to ' + destFile;
       log.error(message);
@@ -91,7 +92,7 @@ BuildCompilers.copyFile = function(src, dest, opt_callback) {
       }
     }
   };
-  fs.copy(src, destFile, fileEvent.bind(this));
+  fs.copy(src, destFile, fileEvent);
 };
 
 
@@ -150,7 +151,7 @@ BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
   var files_ = [];
   var numFiles_ = srcs.length;
   var numDone_ = 0;
-  var callback = function(errors, warnings, files) {
+  var callback = (errors, warnings, files) => {
     if (errors) {
       errors_.push(errors);
     }
@@ -166,9 +167,9 @@ BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
         opt_callback(errors_, warnings_, files_);
       }
     }
-  }.bind(this);
+  };
 
-  for (var i = numFiles_ - 1; i >= 0; i--) {
+  for (let i = numFiles_ - 1; i >= 0; i--) {
     if (validator.isURL(srcs[i])) {
       BuildCompilers.copyRemoteFile(srcs[i], dest, callback);
     } else {
@@ -211,7 +212,7 @@ BuildCompilers.compileSoyTemplates = function(files, out,
   }
 
   fileTools.mkdir(out);
-  var compilerEvent = function(errors, warnings, files) {
+  var compilerEvent = (errors, warnings, files) => {
     if (!errors) {
       var success_message = 'Compiled ' + files.length + ' soy files to ' +
         textTools.getTruncateText(out);
@@ -222,7 +223,7 @@ BuildCompilers.compileSoyTemplates = function(files, out,
     if (opt_callback) {
       opt_callback(errors, warnings, files);
     }
-  }.bind(this);
+  };
 
   closureTemplatesCompiler.compile(files, options, out, compilerEvent);
 };
@@ -236,7 +237,7 @@ BuildCompilers.compileSoyTemplates = function(files, out,
  */
 BuildCompilers.compileCssFiles = function(files, out, opt_callback,
     opt_config) {
-  var compilerEvent = function(errors, minified) {
+  var compilerEvent = (errors, minified) => {
     if (errors) {
       var errorsMessage = 'Failed for ' + out + ':' + errors;
       BuildCompilers.errorCssCompiler(errorsMessage);
@@ -249,49 +250,49 @@ BuildCompilers.compileCssFiles = function(files, out, opt_callback,
     } else if (minified) {
       fileTools.saveContent(out, minified.styles, opt_callback, opt_config);
     }
-  }.bind(this);
+  };
   new cleanCss().minify(files, compilerEvent);
 };
 
 
 /**
  * @param {Array} files
- * @param {string=} output
+ * @param {string=} out
+ * @param {object=} opt_options Additional options for the compiler.
+ *   opt_options.config = BuildConfig
+ *   opt_options.options = Additional compiler options
  * @param {function=} opt_callback
- * @param {BuildConfig=} opt_config
  */
-BuildCompilers.compileNodeFiles = function(files, out, opt_callback,
-    opt_config) {
-  var nodeCompiler = browserify();
-  nodeCompiler.add(files);
-  fileTools.mkfile(out);
-  var bufferEvent = function(errors) {
+BuildCompilers.compileNodeFiles = function(files, out,
+    opt_options, opt_callback) {
+  var options = (opt_options && opt_options.options) ? opt_options.options : {};
+  var config = (opt_options && opt_options.config) ? opt_options.config : false;
+  log.debug('Compiling', files.length, 'files to', out, '...');
+  log.trace(files);
+
+  if (config) {
+    if (config.debug) {
+      options.debug = config.debug;
+    }
+  }
+
+  var compilerEvent = (errors, warnings, target_file) => {
     if (errors) {
-      var error_message = 'Was not able to write file ' + out + ':' + errors;
-      this.errorNodeCompiler(error_message);
       if (opt_callback) {
-        opt_callback(errors, false);
+        opt_callback(errors, warnings);
+      }
+    } else if (target_file) {
+      if (opt_callback) {
+        opt_callback(errors, warnings, target_file);
       }
     } else {
-      if (opt_config) {
-        opt_config.setMessage('Saving output to ' + out);
+      if (opt_callback) {
+        opt_callback(errors, warnings);
       }
     }
-  }.bind(this);
-  var streamEvent = fs.createWriteStream(out);
-  streamEvent.on('error', function(error) {
-    var error_message = 'Was not able to write file ' + out + ':' + error;
-    this.errorNodeCompiler(error_message);
-    if (opt_callback) {
-      opt_callback(error, false);
-    }
-  }.bind(this));
-  streamEvent.on('finish', function() {
-    if (opt_callback) {
-      opt_callback(false, false, out);
-    }
-  });
-  nodeCompiler.bundle(bufferEvent).pipe(streamEvent);
+  };
+
+  nodejsCompiler.compile(files, options, out, compilerEvent);
 };
 
 
@@ -321,13 +322,13 @@ BuildCompilers.convertMarkdownFiles = function(files, out,
     opt_callback, opt_config) {
   var foundError = false;
   var outFiles = [];
-  var errorEvent = function(error, warning, file) {
+  var errorEvent = (error, warning, file) => {
     if (error) {
       foundError = error;
     } else if (file) {
       outFiles.push(file);
     }
-  }.bind(this);
+  };
   for (var i in files) {
     BuildCompilers.convertMarkdownFile(files[i], out, errorEvent, opt_config);
     if (foundError) {
@@ -400,7 +401,7 @@ BuildCompilers.compileJsFiles = function(files, out,
       options.jscomp_error = config.jscompError;
     }
   }
-  var compilerEvent = function(errors, warnings, target_file, content) {
+  var compilerEvent = (errors, warnings, target_file, content) => {
     if (errors) {
       if (opt_callback) {
         opt_callback(errors, warnings);
@@ -412,7 +413,7 @@ BuildCompilers.compileJsFiles = function(files, out,
         opt_callback(errors, warnings);
       }
     }
-  }.bind(this);
+  };
   closureCompiler.compile(files, options, null, compilerEvent,
     useRemoteService);
 };

@@ -63,4 +63,16 @@ TextTools.getTruncateText = function(text, opt_max_length, opt_seperator) {
 };
 
 
+/**
+ * @param {number=} opt_max_length
+ * @return {string}
+ */
+TextTools.getRandomString = function(opt_max_length) {
+  var salt = 1475236985346785342347650023;
+  return (Math.floor(Math.random() * salt).toString(36) +
+    Math.abs(Math.floor(Math.random() * salt) ^ Date.now()).toString(36)
+  ).substring(0, opt_max_length || 8);
+};
+
+
 module.exports = TextTools;

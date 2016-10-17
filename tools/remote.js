@@ -55,7 +55,7 @@ RemoteTools.getFile = function(url, dest,
   var destFilename = opt_filename || pathTools.getUrlFile(url);
   var destFile = path.join(dest, destFilename);
 
-  var completeEvent = function(response) {
+  var completeEvent = (response) => {
     if (response.statusCode !== 200) {
       log.error('ERROR:', url, 'failed to download with http status: ',
         response.statusCode);
@@ -72,7 +72,7 @@ RemoteTools.getFile = function(url, dest,
     }
   };
 
-  var errorEvent = function(error) {
+  var errorEvent = (error) => {
     if (error && error.code == 'ENOTFOUND') {
       log.warn('File at ' + error.hostname + ' is not reachable!\n' +
         'Please make sure you are online and that the name is correct!\n' +
@@ -86,7 +86,7 @@ RemoteTools.getFile = function(url, dest,
     }
   };
 
-  var responseEvent = function(response) {
+  var responseEvent = (response) => {
     var len = parseInt(response.headers['content-length'], 10);
     var barText = 'Downloading ' + destFilename + ' [:bar] :percent :etas';
     var bar = new progressBar(barText, {

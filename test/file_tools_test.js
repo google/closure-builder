@@ -31,35 +31,76 @@ describe('fileTools', function() {
 
   describe('copyFile', function() {
 
-    it('Copy single file', function() {
+    it('Copy single file', function(done) {
       var srcFile = path.join(testFilesPath, 'file.jpg');
       var targetFile = testDirectory;
       fileTools.copyFile(srcFile, targetFile, function() {
         assert(pathTools.existFile(srcFile));
         assert(pathTools.existFile(path.join(targetFile, 'file.jpg')));
+        done();
       });
     });
 
-    it('Copy single file with different name', function() {
+    it('Copy single file with different name', function(done) {
       var srcFile = path.join(testFilesPath, 'file.jpg');
       var targetFile = path.join(testDirectory, 'file123.jpg');
       fileTools.copyFile(srcFile, targetFile, function() {
         assert(pathTools.existFile(srcFile));
         assert(pathTools.existFile(targetFile));
+        done();
       });
     });
 
-    it('Copy multiple files', function() {
-      var srcFiles = testFilesPath;
+    it('Copy multiple files', function(done) {
       var targetDir = path.join(testDirectory, 'example-files');
-      fileTools.copyFile(srcFiles, targetDir, function() {
-        assert(pathTools.existFile(path.join(targetDir, 'file')));
-        assert(pathTools.existFile(path.join(targetDir, 'file.htm')));
-        assert(pathTools.existFile(path.join(targetDir, 'file.jpg')));
-        assert(pathTools.existFile(path.join(targetDir, 'file_test.js')));
+      fileTools.copyFile(testFilesPath, targetDir, function() {
+        assert(pathTools.existFile(
+          path.join(targetDir, 'resources', 'file')));
+        assert(pathTools.existFile(
+          path.join(targetDir, 'resources', 'file.htm')));
+        assert(pathTools.existFile(
+          path.join(targetDir, 'resources', 'file.jpg')));
+        assert(pathTools.existFile(
+          path.join(targetDir, 'resources', 'file_test.js')));
+        done();
       });
     });
 
+  });
+
+  describe('findAndReplace', function() {
+    var targetDir = path.join(testDirectory, 'find-and-replace');
+
+    it('Find and replace single file', function(done) {
+      var testFile = path.join(testFilesPath, 'file.txt');
+      fileTools.copyFile(testFile, targetDir, function() {
+        var targetFile = path.join(targetDir, 'file.txt');
+        fileTools.findAndReplace(targetFile, 'Hello', 'Welcome');
+        assert.equal(fileTools.readFile(targetFile), 'Welcome world !');
+        done();
+      });
+    });
+
+    it('Find and replace multiple files', function(done) {
+      fileTools.copyFile(testFilesPath, targetDir, function() {
+        var testDir = path.join(targetDir, 'resources');
+        fileTools.findAndReplace(targetDir, 'o', 'O', true);
+        assert.equal(
+          fileTools.readFile(path.join(testDir, 'file.xml')), 'xml cOntent');
+        assert.equal(
+          fileTools.readFile(path.join(testDir, 'file.htm')), 'htm cOntent');
+        assert.equal(
+          fileTools.readFile(path.join(testDir, 'file.html')), 'html cOntent');
+        done();
+      });
+    });
+
+  });
+
+  it ('readFile', function() {
+    var testFile = path.join(testFilesPath, 'file.txt');
+    var content = fileTools.readFile(testFile);
+    assert.equal(content, 'Hello world !');
   });
 
   it ('getGlobFiles', function() {

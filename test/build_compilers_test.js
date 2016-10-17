@@ -20,10 +20,11 @@
 var assert = require('assert');
 var fs = require('fs-extra');
 
-var buildTools = require('../build_tools.js');
+var memoryTools = require('../tools/memory.js');
+
 var closureBuilder = require('../closure-builder');
 var testConfigs = require('../test/test_configs.js');
-var largeMemoryTest = buildTools.checkAvailableMemory(600);
+var largeMemoryTest = memoryTools.checkAvailableMemory(600);
 
 describe('ClosureBuilder', function() {
   closureBuilder.showMessages(false);
@@ -261,8 +262,11 @@ describe('ClosureBuilder', function() {
   describe('NodeJs', function() {
     it('compile', function(done) {
       this.timeout(30000);
-      closureBuilder.build(testConfigs.nodeTestConfig, function(errors) {
+      closureBuilder.build(testConfigs.nodeTestConfig, function(errors,
+          warnings, files) {
         assert(!errors);
+        assert(!warnings);
+        assert(files);
         done();
       });
     });

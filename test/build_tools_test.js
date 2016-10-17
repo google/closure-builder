@@ -48,18 +48,4 @@ describe('buildTools', function() {
     });
   });
 
-  describe('Misc', function() {
-    it ('getMemory', function() {
-      var memory = buildTools.getMemory();
-      assert(memory > 16);
-    });
-
-    it ('checkAvailableMemory', function() {
-      var largeMemory = buildTools.checkAvailableMemory(
-        buildTools.getMemory() + 128);
-      var smallMemory = buildTools.checkAvailableMemory(128);
-      assert(!largeMemory);
-      assert(smallMemory);
-    });
-  });
 });

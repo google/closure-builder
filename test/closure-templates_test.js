@@ -186,7 +186,7 @@ describe('Closure Templates::', function() {
       });
   });
 
-/**
+/*
   it('Custom i18n tags', function(done) {
     this.timeout(25000);
     var files = ['test_files/special/soy_test_i18n.soy'];
@@ -208,5 +208,4 @@ describe('Closure Templates::', function() {
       });
   });
 */
-
 });
