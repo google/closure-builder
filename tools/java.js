@@ -28,6 +28,7 @@ var childProcess = require('child_process');
  */
 var JavaTools = function() {};
 
+
 /**
  * @type {!number};
  */
@@ -37,7 +38,7 @@ JavaTools.maxBuffer = 10 * 1024 * 1024;  // 10MB
 /**
  * @type {!number};
  */
-JavaTools.minBuffer = 1024 * 1024;  // 1MB
+JavaTools.minBuffer = 1 * 1024 * 1024;  // 1MB
 
 
 /**
@@ -128,10 +129,15 @@ JavaTools.execJavaSync = function(args, opt_java) {
  */
 JavaTools.execJavaJar = function(jar, args, callback, opt_java, opt_debug) {
   var javaBin = opt_java || 'java';
-  if (opt_debug) {
-    console.log(javaBin, ['-jar', jar].concat(args).join(' '));
+  var javaFlags = ['-XX:+TieredCompilation', '-XX:TieredStopAtLevel=1'];
+  if (process.arch.includes('64')) {
+    javaFlags.push('-d64');
   }
-  childProcess.execFile(javaBin, ['-jar', jar].concat(args), {
+  javaFlags = javaFlags.concat(['-jar', jar]).concat(args);
+  if (opt_debug) {
+    console.log(javaBin, javaFlags.join(' '));
+  }
+  childProcess.execFile(javaBin, javaFlags, {
     'maxBuffer': JavaTools.maxBuffer }, callback);
 };
 

@@ -378,6 +378,9 @@ BuildCompilers.compileJsFiles = function(files, out,
     }
     if (config.requireClosureLibrary) {
       options.use_closure_library = true;
+      if (config.requireClosureLibraryUI && !config.remoteService) {
+        options.use_closure_library_ui = true;
+      }
     }
     if (config.compress) {
       options.compilation_level = 'ADVANCED_OPTIMIZATIONS';

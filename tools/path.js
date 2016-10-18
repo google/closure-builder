@@ -38,6 +38,74 @@ var PathTools = function() {};
 
 
 /**
+ * List of known closure library closure goog folders.
+ * @type {array}
+ */
+PathTools.closureGoogFolders = [
+  'a11y',
+  'array',
+  'asserts',
+  'async',
+  'bootstrap',
+  'color',
+  'crypt',
+  'css',
+  'cssom',
+  'datasource',
+  'date',
+  'db',
+  'debug',
+  'disposable',
+  'dom',
+  'editor',
+  'events',
+  'format',
+  'fs',
+  'functions',
+  'fx',
+  'graphics',
+  'history',
+  'html',
+  'i18n',
+  'images',
+  'iter',
+  'json',
+  'labs',
+  'locale',
+  'log',
+  'math',
+  'memoize',
+  'messaging',
+  'module',
+  'net',
+  'object',
+  'positioning',
+  'promise',
+  'proto',
+  'proto2',
+  'pubsub',
+  'reflect',
+  'result',
+  'soy',
+  'spell',
+  'stats',
+  'storage',
+  'string',
+  'structs',
+  'style',
+  'testing',
+  'timer',
+  'tweak',
+  'ui',
+  'uri',
+  'useragent',
+  'vec',
+  'webgl',
+  'window'
+];
+
+
+/**
  * @param {string=} opt_name
  * @return {!string}
  */
@@ -94,32 +162,36 @@ PathTools.getClosureLibraryPath = function() {
 
 
 /**
+ * @param {array=} opt_ignore
  * @return {!string}
  */
-PathTools.getClosureLibraryFiles = function() {
+PathTools.getClosureLibraryFiles = function(opt_ignore = []) {
   var closureLibraryFiles = path.join(PathTools.getClosureLibraryPath(),
     'closure', 'goog');
   if (!PathTools.existDirectory(closureLibraryFiles)) {
     log.error('Closure library files were not found at', closureLibraryFiles);
     return [];
   }
+
+  var closureLibraryFolders = [];
+  PathTools.closureGoogFolders.forEach(folder => {
+    if (opt_ignore.indexOf(folder) === -1) {
+      closureLibraryFolders.push(
+        path.join(closureLibraryFiles, folder, '**.js'));
+    }
+  });
+
   var closureLibrary3rdParty = path.join(PathTools.getClosureLibraryPath(),
     'third_party', 'closure', 'goog');
   if (!PathTools.existDirectory(closureLibrary3rdParty)) {
     log.warn('Closure library 3rd party files were not found at',
       closureLibrary3rdParty);
-    return [
-      path.join(closureLibraryFiles, '**.js'),
-      path.join(closureLibraryFiles, '!**_test.js')
-    ];
+    return closureLibraryFolders;
+  } else {
+    closureLibraryFolders.push(path.join(closureLibrary3rdParty, '**.js'));
   }
 
-  return [
-    path.join(closureLibraryFiles, '**.js'),
-    path.join(closureLibraryFiles, '!**_test.js'),
-    path.join(closureLibrary3rdParty, '**.js'),
-    path.join(closureLibrary3rdParty, '!**_test.js')
-  ];
+  return closureLibraryFolders;
 };
 
 

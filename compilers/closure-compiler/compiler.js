@@ -79,7 +79,6 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     return ClosureCompiler.error('Java (JRE) is needed!', opt_callback);
   }
 
-  var i = 0;
   var compiler = pathTools.getClosureCompilerJar();
   var compilerOptions = [];
   var options = opt_options || {};
@@ -108,7 +107,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
 
   // Handling compiler error
   if (options.jscomp_error) {
-    for (i = 0; i < options.jscomp_error.length; i++) {
+    for (let i = 0; i < options.jscomp_error.length; i++) {
       compilerOptions.push('--jscomp_error', options.jscomp_error[i]);
     }
     delete options.jscomp_warning;
@@ -116,7 +115,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
 
   // Handling compiler off
   if (options.jscomp_off) {
-    for (i = 0; i < options.jscomp_off.length; i++) {
+    for (let i = 0; i < options.jscomp_off.length; i++) {
       compilerOptions.push('--jscomp_off', options.jscomp_off[i]);
     }
     delete options.jscomp_warning;
@@ -124,7 +123,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
 
   // Handling compiler warnings
   if (options.jscomp_warning) {
-    for (i = 0; i < options.jscomp_warning.length; i++) {
+    for (let i = 0; i < options.jscomp_warning.length; i++) {
       compilerOptions.push('--jscomp_warning', options.jscomp_warning[i]);
     }
     delete options.jscomp_warning;
@@ -132,7 +131,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
 
   // Handling files
   var dupFile = {};
-  for (i = 0; i < files.length; i++) {
+  for (let i = 0; i < files.length; i++) {
     if (!dupFile[files[i]]) {
       compilerOptions.push('--js', files[i]);
     }
@@ -141,7 +140,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
 
   // Handling externs files
   if (options.externs) {
-    for (i = 0; i < options.externs.length; i++) {
+    for (let i = 0; i < options.externs.length; i++) {
       compilerOptions.push('--externs', options.externs[i]);
     }
     delete options.externs;
@@ -161,21 +160,25 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     delete options.use_closure_templates;
   }
 
-  // Closure base file
-  if (options.use_closure_basefile) {
-    if (!options.use_closure_library) {
-      var baseFile = pathTools.getClosureBaseFile();
-      if (baseFile) {
-        compilerOptions.push('--js', baseFile);
-      }
+  // Include Closure base file
+  if (options.use_closure_basefile || options.use_closure_library) {
+    var baseFile = pathTools.getClosureBaseFile();
+    if (baseFile) {
+      compilerOptions.push('--js', baseFile);
     }
     delete options.use_closure_basefile;
   }
 
-  // Closure library
+  // Include Closure library files
   if (options.use_closure_library) {
-    var closureLibraryFiles = pathTools.getClosureLibraryFiles();
-    for (i = 0; i < closureLibraryFiles.length; i++) {
+    var ignoreList = [];
+    if (options.use_closure_library_ui) {
+      delete options.use_closure_library_ui;
+    } else {
+      ignoreList.push('ui');
+    }
+    var closureLibraryFiles = pathTools.getClosureLibraryFiles(ignoreList);
+    for (let i = 0; i < closureLibraryFiles.length; i++) {
       compilerOptions.push('--js=' + closureLibraryFiles[i]);
     }
     delete options.use_closure_library;
@@ -224,8 +227,8 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
  * @param {string=} opt_target_file
  * @param {function=} opt_callback
  */
-ClosureCompiler.remoteCompile = function(files, opt_options, opt_target_file,
-    opt_callback) {
+ClosureCompiler.remoteCompile = function(files,
+    opt_options, opt_target_file, opt_callback) {
   if (!files) {
     return ClosureCompiler.error('No valid files are provided!', opt_callback);
   }

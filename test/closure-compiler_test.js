@@ -291,6 +291,26 @@ describe('Closure Compiler::', function() {
           done();
         });
     });
+/*
+    it('Closure Library UI', function(done) {
+      if (!largeMemoryTest) {
+        return done();
+      }
+      this.timeout(140000);
+      var files =  ['test_files/closure_library_ui_test.js'];
+      var options = {
+        dependency_mode: 'STRICT',
+        entry_point: 'closure_library_ui_test',
+        use_closure_library: true
+      };
+      closureCompiler.localCompile(files, options, null,
+        function(errors, warnings, files, content) {
+          assert(!errors);
+          assert(!warnings);
+          assert(content);
+          done();
+        });
+    });*/
 
     it('Soy file', function(done) {
       if (!largeMemoryTest) {

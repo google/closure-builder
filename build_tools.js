@@ -119,6 +119,8 @@ BuildTools.getBuildRequirements = function(config) {
     requireClosureExport: (srcsConfig.requireClosureExport),
     requireClosureLibrary: (depsConfig.requireClosureLibrary ||
       srcsConfig.requireClosureLibrary),
+    requireClosureLibraryUI: (depsConfig.requireClosureLibraryUI ||
+      srcsConfig.requireClosureLibraryUI),
     requireECMAScript6: (depsConfig.requireECMAScript6 ||
       srcsConfig.requireECMAScript6),
     requireSoyLibrary: (depsConfig.requireSoyLibrary ||
@@ -142,6 +144,7 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
   var nodeFiles = [];
   var soyFiles = [];
   var entryPoint = '';
+  var requireClosureLibraryUI = false;
   var requireClosureExport = false;
   var requireClosureLibrary = false;
   var requireECMAScript6 = false;
@@ -189,6 +192,10 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
       // Require closure library ?
       if (fileContent.includes('goog.require(\'goog.') ||
           fileContent.includes('goog.require("goog.')) {
+        if (fileContent.includes('goog.require(\'goog.ui') ||
+            fileContent.includes('goog.require("goog.ui')) {
+          requireClosureLibraryUI = true;
+        }
         requireClosureLibrary = true;
       }
 
@@ -222,6 +229,7 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
     markdownFiles: markdownFiles,
     requireClosureExport: requireClosureExport,
     requireClosureLibrary: requireClosureLibrary,
+    requireClosureLibraryUI: requireClosureLibraryUI,
     requireSoyLibrary: requireSoyLibrary,
     requireSoyi18n: requireSoyi18n,
     requireECMAScript6: requireECMAScript6
