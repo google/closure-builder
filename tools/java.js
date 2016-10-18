@@ -41,34 +41,55 @@ JavaTools.minBuffer = 1024 * 1024;  // 1MB
 
 
 /**
+ * @param {string=} opt_version_string
  * @return {boolean}
  */
-JavaTools.hasJava = function() {
-  var result = JavaTools.execJavaSync(['-version']);
-  if (result && result.stderr &&
-      result.stderr.toString().toLowerCase().includes('java')) {
+JavaTools.hasJava = function(opt_version_string) {
+  var version = JavaTools.getJavaVersionString(opt_version_string)
+    .toLowerCase();
+  if (version &&
+      version.includes('java') ||
+      version.includes('jdk')) {
     return true;
   }
-  console.error(result);
+  console.error('Unknown Java Version:', version);
   return false;
 };
 
 
 /**
+ * @param {string=} opt_version_string
  * @return {string}
  */
-JavaTools.getJavaVersion = function() {
+JavaTools.getJavaVersion = function(opt_version_string) {
   if (JavaTools.hasJava()) {
-    var result = JavaTools.execJavaSync(['-version']);
-    if (result && result.stderr) {
-      var version = result.stderr.toString();
-      if (version.toLowerCase().includes('java version')) {
-        return version.match(/java version \"?([0-9_.-]+)\"?/)[1];
-      } else {
-        return 'unknown';
-      }
+    var version = JavaTools.getJavaVersionString(opt_version_string)
+      .toLowerCase();
+    if (version.includes('java version')) {
+      return version.match(/java version \"?([0-9_.-]+)\"?/)[1];
+    } else if (version.includes('jdk version')) {
+      return version.match(/jdk version \"?([0-9_.-]+)\"?/)[1];
+    } else if (version) {
+      return 'unknown';
     }
   }
+  return '';
+};
+
+
+/**
+ * @param {array|string=} opt_version_string
+ * @return {!string}
+ */
+JavaTools.getJavaVersionString = function(opt_version_string) {
+  if (opt_version_string !== undefined) {
+    return opt_version_string.toString();
+  }
+  var javaString = JavaTools.execJavaSync(['-version']);
+  if (javaString && javaString.stderr) {
+    return javaString.stderr.toString();
+  }
+  console.error('Unknown Java version string', javaString);
   return '';
 };
 
