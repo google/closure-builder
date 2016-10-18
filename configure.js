@@ -44,7 +44,7 @@ remoteTools.getZip(
 
 // Google Closure Stylesheets
 var gcs = 'https://github.com/google/closure-stylesheets/releases/download/';
-var gcsVersion = 'v1.2.0';
+var gcsVersion = 'v1.4.0';
 var gcsDoc = 'https://raw.githubusercontent.com/google/closure-stylesheets/';
 remoteTools.getFiles(
   'Google Closure Stylesheets', [
@@ -55,16 +55,22 @@ remoteTools.getFiles(
   path.join('.', 'runtime', 'closure-stylesheets')
 );
 
-// Google Closure Library
-console.log('Optimized Google Closure Library ...');
-var closureLibrary = path.join('.', 'third_party', 'closure-library', '**');
-fileTools.removeFiles(path.join(closureLibrary, '*_test.js'));
-fileTools.removeFiles(path.join(closureLibrary, '*_test.html'));
-fileTools.removeFiles(path.join(closureLibrary, 'test_module.js'));
-fileTools.removeFiles(path.join(closureLibrary, 'test_module_dep.js'));
+// Cleanup Google Closure Library
+console.log('Optimizing Google Closure Library ...');
+var closureLibrary = path.join('.', 'third_party', 'closure-library');
+fileTools.removeFiles(path.join(closureLibrary, '**', '*_test.js'));
+fileTools.removeFiles(path.join(closureLibrary, '**', '*_test.html'));
+fileTools.removeFiles(path.join(closureLibrary, '**', 'test_module.js'));
+fileTools.removeFiles(path.join(closureLibrary, '**', 'test_module_dep.js'));
+fileTools.removeFiles(path.join(closureLibrary, '**', 'transpile.js'));
+fileTools.removeFiles(path.join(closureLibrary, 'closure', 'goog', 'demos'));
 
-// Google Closure Templates
-console.log('Optimized Google Closure Templates ...');
+// Cleanup Google Closure Templates
+console.log('Optimizing Google Closure Templates ...');
+var closureTemplates = path.join('.', 'third_party', 'closure-templates');
+fileTools.removeFiles(path.join(closureTemplates, 'java'));
+fileTools.removeFiles(path.join(closureTemplates, 'python'));
+fileTools.removeFiles(path.join(closureTemplates, 'src'));
 
 // JAVA check
 console.log('Perform basic Java checks ...');
@@ -73,5 +79,5 @@ if (javaTools.hasJava()) {
 } else {
   console.warn('\nWARNING!!!\nFound no global JRE!\n' +
     'Please install an Java Runtime Environment (JRE), to be able to use' +
-    ' all features!\n');
+    ' all features and compilers!\n');
 }

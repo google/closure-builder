@@ -46,10 +46,29 @@ TestConfigs.closureLibraryConfig = {
 };
 
 
+TestConfigs.closureLibraryUiConfig = {
+  name: 'closure_library_ui_test',
+  srcs: [
+    'test_files/closure_library_ui_test.js'
+  ],
+  out: path.join(testDirectory, 'closure-library')
+};
+
+
 TestConfigs.closureLibraryConfigRemoteService = {
   name: 'closure_library_test',
   srcs: [
     'test_files/closure_library_test.js'
+  ],
+  remote_service: true,
+  out: path.join(testDirectory, 'closure-library')
+};
+
+
+TestConfigs.closureLibraryUiConfigRemoteService = {
+  name: 'closure_library_ui_test',
+  srcs: [
+    'test_files/closure_library_ui_test.js'
   ],
   remote_service: true,
   out: path.join(testDirectory, 'closure-library')

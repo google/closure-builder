@@ -3,9 +3,8 @@
  */
 goog.provide('closure_library_test');
 
-goog.require('goog.ui.Button');
-goog.require('goog.ui.CharPicker');
-goog.require('goog.ui.MenuItem');
+goog.require('goog.Promise');
+goog.require('goog.Timer');
 
 
 closure_library_test = function() {

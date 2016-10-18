@@ -20,11 +20,11 @@
 var path = require('path');
 var progressBar = require('progress');
 
-var pathTools = require('./tools/path.js');
-var textTools = require('./tools/text.js');
+var pathTools = require('./../tools/path.js');
+var textTools = require('./../tools/text.js');
 
-var BuildType = require('./build_types.js');
-var BuildTools = require('./build_tools.js');
+var BuildType = require('./../build_types.js');
+var BuildTools = require('./../build_tools.js');
 
 
 /**

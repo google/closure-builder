@@ -297,6 +297,25 @@ describe('ClosureBuilder', function() {
         assert(!warnings);
         assert(content);
         assert(content.indexOf('closure_library_test=func') !== -1);
+        assert(content.indexOf('goog.Promise=func') !== -1);
+        assert(content.indexOf('goog.Timer=func') !== -1);
+        done();
+      });
+    });
+  });
+
+  describe('Closure library - UI', function() {
+    it('compile', function(done) {
+      if (!largeMemoryTest) {
+        return done();
+      }
+      this.timeout(140000);
+      closureBuilder.build(testConfigs.closureLibraryUiConfig, function(errors,
+          warnings, files, content) {
+        assert(!errors);
+        assert(!warnings);
+        assert(content);
+        assert(content.indexOf('closure_library_ui_test=func') !== -1);
         assert(content.indexOf('goog.ui.Button=func') !== -1);
         assert(content.indexOf('goog.ui.CharPicker=func') !== -1);
         assert(content.indexOf('goog.ui.MenuItem=func') !== -1);
@@ -317,6 +336,25 @@ describe('ClosureBuilder', function() {
           assert(!warnings);
           assert(content);
           assert(content.indexOf('closure_library_test=func') !== -1);
+          assert(content.indexOf('goog.Promise=func') !== -1);
+          assert(content.indexOf('goog.Timer=func') !== -1);
+          done();
+        });
+    });
+  });
+
+  describe('Closure library UI - Remote Service', function() {
+    it('compile', function(done) {
+      if (!largeMemoryTest) {
+        return done();
+      }
+      this.timeout(140000);
+      closureBuilder.build(testConfigs.closureLibraryUiConfigRemoteService,
+        function(errors, warnings, files, content) {
+          assert(!errors);
+          assert(!warnings);
+          assert(content);
+          assert(content.indexOf('closure_library_ui_test=func') !== -1);
           assert(content.indexOf('goog.ui.Button=func') !== -1);
           assert(content.indexOf('goog.ui.CharPicker=func') !== -1);
           assert(content.indexOf('goog.ui.MenuItem=func') !== -1);

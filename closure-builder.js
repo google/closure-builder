@@ -20,7 +20,7 @@
 var log = require('loglevel');
 
 var fileTools = require('./tools/file.js');
-var buildConfig = require('./build_config.js');
+var buildConfig = require('./build/config.js');
 var buildTools = require('./build_tools.js');
 var buildType = require('./build_types.js');
 var buildCompilers = require('./build_compilers.js');
