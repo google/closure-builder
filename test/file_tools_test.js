@@ -97,13 +97,18 @@ describe('fileTools', function() {
 
   });
 
-  it ('readFile', function() {
+  it('readFile', function() {
     var testFile = path.join(testFilesPath, 'file.txt');
     var content = fileTools.readFile(testFile);
     assert.equal(content, 'Hello world !');
   });
 
-  it ('getGlobFiles', function() {
+  it('getDirectories', function() {
+    var folders = fileTools.getDirectories(testFilesPath);
+    assert(folders[0] == 'folder');
+  });
+
+  it('getGlobFiles', function() {
     var files = fileTools.getGlobFiles(testFilesPath + '*');
     assert(files.length >= 9);
   });

@@ -19,7 +19,7 @@
  */
 var fs = require('fs-extra');
 
-var BuildType = require('./build_types.js');
+var BuildType = require('./build/types.js');
 
 
 
@@ -252,30 +252,6 @@ BuildTools.filterTestFiles = function(files) {
     }
   }
   return files;
-};
-
-
-/**
- * @param {array} files
- * @return {array}
- */
-BuildTools.getSafeFileList = function(files) {
-  var result = [];
-  var cache = {};
-  for (let file in files) {
-    var fileEntry = files[file];
-    var safeFileEntry = '"' + fileEntry + '"';
-    if (fileEntry && !(fileEntry in cache || safeFileEntry in cache)) {
-      if ((fileEntry.charAt(0) === '"' && fileEntry.charAt(0) === '"') ||
-          (fileEntry.charAt(0) === '\'' && fileEntry.charAt(0) === '\'')){
-        result.push(fileEntry);
-      } else {
-        result.push(safeFileEntry);
-      }
-      cache[fileEntry] = true;
-    }
-  }
-  return result;
 };
 
 

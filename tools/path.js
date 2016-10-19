@@ -38,74 +38,6 @@ var PathTools = function() {};
 
 
 /**
- * List of known closure library closure goog folders.
- * @type {array}
- */
-PathTools.closureGoogFolders = [
-  'a11y',
-  'array',
-  'asserts',
-  'async',
-  'bootstrap',
-  'color',
-  'crypt',
-  'css',
-  'cssom',
-  'datasource',
-  'date',
-  'db',
-  'debug',
-  'disposable',
-  'dom',
-  'editor',
-  'events',
-  'format',
-  'fs',
-  'functions',
-  'fx',
-  'graphics',
-  'history',
-  'html',
-  'i18n',
-  'images',
-  'iter',
-  'json',
-  'labs',
-  'locale',
-  'log',
-  'math',
-  'memoize',
-  'messaging',
-  'module',
-  'net',
-  'object',
-  'positioning',
-  'promise',
-  'proto',
-  'proto2',
-  'pubsub',
-  'reflect',
-  'result',
-  'soy',
-  'spell',
-  'stats',
-  'storage',
-  'string',
-  'structs',
-  'style',
-  'testing',
-  'timer',
-  'tweak',
-  'ui',
-  'uri',
-  'useragent',
-  'vec',
-  'webgl',
-  'window'
-];
-
-
-/**
  * @param {string=} opt_name
  * @return {!string}
  */
@@ -174,7 +106,8 @@ PathTools.getClosureLibraryFiles = function(opt_ignore = []) {
   }
 
   var closureLibraryFolders = [];
-  PathTools.closureGoogFolders.forEach(folder => {
+  var closureGoogFolders = PathTools.getDirectories(closureLibraryFiles);
+  closureGoogFolders.forEach(folder => {
     if (opt_ignore.indexOf(folder) === -1) {
       closureLibraryFolders.push(
         path.join(closureLibraryFiles, folder, '**.js'));
@@ -334,6 +267,16 @@ PathTools.getUrlFile = function(file_url) {
  */
 PathTools.getFileBase = function(file) {
   return pathParse(file).base;
+};
+
+
+/**
+ * @param {!string} directory_path
+ */
+PathTools.getDirectories = function(directory_path) {
+  return fs.readdirSync(directory_path).filter((file) => {
+    return fs.statSync(path.join(directory_path, file)).isDirectory();
+  });
 };
 
 

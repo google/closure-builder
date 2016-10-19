@@ -28,6 +28,7 @@ var testFilesPath = 'test_files/resources/';
 describe('buildTools', function() {
 
   describe('Files', function() {
+
     it('sortFiles', function() {
       var files = fileTools.getGlobFiles(testFilesPath + '*');
       var sortedFilesAll = buildTools.sortFiles(files, true);
@@ -39,13 +40,6 @@ describe('buildTools', function() {
       assert(sortedFilesWithoutTest.length > 5);
     });
 
-    it('getSafeFileList', function() {
-      var files = ['a1', 'a2', 'a3', 'a4', 'a5', 'b2', 'a4'];
-      var expectedFiles = ['"a1"', '"a2"', '"a3"', '"a4"', '"a5"', '"b2"'];
-      var safeFiles = buildTools.getSafeFileList(files);
-      assert(safeFiles);
-      assert.deepEqual(safeFiles, expectedFiles);
-    });
   });
 
 });

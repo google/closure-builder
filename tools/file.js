@@ -265,6 +265,16 @@ FileTools.writeFile = function(file, content) {
 
 
 /**
+ * @param {!string} directory_path
+ */
+FileTools.getDirectories = function(directory_path) {
+  return fs.readdirSync(directory_path).filter((file) => {
+    return FileTools.isDirectory(path.join(directory_path, file));
+  });
+};
+
+
+/**
  * @param {!string} file
  * @return {!boolean}
  */
