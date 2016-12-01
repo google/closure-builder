@@ -60,10 +60,10 @@
   "license": "Apache-2.0",
   "dependencies": {
     "browserify": "13.1.1",
-    "clean-css": "3.4.20",
+    "clean-css": "3.4.21",
     "decompress": "^4.0.0",
-    "follow-redirects": "1.0.0",
-    "fs-extra": "0.30.0",
+    "follow-redirects": "1.1.0",
+    "fs-extra": "1.0.0",
     "glob": "7.1.1",
     "loglevel": "1.4.1",
     "marked": "0.3.6",
@@ -72,7 +72,7 @@
     "path-parse": "1.0.5",
     "progress": "1.1.8",
     "touch": "1.0.0",
-    "validator": "6.1.0"
+    "validator": "6.2.0"
   },
   "devDependencies": {
     "assert": "latest",
