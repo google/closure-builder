@@ -49,6 +49,8 @@ BuildTools.detectType = function(config) {
     return BuildType.NODEJS;
   } else if (config.hasJsFiles()) {
     return BuildType.JAVASCRIPT;
+  } else if (config.hasClosureStylesheetsFiles()) {
+    return BuildType.CLOSURE_STYLESHEETS;
   } else if (config.hasCssFiles()) {
     return BuildType.CSS;
   } else if (config.hasMarkdownFiles()) {
@@ -110,6 +112,7 @@ BuildTools.getBuildRequirements = function(config) {
   return {
     closureFiles: [].concat(depsConfig.closureFiles, srcsConfig.closureFiles),
     cssFiles: [].concat(srcsConfig.cssFiles),
+    closureStylesheetsFiles: [].concat(srcsConfig.closureStylesheetsFiles),
     jsFiles: [].concat(depsConfig.jsFiles, srcsConfig.jsFiles),
     markdownFiles: [].concat(mdConfig.markdownFiles),
     nodeFiles: [].concat(srcsConfig.nodeFiles),
@@ -138,15 +141,16 @@ BuildTools.getBuildRequirements = function(config) {
  */
 BuildTools.scanFiles = function(files, opt_entry_point) {
   var closureFiles = [];
+  var closureStylesheetsFiles = [];
   var cssFiles = [];
+  var entryPoint = '';
   var jsFiles = [];
   var markdownFiles = [];
   var nodeFiles = [];
   var soyFiles = [];
-  var entryPoint = '';
-  var requireClosureLibraryUI = false;
   var requireClosureExport = false;
   var requireClosureLibrary = false;
+  var requireClosureLibraryUI = false;
   var requireECMAScript6 = false;
   var requireSoyLibrary = false;
   var requireSoyi18n = false;
@@ -210,6 +214,10 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
         requireECMAScript6 = true;
       }
 
+    // Handling Closure stylesheets (.gss) file.
+    } else if (file.endsWith('.gss')) {
+      closureStylesheetsFiles.push(file);
+
     // Handling CSS files.
     } else if (file.endsWith('.css')) {
       cssFiles.push(file);
@@ -223,16 +231,17 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
     closureFiles: closureFiles,
     cssFiles: cssFiles,
     entryPoint: entryPoint,
+    closureStylesheetsFiles: closureStylesheetsFiles,
     jsFiles: jsFiles,
+    markdownFiles: markdownFiles,
     nodeFiles: nodeFiles,
     soyFiles: soyFiles,
-    markdownFiles: markdownFiles,
     requireClosureExport: requireClosureExport,
     requireClosureLibrary: requireClosureLibrary,
     requireClosureLibraryUI: requireClosureLibraryUI,
+    requireECMAScript6: requireECMAScript6,
     requireSoyLibrary: requireSoyLibrary,
-    requireSoyi18n: requireSoyi18n,
-    requireECMAScript6: requireECMAScript6
+    requireSoyi18n: requireSoyi18n
   };
 };
 

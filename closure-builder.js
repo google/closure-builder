@@ -138,6 +138,8 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
     this.compileJavaScriptFiles(config, callback);
   } else if (type === buildType.CSS) {
     this.compileCssFiles(config, callback);
+  } else if (type === buildType.CLOSURE_STYLESHEETS) {
+    this.compileClosureStylesheetsFiles(config, callback);
   } else if (type === buildType.MARKDOWN) {
     this.convertMarkdownFiles(config, callback);
   } else if (type === buildType.RESOURCES) {
@@ -166,6 +168,10 @@ ClosureBuilder.prototype.showConfigInformation = function(config) {
 
   log.debug('Found', config.hasClosureFiles(), 'closure files.');
   log.trace(config.getClosureFiles());
+
+  log.debug('Found', config.hasClosureStylesheetsFiles(),
+    'closure stylesheets files.');
+  log.trace(config.getClosureStylesheetsFiles());
 
   log.debug('Found', config.hasCssFiles(), 'css files.');
   log.trace(config.getCssFiles());
@@ -270,6 +276,23 @@ ClosureBuilder.prototype.compileCssFiles = function(config, opt_callback) {
   var files = config.getCssFiles();
   buildCompilers.compileCssFiles(files, config.getOutFilePath(), opt_callback,
       config);
+};
+
+
+/**
+ * @param {!buildConfig} config
+ * @param {function=} opt_callback
+ */
+ClosureBuilder.prototype.compileClosureStylesheetsFiles = function(
+    config, opt_callback) {
+  config.setMessage('Compiling Closure Stylesheets files ...');
+  var files = config.getClosureStylesheetsFiles();
+  buildCompilers.compileClosureStylesheetsFiles(
+    files, config.getOutFilePath(), {
+      config: config,
+      options: config.closureStylesheetsCompilerOptions
+    },
+    opt_callback);
 };
 
 

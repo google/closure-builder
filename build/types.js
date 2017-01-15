@@ -26,13 +26,14 @@
  */
 var BuildType = {
   CLOSURE: 'closure',
+  CLOSURE_STYLESHEETS: 'closure stylesheets',
   CSS: 'css',
   JAVASCRIPT: 'javascript',
+  MARKDOWN: 'markdown',
+  NODEJS: 'nodejs',
   RESOURCES: 'resources',
   SOY: 'soy',
   SOY_CLOSURE: 'soy and closure',
-  NODEJS: 'nodejs',
-  MARKDOWN: 'markdown',
   UNKNOWN: ''
 };
 

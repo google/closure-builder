@@ -104,6 +104,16 @@ TestConfigs.soyTestConfigBroken = {
 };
 
 
+TestConfigs.closureStylesheetsTestConfig = {
+  name: 'closure_stylesheet_test',
+  srcs: [
+    'test_files/test_1.gss',
+    'test_files/test_2.gss'
+  ],
+  out: path.join(testDirectory, 'closure-stylesheet-test')
+};
+
+
 TestConfigs.markdownConfig = {
   name: 'markdown_test',
   markdown: [

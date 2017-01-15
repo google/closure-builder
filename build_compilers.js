@@ -31,6 +31,8 @@ var remoteTools = require('./tools/remote.js');
 var textTools = require('./tools/text.js');
 
 var closureCompiler = require('./compilers/closure-compiler/compiler.js');
+var closureStylesheetsCompiler = require(
+  './compilers/closure-stylesheets/compiler.js');
 var closureTemplatesCompiler = require(
   './compilers/closure-templates/compiler.js');
 var nodejsCompiler = require('./compilers/nodejs/compiler.js');
@@ -343,7 +345,7 @@ BuildCompilers.convertMarkdownFiles = function(files, out,
 
 /**
  * @param {Array} files
- * @param {string=} output
+ * @param {string=} out
  * @param {object=} opt_options Additional options for the compiler.
  *   opt_options.config = BuildConfig
  *   opt_options.options = Additional compiler options
@@ -419,6 +421,37 @@ BuildCompilers.compileJsFiles = function(files, out,
   };
   closureCompiler.compile(files, options, null, compilerEvent,
     useRemoteService);
+};
+
+
+/**
+ * @param {Array} files
+ * @param {string=} out
+ * @param {object=} opt_options Additional options for the compiler.
+ *   opt_options.config = BuildConfig
+ *   opt_options.options = Additional compiler options
+ * @param {function=} opt_callback
+ */
+BuildCompilers.compileClosureStylesheetsFiles = function(files, out,
+    opt_options, opt_callback) {
+  var options = (opt_options && opt_options.options) ? opt_options.options : {};
+  var config = (opt_options && opt_options.config) ? opt_options.config : false;
+  log.debug('Compiling', files.length, 'files to', out, '...');
+  log.trace(files);
+  var compilerEvent = (errors, warnings, target_file, content) => {
+    if (errors) {
+      if (opt_callback) {
+        opt_callback(errors, warnings);
+      }
+    } else if (content) {
+      fileTools.saveContent(out, content, opt_callback, config, warnings);
+    } else {
+      if (opt_callback) {
+        opt_callback(errors, warnings);
+      }
+    }
+  };
+  closureStylesheetsCompiler.compile(files, options, null, compilerEvent);
 };
 
 

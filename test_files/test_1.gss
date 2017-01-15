@@ -1,0 +1,13 @@
+@def BG_COLOR              rgb(235, 239, 249);
+
+@def DIALOG_BORDER_COLOR   rgb(107, 144, 218);
+@def DIALOG_BG_COLOR       BG_COLOR;
+
+body {
+  background-color: BG_COLOR;
+}
+
+.dialog {
+  background-color: DIALOG_BG_COLOR;
+  border: 1px solid DIALOG_BORDER_COLOR;
+}

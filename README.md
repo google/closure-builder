@@ -7,11 +7,12 @@ Closure Builder - Closure build system
 
 [![NPM](https://nodei.co/npm/closure-builder.png?downloads=true&downloadRank=true)](https://nodei.co/npm/closure-builder/)
 
-Closure build system to easily compile Soy template files together with
-Closure JavaScript files without the need to configure anything.
+An Closure build system to easily compile Closure JavaScript files,
+Closure Template files and Closure Stylesheet files without the need to
+configure anything.
 The Google Closure library will be included automatically if needed.
 
-This simple build system could be also used for normal css, js, nodejs  and
+This build system could be also used for normal css, js, nodejs  and
 static files as well.
 
 * [Installation](#installation)
@@ -21,11 +22,12 @@ static files as well.
    * [Closure compiler options](#closure-compiler-options)
 * [Function callback](#function-callback)
 * [Example build configurations](#example-build-configurations)
-  * [Compile closure JavaScript files](#compile-closure-javascript-files)
-  * [Compile closure Javascript files with soy files](#compile-closure-javascript-files-with-soy-files)
-  * [Compile closure Javascript files with externs](#compile-closure-javascript-files-with-externs)
-  * [Compile closure JavaScript files over remote service](#compile-closure-javascript-files-over-remote-service)
-  * [Compile soy files](#compile-soy-files)
+  * [Compile Closure JavaScript files](#compile-closure-javascript-files)
+  * [Compile Closure Javascript files with soy files](#compile-closure-javascript-files-with-soy-files)
+  * [Compile Closure Javascript files with externs](#compile-closure-javascript-files-with-externs)
+  * [Compile Closure JavaScript files over remote service](#compile-closure-javascript-files-over-remote-service)
+  * [Compile Closure Template (.soy) files](#compile-closure-template-files)
+  * [Compile Closure Stylesheet (.gss) files](#compile-closure-stylesheet-files)
   * [Compile JavaScript files](#compile-javascript-files)
   * [Compile Node.js files](#compile-node-js-files)
   * [Compile css files](#compile-css-files)
@@ -244,7 +246,7 @@ closureBuilder.build({
 });
 ```
 
-#### Compile Soy files ####
+#### Compile Closure Template files ####
 Compiling Soy files into Soy JavaScript files to an targeted directory.
 ```javascript
 closureBuilder.build({
@@ -253,6 +255,18 @@ closureBuilder.build({
     'soy/**/*.soy'
   ]),
   out: 'genfiles/compiled_soy_files/'
+});
+```
+
+#### Compile Closure Stylesheet files ####
+Compiling closure stylesheet files into css files to an targeted directory.
+```javascript
+closureBuilder.build({
+  name: 'gss_files',
+  srcs: glob([
+    'css/**/*.gss'
+  ]),
+  out: 'genfiles/compiled_css_files/'
 });
 ```
 

@@ -121,7 +121,6 @@ describe('ClosureBuilder', function() {
         done();
       });
     });
-
   });
 
   describe('ECMA Script 6', function() {
@@ -161,6 +160,18 @@ describe('ClosureBuilder', function() {
     });
   });
 
+  describe('Closure Stylesheets file', function() {
+    it('compile', function(done) {
+      this.timeout(30000);
+      closureBuilder.build(testConfigs.closureStylesheetsTestConfig, function(
+          errors, warnings) {
+        assert(!errors);
+        assert(!warnings);
+        done();
+      });
+    });
+  });
+
   describe('Closure files', function() {
     it('Single file', function(done) {
       this.timeout(25000);
@@ -189,7 +200,6 @@ describe('ClosureBuilder', function() {
       this.timeout(30000);
       closureBuilder.build(testConfigs.closureTestModuleConfig, function(
           errors, warnings) {
-        console.log(errors, warnings);
         assert(!errors);
         assert(!warnings);
         done();
@@ -270,10 +280,7 @@ describe('ClosureBuilder', function() {
         done();
       });
     });
-  });
-
-  describe('NodeJs - Type overwrite', function() {
-    it('compile', function(done) {
+    it('Type overwrite', function(done) {
       this.timeout(25000);
       closureBuilder.build(testConfigs.nodeToJsTestConfig, function(errors,
           warnings, files, content) {
@@ -286,7 +293,7 @@ describe('ClosureBuilder', function() {
   });
 
   describe('Closure library', function() {
-    it('compile', function(done) {
+    it('Compile', function(done) {
       if (!largeMemoryTest) {
         return done();
       }
@@ -302,10 +309,7 @@ describe('ClosureBuilder', function() {
         done();
       });
     });
-  });
-
-  describe('Closure library - UI', function() {
-    it('compile', function(done) {
+    it('Compile goog.ui', function(done) {
       if (!largeMemoryTest) {
         return done();
       }
@@ -325,7 +329,7 @@ describe('ClosureBuilder', function() {
   });
 
   describe('Closure library - Remote Service', function() {
-    it('compile', function(done) {
+    it('Compile', function(done) {
       if (!largeMemoryTest) {
         return done();
       }
@@ -341,10 +345,7 @@ describe('ClosureBuilder', function() {
           done();
         });
     });
-  });
-
-  describe('Closure library UI - Remote Service', function() {
-    it('compile', function(done) {
+    it('Compile goog.ui', function(done) {
       if (!largeMemoryTest) {
         return done();
       }

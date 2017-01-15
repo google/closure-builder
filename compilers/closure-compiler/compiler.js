@@ -196,6 +196,8 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     var warnings = null;
     var numErrors = 0;
     var numWarnings = 0;
+
+    // Handling Error messages
     if (errorMsg) {
       var parsedErrorMessage = ClosureCompiler.parseErrorMessage(errorMsg);
       numErrors = parsedErrorMessage.errors;

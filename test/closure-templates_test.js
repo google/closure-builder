@@ -1,5 +1,5 @@
 /**
- * @fileoverview Closure Compilers - Closure Compiler
+ * @fileoverview Closure Compilers - Closure Templates Compiler
  *
  * @license Copyright 2016 Google Inc. All Rights Reserved.
  *
@@ -177,11 +177,11 @@ describe('Closure Templates::', function() {
         assert(!errors);
         assert(!warnings);
         var content = fs.readFileSync(files[0]).toString();
-        assert(content.indexOf('goog.provide(\'soy_test_3\');') !== -1);
-        assert(content.indexOf('goog.require(\'goog.i18n.bidi\');') === -1);
-        assert(content.indexOf('goog.getMsg(') === -1);
-        assert(content.indexOf('i18nTest(') !== -1);
-        assert(content.indexOf('MSG_EXTERNAL_') !== -1);
+        assert(content.includes('goog.provide(\'soy_test_3\');'));
+        assert(!content.includes('goog.require(\'goog.i18n.bidi\');'));
+        assert(!content.includes('goog.getMsg('));
+        assert(content.includes('i18nTest('));
+        assert(content.includes('MSG_EXTERNAL_'));
         done();
       });
   });

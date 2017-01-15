@@ -153,6 +153,32 @@ PathTools.getClosureTemplatesPath = function() {
 /**
  * @return {!string}
  */
+PathTools.getClosureTemplatesCompilerPath = function() {
+  return PathTools.getResourcePath('closure-templates-compiler', 'runtime');
+};
+
+
+/**
+ * @return {!string}
+ */
+PathTools.getClosureTemplatesCompilerJar = function() {
+  var searchPath = PathTools.getClosureTemplatesCompilerPath();
+  var compilerJar = path.join(searchPath, 'SoyToJsSrcCompiler.jar');
+  if (!PathTools.existFile(compilerJar)) {
+    compilerJar = PathTools.searchFile(
+      searchPath, 'SoyToJsSrcCompiler', '.jar');
+  }
+  if (!PathTools.existFile(compilerJar)) {
+    log.error('Closure templates compiler jar was not found at', compilerJar);
+    return '';
+  }
+  return compilerJar;
+};
+
+
+/**
+ * @return {!string}
+ */
 PathTools.getClosureSoyUtilsFile = function() {
   var soyUtilsFile = path.join(PathTools.getClosureTemplatesPath(),
     'javascript', 'soyutils_usegoog.js');
@@ -167,28 +193,6 @@ PathTools.getClosureSoyUtilsFile = function() {
 /**
  * @return {!string}
  */
-PathTools.getClosureTemplatesCompilerPath = function() {
-  return PathTools.getResourcePath('closure-templates-compiler', 'runtime');
-};
-
-
-/**
- * @return {!string}
- */
-PathTools.getClosureTemplatesCompilerJar = function() {
-  var compilerJar = path.join(
-    PathTools.getClosureTemplatesCompilerPath(), 'SoyToJsSrcCompiler.jar');
-  if (!PathTools.existFile(compilerJar)) {
-    log.error('Closure templates compiler jar was not found at', compilerJar);
-    return '';
-  }
-  return compilerJar;
-};
-
-
-/**
- * @return {!string}
- */
 PathTools.getClosureStylesheetsCompilerPath = function() {
   return PathTools.getResourcePath('closure-stylesheets', 'runtime');
 };
@@ -197,7 +201,7 @@ PathTools.getClosureStylesheetsCompilerPath = function() {
 /**
  * @return {!string}
  */
-PathTools.getClosureStylesheetsJar = function() {
+PathTools.getClosureStylesheetsCompilerJar = function() {
   var searchPath = PathTools.getClosureStylesheetsCompilerPath();
   var compilerJar = path.join(searchPath, 'closure-stylesheets.jar');
   if (!PathTools.existFile(compilerJar)) {

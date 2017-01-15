@@ -1,0 +1,6 @@
+@def EXISTS                rgb(235, 239, 249);
+
+body {
+  background-color: EXISTS;
+  color: NOT_EXISTS
+}

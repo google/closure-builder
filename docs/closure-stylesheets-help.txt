@@ -1,0 +1,97 @@
+Closure Stylesheets
+
+One or more CSS/GSS files must be supplied as inputs.
+Output will be written to standard out unless --output_file is specified.
+
+command line options:
+ --allow-def-propagation                : Allows @defs and @mixins from one
+                                          file to propagate to other files.
+ --allow-unrecognized-functions         : Allow unrecognized functions.
+ --allow-unrecognized-properties        : Allow unrecognized properties.
+ --allowed-non-standard-function VAL    : Specify a non-standard function to
+                                          whitelist, like alpha()
+ --allowed-unrecognized-property VAL    : Specify an unrecognized property to
+                                          whitelist
+ --const                                : Specify integer constants to be used
+                                          in for loops. Invoke for each const,
+                                          e.g.: --const=VAR1=VALUE1 --const=VAR2
+                                          =VALUE2
+ --copyright-notice VAL                 : Copyright notice to prepend to the
+                                          output
+ --css-renaming-prefix VAL              : Add a prefix to all renamed css class
+                                          names.
+ --define VAL                           : Specifies the name of a true condition
+                                          . The condition name can be used in
+                                          @if boolean expressions. The condition
+                                          s are ignored if GSS extensions are
+                                          not enabled.
+ --excluded-classes-from-renaming VAL   : Pass the compiler a list of CSS class
+                                          names that shoudn't be renamed.
+ --gss-function-map-provider VAL        : The fully qualified class name of a
+                                          map provider of custom GSS functions
+                                          to resolve.
+ --input-orientation [LTR | RTL]        : This specifies the display orientation
+                                          the input files were written for. You
+                                          can choose between: LTR, RTL. LTR is
+                                          the default and means that the input
+                                          style sheets were designed for use
+                                          with left to right display User
+                                          Agents. RTL sheets are designed for
+                                          use with right to left UAs. Currently,
+                                          all input files must have the same
+                                          orientation, as there is no way to
+                                          specify the orientation on a per-file
+                                          or per-library basis.
+ --output-file (-o) VAL                 : The output CSS filename. If empty,
+                                          standard output will be used. The
+                                          output is always UTF-8 encoded.
+ --output-orientation [LTR | RTL |      : Specify this option to perform
+ NOCHANGE]                              : automatic right to left conversion of
+                                          the input. You can choose between:
+                                          LTR, RTL, NOCHANGE. NOCHANGE means
+                                          the input will not be changed in any
+                                          way with respect to direction issues.
+                                          LTR outputs a sheet suitable for left
+                                          to right display and RTL outputs a
+                                          sheet suitable for right to left
+                                          display. If the input orientation is
+                                          different than the requested output
+                                          orientation, 'left' and 'right'
+                                          values in direction sensitive style
+                                          rules are flipped. If the input
+                                          already has the desired orientation,
+                                          this option effectively does nothing
+                                          except for defining GSS_LTR and
+                                          GSS_RTL, respectively. The input is
+                                          LTR by default and can be changed
+                                          with the input_orientation flag.
+ --output-renaming-map VAL              : The output from the CSS class
+                                          renaming. Provides a map of class
+                                          names to what they were renammed to.
+ --output-renaming-map-format [CLOSURE_ : How to format the output from the CSS
+ COMPILED | CLOSURE_COMPILED_BY_WHOLE   : class renaming.
+ | CLOSURE_COMPILED_SPLIT_HYPHENS |     :
+ CLOSURE_UNCOMPILED | JSON | PROPERTIES :
+ | JSCOMP_VARIABLE_MAP]                 :
+ --output-source-map VAL                : The source map output. Provides a
+                                          mapping from the generated output to
+                                          their original source code location.
+ --preserve-comments                    : Preserve comments from sources into
+                                          pretty printed output css.
+ --pretty-print                         : Whether to format the output with
+                                          newlines and indents so that it is
+                                          more readable.
+ --rename [NONE | DEBUG | CLOSURE]      : How CSS classes should be renamed.
+                                          Defaults to NONE.
+ --source_map_output_level [ALL |       : The level to generate source maps.
+ DEFAULT]                               : You could choose between DEFAULT,
+                                          which will generate source map only
+                                          for selectors, blocks, rules,
+                                          variables and symbol mappings, and
+                                          ALL, which outputs mappings for all
+                                          elements.
+ --vendor [WEBKIT | MOZILLA | MICROSOFT : Creates browser-vendor-specific
+ | OPERA | KONQUEROR]                   : output by stripping all proprietary
+                                          browser-vendor properties from the
+                                          output except for those associated
+                                          with this vendor.

@@ -193,6 +193,9 @@ var BuildConfig = function(config) {
   this.cssFiles_ = requirements.cssFiles;
 
   /** @private {!array} */
+  this.closureStylesheetsFiles_ = requirements.closureStylesheetsFiles;
+
+  /** @private {!array} */
   this.soyFiles_ = requirements.soyFiles;
 
   /** @private {!array} */
@@ -236,6 +239,14 @@ BuildConfig.prototype.getNodeFiles = function() {
 BuildConfig.prototype.getCssFiles = function() {
   return this.cssFiles_;
 };
+
+/**
+ * @return {!array}
+ */
+BuildConfig.prototype.getClosureStylesheetsFiles = function() {
+  return this.closureStylesheetsFiles_;
+};
+
 
 /**
  * @return {!array}
@@ -334,6 +345,14 @@ BuildConfig.prototype.hasNodeFiles = function() {
  */
 BuildConfig.prototype.hasCssFiles = function() {
   return this.cssFiles_.length || 0;
+};
+
+
+/**
+ * @return {!number}
+ */
+BuildConfig.prototype.hasClosureStylesheetsFiles = function() {
+  return this.closureStylesheetsFiles_.length || 0;
 };
 
 

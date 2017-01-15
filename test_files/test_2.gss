@@ -1,0 +1,16 @@
+@def LEFT_HAND_NAV_WIDTH    180px;
+@def LEFT_HAND_NAV_PADDING  3px;
+
+.left_hand_nav {
+  position: absolute;
+  width: LEFT_HAND_NAV_WIDTH;
+  padding: LEFT_HAND_NAV_PADDING;
+}
+
+.content {
+  position: absolute;
+  margin-left: add(LEFT_HAND_NAV_PADDING,  /* padding left */
+                   LEFT_HAND_NAV_WIDTH,
+                   LEFT_HAND_NAV_PADDING); /* padding right */
+
+}
