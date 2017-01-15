@@ -63,6 +63,25 @@ describe('Closure Stylesheets::', function() {
       });
   });
 
+  it('css-renaming-prefix', function(done) {
+    this.timeout(25000);
+    var files = ['test_files/test_1.gss'];
+    var options = {
+      'css-renaming-prefix': 'test123312-'
+    };
+    closureStylesheets.compile(files, options, null,
+      function(errors, warnings, file, code) {
+        assert(!errors);
+        assert(!warnings);
+        assert(code.includes('body{background-color:#ebeff9}'));
+        assert(!code.includes(
+          'test123312-body{background-color:#ebeff9}'));
+        assert(code.includes(
+          '.test123312-dialog{background-color:#ebeff9;'));
+        done();
+      });
+  });
+
   it('Expected Error Message', function(done) {
     this.timeout(25000);
     var files = ['test_files/special/error.gss'];

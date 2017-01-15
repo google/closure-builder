@@ -438,6 +438,11 @@ BuildCompilers.compileClosureStylesheetsFiles = function(files, out,
   var config = (opt_options && opt_options.config) ? opt_options.config : false;
   log.debug('Compiling', files.length, 'files to', out, '...');
   log.trace(files);
+  if (config) {
+    if (config.prefix) {
+      options['css-renaming-prefix'] = config.prefix;
+    }
+  }
   var compilerEvent = (errors, warnings, target_file, content) => {
     if (errors) {
       if (opt_callback) {

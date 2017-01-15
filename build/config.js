@@ -150,6 +150,9 @@ var BuildConfig = function(config) {
   /** @type {array} */
   this.replaceText = this.config.replace || null;
 
+  /** @type {!string} */
+  this.prefix = this.config.prefix || '';
+
   // Checking requirements and make sure correct options are set.
   var requirements = BuildTools.getBuildRequirements(this);
 
