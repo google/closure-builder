@@ -266,7 +266,7 @@ closureBuilder.build({
   srcs: glob([
     'css/**/*.gss'
   ]),
-  out: 'genfiles/compiled_css_files/'
+  out: 'genfiles/compiled.css'
 });
 ```
 
