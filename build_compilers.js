@@ -199,6 +199,9 @@ BuildCompilers.compileSoyTemplates = function(files, out,
   if (typeof options.shouldProvideRequireSoyNamespaces === 'undefined') {
     options.shouldProvideRequireSoyNamespaces = true;
   }
+  if (typeof options.shouldGenerateJsdoc === 'undefined') {
+    options.shouldGenerateJsdoc = true;
+  }
   if (config) {
     config.setMessage(message);
     if (config.i18n) {
