@@ -64,7 +64,7 @@
     "clean-css": "3.4.23",
     "decompress": "^4.0.0",
     "follow-redirects": "1.2.1",
-    "fs-extra": "1.0.0",
+    "fs-extra": "2.0.0",
     "glob": "7.1.1",
     "loglevel": "1.4.1",
     "marked": "0.3.6",
