@@ -46,6 +46,17 @@ var configTypeJavaScript = {
   'type': closureBuilder.buildType.JAVASCRIPT
 };
 
+var configPrefix = {
+  'debug': true,
+  'name': 'test1',
+  'sources': [
+    'test_files/test1.js'
+  ],
+  'prefix': 'test123',
+  'options': {},
+  'type': closureBuilder.buildType.JAVASCRIPT
+};
+
 var pathOutConfig = {'out': 'folder1/folder2/'};
 var fileOutConfig = {'out': 'folder1/folder2/file1.txt'};
 var emptyOutConfig = {'out': ''};
@@ -78,6 +89,10 @@ describe('BuildConfig', function() {
     });
     it('this.jscomp_error', function() {
       assert.equal(buildConfig.jscompError, strucConfig.jscomp_error);
+    });
+    it('this.prefix', function() {
+      var buildConfig = closureBuilder.getBuildConfig(configPrefix);
+      assert.equal(buildConfig.prefix, configPrefix.prefix);
     });
   });
 

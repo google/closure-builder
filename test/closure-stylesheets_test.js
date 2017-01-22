@@ -82,6 +82,25 @@ describe('Closure Stylesheets::', function() {
       });
   });
 
+  it('prefix', function(done) {
+    this.timeout(25000);
+    var files = ['test_files/special/prefix_test.gss'];
+    var options = {
+      'use_prefix': 'test3122-'
+    };
+    closureStylesheets.compile(files, options, null,
+      function(errors, warnings, file, code) {
+        assert(!errors);
+        assert(!warnings);
+        console.log(code);
+        assert(code.includes('background-color:#ebeff9'));
+        assert(!code.includes('{$prefix}'));
+        assert(code.includes('.test3122-overview .max-width{'));
+        assert(code.includes('#test3122-overview .mdl-card__media img{'));
+        done();
+      });
+  });
+
   it('Expected Error Message', function(done) {
     this.timeout(25000);
     var files = ['test_files/special/error.gss'];

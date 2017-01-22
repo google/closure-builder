@@ -17,6 +17,7 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
+var fileTools = require('../../tools/file.js');
 var javaTools = require('../../tools/java.js');
 var pathTools = require('../../tools/path.js');
 
@@ -59,13 +60,18 @@ ClosureStylesheets.compile = function(files, opt_options, opt_target_file,
   var options = opt_options || {};
   var showWarnings = true;
 
-  // Handling files
-  var dupFile = {};
-  for (let i = 0; i < files.length; i++) {
-    if (!dupFile[files[i]]) {
-      compilerOptions.push(files[i]);
-    }
-    dupFile[files[i]] = true;
+  // Pre-convert custom {$prefix} tag.
+  if (options.use_prefix) {
+    var targetDir = pathTools.getRandomTempPath('closure-builder-templates');
+    fileTools.copySync(files, targetDir);
+    fileTools.findAndReplace(
+      [targetDir],
+      /\{\$prefix\}/g,
+      options.use_prefix,
+      true
+    );
+    files = fileTools.getGlobFiles(targetDir +  '/**/*');
+    delete options.use_prefix;
   }
 
   // Handling options
@@ -77,10 +83,13 @@ ClosureStylesheets.compile = function(files, opt_options, opt_target_file,
     }
   }
 
-  // Handling warnings
-  if (options.no_warnings) {
-    showWarnings = false;
-    delete options.no_warnings;
+  // Handling files
+  var dupFile = {};
+  for (let i = 0; i < files.length; i++) {
+    if (!dupFile[files[i]]) {
+      compilerOptions.push(files[i]);
+    }
+    dupFile[files[i]] = true;
   }
 
   var compilerEvent = (error, stdout, stderr) => {

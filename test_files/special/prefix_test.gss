@@ -1,0 +1,20 @@
+@def BG_COLOR              rgb(235, 239, 249);
+
+.{$prefix}overview section.section--center,
+.{$prefix}overview .max-width {
+  background-color: BG_COLOR;
+}
+
+#{$prefix}overview .mdl-card__media {
+  min-height: 150px;
+  overflow: hidden;
+}
+
+#{$prefix}overview .mdl-card__media img {
+  width: 100%;
+}
+
+#{$prefix}overview .mdl-card__title {
+  background: transparent;
+  height: auto;
+}

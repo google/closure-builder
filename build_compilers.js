@@ -443,7 +443,7 @@ BuildCompilers.compileClosureStylesheetsFiles = function(files, out,
   log.trace(files);
   if (config) {
     if (config.prefix) {
-      options['css-renaming-prefix'] = config.prefix;
+      options['use_prefix'] = config.prefix;
     }
   }
   var compilerEvent = (errors, warnings, target_file, content) => {
