@@ -238,6 +238,15 @@ PathTools.getTempPath = function(opt_name) {
 
 
 /**
+ * @param {string!} name
+ * @return {string} Temp test dir path
+ */
+PathTools.getTempTestPath = function(name) {
+  return path.join(PathTools.getTempPath('closure-builder-test'), name);
+};
+
+
+/**
  * @param {string} file
  * @return {string} file path
  */

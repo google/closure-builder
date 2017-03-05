@@ -60,8 +60,8 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "browserify": "13.3.0",
-    "clean-css": "3.4.24",
+    "browserify": "14.1.0",
+    "clean-css": "4.0.8",
     "decompress": "^4.0.0",
     "follow-redirects": "1.2.1",
     "fs-extra": "2.0.0",
@@ -69,11 +69,11 @@
     "loglevel": "1.4.1",
     "marked": "0.3.6",
     "mkdirp": "0.5.1",
-    "rimraf": "^2.5.4",
+    "rimraf": "^2.6.1",
     "path-parse": "1.0.5",
     "progress": "1.1.8",
     "touch": "1.0.0",
-    "validator": "6.2.1"
+    "validator": "7.0.0"
   },
   "devDependencies": {
     "assert": "latest",

@@ -23,6 +23,9 @@ var fs = require('fs-extra');
 var memoryTools = require('../tools/memory.js');
 
 var closureBuilder = require('../closure-builder');
+var cssConfig = require('../test/configs/css_config.js');
+var closureCompilerConfig = require(
+  '../test/configs/closure_compiler_config.js');
 var testConfigs = require('../test/test_configs.js');
 var largeMemoryTest = memoryTools.checkAvailableMemory(600);
 
@@ -59,24 +62,15 @@ describe('ClosureBuilder', function() {
   describe('CSS files', function() {
     it('compile', function(done) {
       this.timeout(20000);
-      closureBuilder.build(testConfigs.cssConfig, function(errors, warnings,
+      closureBuilder.build(cssConfig.general, function(errors, warnings,
           files, content) {
-        var expected = '.menueliste li a,.submenue li a{text-decoration:none}' +
-          'body{margin:0;padding:0;background:#e4e9ec}#container1,#container2' +
-          ',#container3{width:900px}#content{background:red;margin:0 5px;min-' +
-          'height:1050px}#menu{margin:50px auto;border:1px solid #000}.menuel' +
-          'iste li{text-align:center;display:block;margin:25px 0 0;background' +
-          ':#7d94a1;list-style:none}.menueliste li a:hover{display:block;bord' +
-          'er-left:10px solid #bacbe3;border-right:10px solid #7d94a1;backgro' +
-          'und:#60777f}.submenue li{margin:0;padding:0;text-align:left;border' +
-          '-bottom:1px solid #60777f;list-style:none}.submenue li a{display:b' +
-          'lock;padding:5px 5px 5px .5em;border-left:10px solid #7d94a1;borde' +
-          'r-right:10px solid #bacbe3;background:#9aacbb;width:119px}.submenu' +
-          'e li a:hover{padding:5px 5px 5px .5em;border-left:10px solid #1c64' +
-          'd1;border-right:10px solid #5ba3e0;background:#7d94a1}';
         assert(!errors);
+        console.log(content);
         assert(content);
-        assert.equal(content, expected);
+        assert(content.includes('body{margin:0;padding:0;background:#e4e9ec}'));
+        assert(content.includes('.submenue li a{display:block;'));
+        assert(content.includes(
+          '.submenue li a:hover{padding:5px 5px 5px .5em;'));
         done();
       });
     });
@@ -175,21 +169,21 @@ describe('ClosureBuilder', function() {
   describe('Closure files', function() {
     it('Single file', function(done) {
       this.timeout(25000);
-      closureBuilder.build(testConfigs.closureTest1Config, function(errors) {
+      closureBuilder.build(closureCompilerConfig.general1, function(errors) {
         assert(!errors);
         done();
       });
     });
     it('Two files', function(done) {
       this.timeout(25000);
-      closureBuilder.build(testConfigs.closureTest2Config, function(errors) {
+      closureBuilder.build(closureCompilerConfig.general2, function(errors) {
         assert(!errors);
         done();
       });
     });
     it('Group of files', function(done) {
       this.timeout(25000);
-      closureBuilder.build(testConfigs.closureTestGroupConfig, function(
+      closureBuilder.build(closureCompilerConfig.group, function(
           errors, warnings) {
         assert(!errors);
         assert(!warnings);
@@ -198,7 +192,7 @@ describe('ClosureBuilder', function() {
     });
     it('Module files', function(done) {
       this.timeout(30000);
-      closureBuilder.build(testConfigs.closureTestModuleConfig, function(
+      closureBuilder.build(closureCompilerConfig.module, function(
           errors, warnings) {
         assert(!errors);
         assert(!warnings);
@@ -207,7 +201,7 @@ describe('ClosureBuilder', function() {
     });
     it('Duplicate input files', function(done) {
       this.timeout(25000);
-      closureBuilder.build(testConfigs.closureTestDuplicateConfig, function(
+      closureBuilder.build(closureCompilerConfig.duplicate, function(
           errors, warnings) {
         assert(!errors);
         assert(!warnings);
@@ -216,7 +210,7 @@ describe('ClosureBuilder', function() {
     });
     it('Externs', function(done) {
       this.timeout(25000);
-      closureBuilder.build(testConfigs.closureTestExternConfig, function(
+      closureBuilder.build(closureCompilerConfig.extern, function(
           errors, warnings) {
         assert(!errors);
         assert(!warnings);
@@ -225,7 +219,7 @@ describe('ClosureBuilder', function() {
     });
     it('Expected Error Message', function(done) {
       this.timeout(30000);
-      closureBuilder.build(testConfigs.closureTestErrorConfig, function(
+      closureBuilder.build(closureCompilerConfig.error, function(
           errors, warnings) {
         assert(errors);
         assert(!warnings);
@@ -234,7 +228,7 @@ describe('ClosureBuilder', function() {
     });
     it('Expected Warning Message', function(done) {
       this.timeout(30000);
-      closureBuilder.build(testConfigs.closureTestWarningConfig, function(
+      closureBuilder.build(closureCompilerConfig.warning, function(
           errors, warnings) {
         assert(!errors);
         assert(warnings);
@@ -243,7 +237,7 @@ describe('ClosureBuilder', function() {
     });
     it('Disabled Warning Message', function(done) {
       this.timeout(30000);
-      closureBuilder.build(testConfigs.closureTestWarningDisabledConfig,
+      closureBuilder.build(closureCompilerConfig.warningDisabled,
         function(errors, warnings) {
           assert(!errors);
           assert(!warnings);
@@ -252,7 +246,7 @@ describe('ClosureBuilder', function() {
     });
     it('Automatic @export handling', function(done) {
       this.timeout(40000);
-      closureBuilder.build(testConfigs.closureTestExportConfig, function(
+      closureBuilder.build(closureCompilerConfig.export, function(
           errors, warnings, files, content) {
         assert(!errors);
         assert(content);

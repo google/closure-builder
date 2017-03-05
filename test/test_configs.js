@@ -123,69 +123,6 @@ TestConfigs.markdownConfig = {
 };
 
 
-TestConfigs.closureTestDuplicateConfig = {
-  name: 'closure_test_duplicate',
-  srcs: [
-    'test_files/closure_test_1.js',
-    'test_files/closure_test_2.js',
-    'test_files/closure_test_duplicate.js'
-  ],
-  deps: glob([
-    'test_files/closure_test_*.js'
-  ]),
-  out: path.join(testDirectory, 'closure-test-1')
-};
-
-
-TestConfigs.closureTest1Config = {
-  name: 'closure_test_1',
-  srcs: [
-    'test_files/closure_test_1.js'
-  ],
-  out: path.join(testDirectory, 'closure-test-1')
-};
-
-
-TestConfigs.closureTest2Config = {
-  name: 'closure_test_2',
-  srcs: [
-    'test_files/closure_test_1.js',
-    'test_files/closure_test_2.js'
-  ],
-  out: path.join(testDirectory, 'closure-test-2')
-};
-
-
-TestConfigs.closureTestGroupConfig = {
-  name: 'closure_test_group',
-  srcs: glob([
-    'test_files/closure_test_*.js'
-  ]),
-  out: path.join(testDirectory, 'closure-test-group')
-};
-
-
-TestConfigs.closureTestModuleConfig = {
-  name: 'closure_test_require_module',
-  srcs: glob([
-    'test_files/closure_test_*.js'
-  ]),
-  out: path.join(testDirectory, 'closure-module')
-};
-
-
-TestConfigs.closureTestExternConfig = {
-  name: 'closure_test_extern',
-  srcs: glob([
-    'test_files/closure_test_*.js'
-  ]),
-  externs: [
-    'test_files/externs.js'
-  ],
-  out: path.join(testDirectory, 'closure-test-extern')
-};
-
-
 TestConfigs.closureECMAScript6ConstConfig = {
   name: 'closure_test_ecma6_const',
   srcs: glob([
@@ -216,43 +153,6 @@ TestConfigs.closureNoECMAScript6Config = {
 };
 
 
-TestConfigs.closureTestErrorConfig = {
-  name: 'closure_test_error',
-  srcs: glob([
-    'test_files/special/closure_error.js'
-  ]),
-  out: path.join(testDirectory, 'closure-error')
-};
-
-
-TestConfigs.closureTestWarningConfig = {
-  name: 'closure_test_warning',
-  srcs: glob([
-    'test_files/special/closure_warning.js'
-  ]),
-  out: path.join(testDirectory, 'closure-warning')
-};
-
-
-TestConfigs.closureTestWarningDisabledConfig = {
-  name: 'closure_test_warning',
-  srcs: glob([
-    'test_files/special/closure_warning.js'
-  ]),
-  warn: false,
-  out: path.join(testDirectory, 'closure-warning')
-};
-
-
-TestConfigs.closureTestExportConfig = {
-  name: 'closure_test_export',
-  srcs: glob([
-    'test_files/special/closure_export.js'
-  ]),
-  out: path.join(testDirectory, 'closure-export')
-};
-
-
 TestConfigs.nodeTestConfig = {
   name: 'node_test',
   srcs: glob([
@@ -279,16 +179,6 @@ TestConfigs.optionLicenseConfig = {
   ],
   license: 'test_files/license-header.md',
   out: path.join(testDirectory, 'license-files')
-};
-
-
-TestConfigs.cssConfig = {
-  name: 'css_files',
-  srcs: glob([
-    'test_files/*.css',
-    'test_files/*.htm'
-  ]),
-  out: path.join(testDirectory, 'css-files')
 };
 
 
