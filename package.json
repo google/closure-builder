@@ -61,10 +61,10 @@
   "license": "Apache-2.0",
   "dependencies": {
     "browserify": "14.1.0",
-    "clean-css": "4.0.8",
+    "clean-css": "4.0.10",
     "decompress": "^4.0.0",
-    "follow-redirects": "1.2.1",
-    "fs-extra": "2.0.0",
+    "follow-redirects": "1.2.3",
+    "fs-extra": "2.1.2",
     "glob": "7.1.1",
     "loglevel": "1.4.1",
     "marked": "0.3.6",
