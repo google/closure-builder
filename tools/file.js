@@ -104,12 +104,13 @@ FileTools.copyFile = function(src, dest, opt_callback) {
 
 
 /**
- * Copy files from srcs to dest.
+ * Copy files from srcs to an single destination.
  * @param {!array} srcs
  * @param {!string} dest
  */
 FileTools.copySync = function(srcs, dest) {
   var numFiles_ = srcs.length;
+  var fileNames_ = [];
   if (pathTools.isFile(dest)) {
     FileTools.mkdir(path.dirname(dest));
   } else {
@@ -120,7 +121,14 @@ FileTools.copySync = function(srcs, dest) {
     if (pathTools.isFile(dest)) {
       destFile = dest;
     }
-    console.log(destFile);
+    if (fileNames_.indexOf(destFile) !== -1) {
+      var newFileName = textTools.getRandomString() + '-' +
+        pathTools.getFileBase(srcs[i]);
+      console.warn('Renamed duplicated filename:', srcs[i], '>', newFileName);
+      destFile = path.join(dest, newFileName);
+    } else {
+      fileNames_.push(destFile);
+    }
     fs.copySync(srcs[i], destFile);
   }
 };
