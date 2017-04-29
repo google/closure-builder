@@ -20,7 +20,7 @@
 var assert = require('assert');
 
 var closureStylesheets = require(
-  '../compilers/closure-stylesheets/compiler.js');
+  '../../compilers/closure-stylesheets/compiler.js');
 
 
 

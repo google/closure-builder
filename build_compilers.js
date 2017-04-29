@@ -36,6 +36,7 @@ var closureStylesheetsCompiler = require(
 var closureTemplatesCompiler = require(
   './compilers/closure-templates/compiler.js');
 var nodejsCompiler = require('./compilers/nodejs/compiler.js');
+var rollupCompiler = require('./compilers/rollup/compiler.js');
 
 
 
@@ -272,7 +273,7 @@ BuildCompilers.compileNodeFiles = function(files, out,
     opt_options, opt_callback) {
   var options = (opt_options && opt_options.options) ? opt_options.options : {};
   var config = (opt_options && opt_options.config) ? opt_options.config : false;
-  log.debug('Compiling', files.length, 'files to', out, '...');
+  log.debug('Compiling', files.length, ' node files to', out, '...');
   log.trace(files);
 
   if (config) {
@@ -302,7 +303,40 @@ BuildCompilers.compileNodeFiles = function(files, out,
 
 
 /**
- * @param {Array} file
+ * @param {String} file
+ * @param {string=} out
+ * @param {object=} opt_options Additional options for the compiler.
+ *   opt_options.config = BuildConfig
+ *   opt_options.options = Additional compiler options
+ * @param {function=} opt_callback
+ */
+BuildCompilers.compileRollupFile = function(file, out,
+    opt_options, opt_callback) {
+  var options = (opt_options && opt_options.options) ? opt_options.options : {};
+  var config = (opt_options && opt_options.config) ? opt_options.config : false;
+
+  if (!options.moduleName) {
+    options.moduleName = config.name;
+  }
+  if (!options.banner) {
+    options.banner = config.banner;
+  }
+  if (!options.format) {
+    options.format = config.format;
+  }
+  if (config.plugins && config.plugins.length) {
+    options.plugins = config.plugins;
+  }
+
+  log.debug('Compiling rollup file to', out, '...');
+  log.trace(file);
+
+  rollupCompiler.compile(file, options, out, opt_callback);
+};
+
+
+/**
+ * @param {!string} file
  * @param {string=} output
  * @param {function=} opt_callback
  * @param {BuildConfig=} opt_config
@@ -313,6 +347,8 @@ BuildCompilers.convertMarkdownFile = function(file, out, opt_callback,
   var content = marked(markdown);
   var destFile = path.join(out,
     pathTools.getPathFile(file).replace('.md', '.html'));
+  log.debug('Convert markdown file to', destFile, '...');
+  log.trace(destFile);
   fileTools.saveContent(destFile, content, opt_callback, opt_config);
 };
 
@@ -468,14 +504,6 @@ BuildCompilers.compileClosureStylesheetsFiles = function(files, out,
  */
 BuildCompilers.errorCssCompiler = function(msg) {
   log.error('[Css Compiler Error]', msg);
-};
-
-
-/**
- * @param {string} msg
- */
-BuildCompilers.errorNodeCompiler = function(msg) {
-  log.error('[Node Compiler Error]', msg);
 };
 
 

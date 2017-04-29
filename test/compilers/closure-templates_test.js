@@ -20,7 +20,7 @@
 var assert = require('assert');
 var fs = require('fs');
 
-var closureTemplates = require('../compilers/closure-templates/compiler.js');
+var closureTemplates = require('../../compilers/closure-templates/compiler.js');
 
 
 

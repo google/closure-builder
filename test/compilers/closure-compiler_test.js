@@ -20,11 +20,11 @@
 var assert = require('assert');
 var path = require('path');
 
-var fileTools = require('../tools/file.js');
-var memoryTools = require('../tools/memory.js');
-var pathTools = require('../tools/path.js');
+var fileTools = require('../../tools/file.js');
+var memoryTools = require('../../tools/memory.js');
+var pathTools = require('../../tools/path.js');
 
-var closureCompiler = require('../compilers/closure-compiler/compiler.js');
+var closureCompiler = require('../../compilers/closure-compiler/compiler.js');
 
 var glob = fileTools.getGlobFiles;
 var largeMemoryTest = memoryTools.checkAvailableMemory(600);

@@ -91,6 +91,9 @@ var BuildConfig = function(config) {
   /** @type {!string} */
   this.license = this.config.license || '';
 
+  /** @type {!string} */
+  this.banner = this.config.banner || '';
+
   /** @type {!array} */
   this.deps = BuildTools.sortFiles(this.config.deps || []);
 
@@ -109,6 +112,9 @@ var BuildConfig = function(config) {
 
   /** @type {!array} */
   this.markdown = BuildTools.sortFiles(this.config.markdown || []);
+
+  /** @type {!array} */
+  this.plugins = this.config.plugins || [];
 
   /** @type {!string} */
   this.out = this.config.out;
@@ -140,6 +146,9 @@ var BuildConfig = function(config) {
 
   /** @type {!string} */
   this.errors = '';
+
+  /** @type {!string} */
+  this.format = this.config.format || '';
 
   /** @type {!string} */
   this.appendText = this.config.append || '';
@@ -210,8 +219,18 @@ var BuildConfig = function(config) {
   /** @private {!array} */
   this.resourceFiles_ = this.resources;
 
-  if (!this.type || this.type === BuildType.UNKNOWN) {
-    this.type = BuildTools.detectType(this);
+  // Try to detect the correct type if no type was provided.
+  if (!this.type) {
+    if (this.jsFiles_.length === 1 && (
+          this.format === 'amd' ||
+          this.format === 'cjs' ||
+          this.format === 'es' ||
+          this.format === 'iife' ||
+          this.format === 'umd')) {
+      this.type = BuildType.ROLLUP;
+    } else if (this.type === BuildType.UNKNOWN) {
+      this.type = BuildTools.detectType(this);
+    }
   }
 };
 

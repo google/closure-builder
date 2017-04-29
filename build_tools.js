@@ -64,12 +64,15 @@ BuildTools.detectType = function(config) {
 
 
 /**
- * @param {array} files
+ * @param {!array|string} files
  * @param {boolean=} opt_all Show all files and folders.
  * @param {boolean=} opt_exclude_test Exclude test files.
  * @return {array}
  */
 BuildTools.sortFiles = function(files, opt_all, opt_exclude_test) {
+  if (!Array.isArray(files)) {
+    files = [files];
+  }
   var fileList = [];
   var knownFile = {};
   for (let i = files.length - 1; i >= 0; i--) {
@@ -135,11 +138,15 @@ BuildTools.getBuildRequirements = function(config) {
 
 /**
  * Scan files for certain file types and return list of files and requirements.
- * @param {array} files
+ * @param {!array|string} files
  * @param {string=} opt_entry_point
  * @return {Object}
  */
 BuildTools.scanFiles = function(files, opt_entry_point) {
+  if (!Array.isArray(files)) {
+    files = [files];
+  }
+
   var closureFiles = [];
   var closureStylesheetsFiles = [];
   var cssFiles = [];

@@ -81,7 +81,7 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
   }
 
   if (!build_config) {
-    log.error('No Closure Builder config!');
+    log.error('Found no Closure Builder config!');
     return;
   }
 
@@ -100,8 +100,9 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
 
   var config = this.getBuildConfig(build_config);
   var type = config.getType();
-  if (!type) {
-    log.error('Invalid Closure Builder config!');
+  if (!type || type === buildType.UNKNOWN) {
+    log.error('Unknown Closure Builder config type!');
+    log.error('Please set the type or check your build config.');
     return;
   }
 
@@ -132,6 +133,8 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
     this.compileClosureFiles(config, [], callback);
   } else if (type === buildType.NODEJS) {
     this.compileNodeFiles(config, callback);
+  } else if (type === buildType.ROLLUP) {
+    this.compileRollupFiles(config, callback);
   } else if (type === buildType.SOY_CLOSURE) {
     this.compileClosureWithSoyFiles(config, callback);
   } else if (type === buildType.JAVASCRIPT) {
@@ -263,6 +266,18 @@ ClosureBuilder.prototype.compileNodeFiles = function(config, opt_callback) {
   config.setMessage('Compiling Node files ...');
   var files = config.getNodeFiles();
   buildCompilers.compileNodeFiles(files, config.getOutFilePath(), config,
+      opt_callback);
+};
+
+
+/**
+ * @param {!buildConfig} config
+ * @param {function=} opt_callback
+ */
+ClosureBuilder.prototype.compileRollupFiles = function(config, opt_callback) {
+  config.setMessage('Compiling Rollup files ...');
+  var file = config.getJavaScriptFiles()[0];
+  buildCompilers.compileRollupFile(file, config.getOutFilePath(), config,
       opt_callback);
 };
 

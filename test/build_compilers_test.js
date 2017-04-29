@@ -23,10 +23,11 @@ var fs = require('fs-extra');
 var memoryTools = require('../tools/memory.js');
 
 var closureBuilder = require('../closure-builder');
-var cssConfig = require('../test/configs/css_config.js');
-var closureCompilerConfig = require(
+const closureCompilerConfig = require(
   '../test/configs/closure_compiler_config.js');
-var testConfigs = require('../test/test_configs.js');
+const cssConfig = require('../test/configs/css_config.js');
+const rollupConfig = require('../test/configs/rollup_config.js');
+const testConfigs = require('../test/test_configs.js');
 var largeMemoryTest = memoryTools.checkAvailableMemory(600);
 
 describe('ClosureBuilder', function() {
@@ -280,6 +281,20 @@ describe('ClosureBuilder', function() {
           warnings, files, content) {
         assert(!errors);
         assert(!warnings);
+        assert(content);
+        done();
+      });
+    });
+  });
+
+  describe('Rollup', function() {
+    it('compile', function(done) {
+      this.timeout(5000);
+      closureBuilder.build(rollupConfig.test_1, function(errors,
+          warnings, file, content) {
+        assert(!errors);
+        assert(!warnings);
+        assert(file);
         assert(content);
         done();
       });

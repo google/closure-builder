@@ -25,7 +25,6 @@ var fileTools = require('../../tools/file.js');
 
 
 /**
- * ClosureCompiler.
  * @constructor
  * @struct
  * @final

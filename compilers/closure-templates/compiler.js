@@ -26,7 +26,6 @@ var pathTools = require('../../tools/path.js');
 
 
 /**
- * ClosureTemplates.
  * @constructor
  * @struct
  * @final
@@ -41,7 +40,7 @@ ClosureTemplates.DEBUG = false;
 
 
 /**
- * @param {!string} files
+ * @param {!array} files
  * @param {Object=} opt_options
  * @param {string=} opt_target_dir
  * @param {function=} opt_callback

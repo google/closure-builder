@@ -159,7 +159,10 @@ FileTools.saveContent = function(file, content, opt_callback, opt_config,
     }
     if (config.license) {
       var license = fs.readFileSync(config.license, 'utf8');
-      content = license + '\n\n' + content;
+      content = license + content;
+    }
+    if (config.banner) {
+      content = config.banner + content;
     }
   }
   var fileEvent = (error) => {

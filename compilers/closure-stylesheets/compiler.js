@@ -24,7 +24,6 @@ var pathTools = require('../../tools/path.js');
 
 
 /**
- * ClosureStylesheets.
  * @constructor
  * @struct
  * @final
@@ -39,7 +38,7 @@ ClosureStylesheets.DEBUG = false;
 
 
 /**
- * @param {!string} files
+ * @param {!array} files
  * @param {Object=} opt_options
  * @param {string=} opt_target_file
  * @param {function=} opt_callback

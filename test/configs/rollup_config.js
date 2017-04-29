@@ -1,7 +1,7 @@
 /**
- * @fileoverview Closure Builder - Build types
+ * @fileoverview Rollup Closure Builder - Rollup compiler config
  *
- * @license Copyright 2015 Google Inc. All Rights Reserved.
+ * @license Copyright 2017 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +18,24 @@
  * @author mbordihn@google.com (Markus Bordihn)
  */
 
+const pathTools = require('../../tools/path.js');
 
 
 /**
- * Enum with build types.
- * @enum {string}
+ * Build Tools.
+ * @constructor
+ * @struct
+ * @final
  */
-var BuildType = {
-  CLOSURE: 'closure',
-  CLOSURE_STYLESHEETS: 'closure stylesheets',
-  CSS: 'css',
-  JAVASCRIPT: 'javascript',
-  MARKDOWN: 'markdown',
-  NODEJS: 'nodejs',
-  RESOURCES: 'resources',
-  ROLLUP: 'rollup',
-  SOY: 'soy',
-  SOY_CLOSURE: 'soy and closure',
-  UNKNOWN: ''
+var config = function() {};
+
+
+config.test_1 = {
+  name: 'rollup_test_1',
+  srcs: 'test_files/umd/umd-main.js',
+  format: 'umd',
+  out: pathTools.getTempTestPath('rollup-test-1')
 };
 
 
-module.exports = BuildType;
+module.exports = config;

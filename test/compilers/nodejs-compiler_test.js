@@ -20,10 +20,10 @@
 var assert = require('assert');
 var path = require('path');
 
-var fileTools = require('../tools/file.js');
-var pathTools = require('../tools/path.js');
+var fileTools = require('../../tools/file.js');
+var pathTools = require('../../tools/path.js');
 
-var nodejsCompiler = require('../compilers/nodejs/compiler.js');
+var nodejsCompiler = require('../../compilers/nodejs/compiler.js');
 
 var testDirectory = pathTools.getTempPath('nodejs-compiler-test');
 

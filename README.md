@@ -30,10 +30,12 @@ static files as well.
   * [Compile Closure Stylesheet (.gss) files](#compile-closure-stylesheet-files)
   * [Compile JavaScript files](#compile-javascript-files)
   * [Compile Node.js files](#compile-node-js-files)
+  * [Compile Rollup files (experimental)](#compile-rollup-files)
   * [Compile css files](#compile-css-files)
   * [Copy Resources](#copy-resources)
   * [Copy Remote Resources](#copy-remote-resources)
   * [Convert Markdown (.md) to .html file](#convert-markdown-md-to-html-file)
+
 * [Best practise](#best-practise)
 * [Development](#development)
 * [Disclaimer](#disclaimer)
@@ -291,6 +293,17 @@ closureBuilder.build({
     'src/js/node_file.js'
   ]),
   out: 'genfiles/node_bundle.js'
+});
+```
+
+#### Compile Rollup files ####
+Combine JavaScript files with rollup to a single JavaScript bundle.
+```javascript
+closureBuilder.build({
+  name: 'module_name',
+  format: 'umd',
+  srcs: 'src/js/entry_file.js',
+  out: 'genfiles/rollup_bundle.js'
 });
 ```
 

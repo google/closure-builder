@@ -171,7 +171,6 @@ TestConfigs.nodeToJsTestConfig = {
   out: path.join(testDirectory, 'node-test', 'node_compiled_bundle.js')
 };
 
-
 TestConfigs.optionLicenseConfig = {
   name: 'option_license',
   srcs: [
