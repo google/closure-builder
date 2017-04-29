@@ -31,9 +31,6 @@ var buildCompilers = require('./build_compilers.js');
  */
 var ClosureBuilder = function() {
 
-  /** @type {boolean} */
-  this.error = false;
-
   /** @type {string} */
   this.logLevel = 'info';
 
@@ -46,6 +43,8 @@ var ClosureBuilder = function() {
   /** @private {boolean} */
   this.showMessages_ = true;
 
+  /** @private {boolean} */
+  this.testEnv_ = false;
 };
 
 
@@ -76,10 +75,6 @@ ClosureBuilder.prototype.showMessages = function(show) {
  */
 ClosureBuilder.prototype.build = function(build_config, opt_callback) {
 
-  if (this.error) {
-    return;
-  }
-
   if (!build_config) {
     log.error('Found no Closure Builder config!');
     return;
@@ -97,6 +92,9 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
   } else {
     this.setLogLevel(this.logLevel);
   }
+
+  this.testEnv_ = build_config.testEnv;
+
 
   var config = this.getBuildConfig(build_config);
   var type = config.getType();
@@ -119,6 +117,9 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
     }
     if (errors) {
       config.setMessage('\u001b[93m[\u001b[31mErrors!\u001b[93m]\u001b[0m');
+      if (!this.testEnv_) {
+        process.exit(1);
+      }
     } else if (warnings) {
       config.setMessage('\u001b[93m[\u001b[33mWarn\u001b[93m]\u001b[0m', 100);
     } else {

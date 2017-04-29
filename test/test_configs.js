@@ -207,7 +207,8 @@ TestConfigs.resourcesNotExistsConfig = {
     'test_files/resources/not_exists.png',
     'test_files/resources/not_exists.xml'
   ],
-  out: path.join(testDirectory, 'local-resources')
+  out: path.join(testDirectory, 'local-resources'),
+  testEnv: true
 };
 
 

@@ -18,6 +18,7 @@ jdk:
 env:
   - NODE_VERSION=node
   - NODE_VERSION=6
+  - NODE_VERSION=7
 
 matrix:
   exclude:

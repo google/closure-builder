@@ -178,10 +178,10 @@ ClosureTemplates.parseErrorMessage = function(message) {
         message.includes('NullPointerException') ||
         message.includes('java.lang.NoSuchMethodError')) {
       errors = 1;
+    } else if (message.toLowerCase().includes('exception')) {
+      errors = 1;
     } else if (message.toLowerCase().includes('error')) {
       errors = message.toLowerCase().split('error').length - 1;
-    } else if (message.toLowerCase().split('exception') !== -1) {
-      errors = 1;
     } else if (message.toLowerCase().includes('warning')) {
       if (!message.includes('Java HotSpot\(TM\) Client VM warning') ||
           message.toLowerCase().split('warning').length > 2) {

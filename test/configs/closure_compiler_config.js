@@ -98,7 +98,8 @@ config.error = {
   srcs: glob([
     'test_files/special/closure_error.js'
   ]),
-  out: pathTools.getTempTestPath('closure-error')
+  out: pathTools.getTempTestPath('closure-error'),
+  testEnv: true
 };
 
 

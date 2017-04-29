@@ -92,8 +92,9 @@ RemoteTools.getFile = function(url, dest,
     var bar = new progressBar(barText, {
       complete: '=',
       incomplete: ' ',
-      width: 20,
-      total: len
+      renderThrottle: 500,
+      total: len,
+      width: 20
     });
 
     response.on('data', function(chunk) {

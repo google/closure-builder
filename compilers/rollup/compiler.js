@@ -73,8 +73,6 @@ RollupCompiler.compile = function(file, opt_options, opt_target_file,
     RollupCompiler.error(error, opt_callback);
   };
   var compilerEvent = function(bundle) {
-    console.log('Compiler Event');
-
     var errors = null;
     var warnings = null;
     var code = null;
