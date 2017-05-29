@@ -1,10 +1,9 @@
 /**
- * Closure test dummy one
+ * Closure test dummy error
  */
 goog.provide('closure_test_error');
 
 goog.require('closure_test_not_there');
-
 
 
 closure_test_error = function() {

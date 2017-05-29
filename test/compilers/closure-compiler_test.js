@@ -28,86 +28,198 @@ var closureCompiler = require('../../compilers/closure-compiler/compiler.js');
 
 var glob = fileTools.getGlobFiles;
 var largeMemoryTest = memoryTools.checkAvailableMemory(600);
-var onlineStatus = true;
 var testDirectory = pathTools.getTempPath('closure-compiler-test');
 
 
-describe('Closure Compiler::', function() {
+describe('Closure Compiler:local:', function() {
 
-  // Local compiler tests
-  describe('Local Compiler:', function() {
+  it('Single file', function(done) {
+    this.timeout(25000);
+    var files = ['test_files/closure_test_1.js'];
+    var options = {
+      dependency_mode: 'STRICT',
+      entry_point: 'closure_test_1'
+    };
+    closureCompiler.localCompile(files, options, null,
+      function(errors, warnings, file, content) {
+        assert(!errors);
+        assert(!warnings);
+        assert(content);
+        assert.equal(content,
+          'var closure_test_1=function(){return"_CLOSURE_TEST_1"};\n');
+        done();
+      });
+  });
 
-    it('Single file', function(done) {
-      this.timeout(25000);
-      var files = ['test_files/closure_test_1.js'];
-      var options = {
-        dependency_mode: 'STRICT',
-        entry_point: 'closure_test_1'
-      };
-      closureCompiler.localCompile(files, options, null,
-        function(errors, warnings, file, content) {
-          assert(!errors);
-          assert(!warnings);
-          assert(content);
-          assert.equal(content,
-            'var closure_test_1=function(){return"_CLOSURE_TEST_1"};\n');
-          done();
-        });
-    });
+  it('Two files', function(done) {
+    this.timeout(25000);
+    var files = [
+      'test_files/closure_test_1.js',
+      'test_files/closure_test_2.js'
+    ];
+    var options = {
+      dependency_mode: 'STRICT',
+      entry_point: 'closure_test_2'
+    };
+    closureCompiler.localCompile(files, options, null,
+      function(errors, warnings, file, content) {
+        assert(!errors);
+        assert(!warnings);
+        assert(content);
+        assert.equal(content,
+          'var closure_test_1=function(){return"_CLOSURE_TEST_1"};' +
+          'var closure_test_2=function(){return closure_test_1()+' +
+          '"_CLOSURE_TEST_2"};\n');
+        done();
+      });
+  });
 
-    it('Two files', function(done) {
-      this.timeout(25000);
-      var files = [
-        'test_files/closure_test_1.js',
-        'test_files/closure_test_2.js'
-      ];
-      var options = {
-        dependency_mode: 'STRICT',
-        entry_point: 'closure_test_2'
-      };
-      closureCompiler.localCompile(files, options, null,
-        function(errors, warnings, file, content) {
-          assert(!errors);
-          assert(!warnings);
-          assert(content);
-          assert.equal(content,
-            'var closure_test_1=function(){return"_CLOSURE_TEST_1"};' +
-            'var closure_test_2=function(){return closure_test_1()+' +
-            '"_CLOSURE_TEST_2"};\n');
-          done();
-        });
-    });
+  it('Group of files', function(done) {
+    this.timeout(25000);
+    var files = glob(['test_files/closure_test_*.js']);
+    var options = {
+      dependency_mode: 'STRICT',
+      entry_point: 'closure_test_group'
+    };
+    closureCompiler.localCompile(files, options, null,
+      function(errors, warnings, files, content) {
+        assert(!errors);
+        assert(!warnings);
+        assert(content);
+        assert.equal(content,
+          'var closure_test_1=function(){return"_CLOSURE_TEST_1"};' +
+          'var closure_test_2=function(){return closure_test_1()+' +
+          '"_CLOSURE_TEST_2"};var closure_test_group=function(){' +
+          'return closure_test_2()+"_CLOSURE_TEST_2"};\n');
+        done();
+      });
+  });
 
-    it('Group of files', function(done) {
-      this.timeout(25000);
+  it('Duplicate input files', function(done) {
+    this.timeout(25000);
+    var files = glob([
+      'test_files/closure_test_*.js',
+      'test_files/closure_test_duplicate.js'
+    ]);
+    var options = {
+      dependency_mode: 'STRICT',
+      entry_point: 'closure_test_duplicate'
+    };
+    closureCompiler.localCompile(files, options, null,
+      function(errors, warnings, files, content) {
+        assert(!errors);
+        assert(!warnings);
+        assert(content);
+        done();
+      });
+  });
+
+  it('Externs', function(done) {
+    this.timeout(25000);
+    var files =  glob(['test_files/closure_test_*.js']);
+    var options = {
+      externs: ['test_files/externs.js'],
+      dependency_mode: 'STRICT',
+      entry_point: 'closure_test_extern'
+    };
+    closureCompiler.localCompile(files, options, null,
+      function(errors, warnings, files, content) {
+        assert(!errors);
+        assert(!warnings);
+        assert(content);
+        assert.equal(content,
+          'var closure_test_extern=function(){return global_extern};\n');
+        done();
+      });
+  });
+
+  it('Module files', function(done) {
+    this.timeout(30000);
+    var files =  glob(['test_files/closure_test_*.js']);
+    var options = {
+      dependency_mode: 'STRICT',
+      entry_point: 'closure_test_require_module',
+    };
+    closureCompiler.localCompile(files, options, null,
+      function(errors, warnings, files, content) {
+        assert(!errors);
+        assert(!warnings);
+        assert(content);
+        assert(content.indexOf('_CLOSURE_TEST_MODULE') !== -1);
+        assert(content.indexOf(
+          'var module$exports$closure_test_module={') !== -1);
+        assert(content.indexOf(
+          'var module$exports$closure_test_require_module=function') !== -1);
+        done();
+      });
+  });
+
+  it('Expected Error Message', function(done) {
+    this.timeout(30000);
+    var files =  ['test_files/special/closure_error.js'];
+    var options = {
+      dependency_mode: 'STRICT',
+      entry_point: 'closure_test_error'
+    };
+    closureCompiler.localCompile(files, options, null,
+      function(errors, warnings, files, content) {
+        assert(errors);
+        assert(!warnings);
+        assert(!content);
+        done();
+      });
+  });
+
+  it('Expected Warning Message', function(done) {
+    this.timeout(30000);
+    var files =  ['test_files/special/closure_warning.js'];
+    var options = {
+      dependency_mode: 'STRICT',
+      entry_point: 'closure_test_warning'
+    };
+    closureCompiler.localCompile(files, options, null,
+      function(errors, warnings, files, content) {
+        assert(!errors);
+        assert(warnings);
+        assert(content);
+        done();
+      });
+  });
+
+  it('Automatic @export handling', function(done) {
+    this.timeout(40000);
+    var files =  ['test_files/special/closure_export.js'];
+    var options = {
+      dependency_mode: 'STRICT',
+      generate_exports: true,
+      entry_point: 'closure_test_export'
+    };
+    closureCompiler.localCompile(files, options, null,
+      function(errors, warnings, files, content) {
+        assert(!errors);
+        assert(!warnings);
+        assert(content);
+        assert(content.indexOf(
+          'goog.exportSymbol("closure_test_export"') !== -1);
+        assert(content.indexOf(
+          'goog.exportProperty(closure_test_export.prototype,"visible"'
+          ) !== -1);
+        assert(content.indexOf(
+          'goog.exportProperty(closure_test_export.prototype,"invisible'
+          ) === -1);
+        done();
+      });
+  });
+
+  describe('ECMA Script 6', function() {
+    it('Const', function(done) {
+      this.timeout(40000);
       var files = glob(['test_files/closure_test_*.js']);
       var options = {
         dependency_mode: 'STRICT',
-        entry_point: 'closure_test_group'
-      };
-      closureCompiler.localCompile(files, options, null,
-        function(errors, warnings, files, content) {
-          assert(!errors);
-          assert(!warnings);
-          assert(content);
-          assert.equal(content,
-            'var closure_test_1=function(){return"_CLOSURE_TEST_1"};' +
-            'var closure_test_2=function(){return closure_test_1()+' +
-            '"_CLOSURE_TEST_2"};var closure_test_group=function(){' +
-            'return closure_test_2()+"_CLOSURE_TEST_2"};\n');
-          done();
-        });
-    });
-
-    it('Duplicate input files', function(done) {
-      this.timeout(25000);
-      var files = glob([
-        'test_files/closure_test_*.js',
-        'test_files/closure_test_duplicate.js'
-      ]);
-      var options = {
-        dependency_mode: 'STRICT',
-        entry_point: 'closure_test_duplicate'
+        entry_point: 'closure_test_ecma6_const',
+        language_in: 'ECMASCRIPT6',
+        language_out: 'ES5_STRICT'
       };
       closureCompiler.localCompile(files, options, null,
         function(errors, warnings, files, content) {
@@ -117,171 +229,15 @@ describe('Closure Compiler::', function() {
           done();
         });
     });
-
-    it('Externs', function(done) {
-      this.timeout(25000);
-      var files =  glob(['test_files/closure_test_*.js']);
-      var options = {
-        externs: ['test_files/externs.js'],
-        dependency_mode: 'STRICT',
-        entry_point: 'closure_test_extern'
-      };
-      closureCompiler.localCompile(files, options, null,
-        function(errors, warnings, files, content) {
-          assert(!errors);
-          assert(!warnings);
-          assert(content);
-          assert.equal(content,
-            'var closure_test_extern=function(){return global_extern};\n');
-          done();
-        });
-    });
-
-    it('Module files', function(done) {
-      this.timeout(30000);
-      var files =  glob(['test_files/closure_test_*.js']);
-      var options = {
-        dependency_mode: 'STRICT',
-        entry_point: 'closure_test_require_module',
-      };
-      closureCompiler.localCompile(files, options, null,
-        function(errors, warnings, files, content) {
-          assert(!errors);
-          assert(!warnings);
-          assert(content);
-          assert(content.indexOf('_CLOSURE_TEST_MODULE') !== -1);
-          assert(content.indexOf(
-            'var module$exports$closure_test_module={') !== -1);
-          assert(content.indexOf(
-            'var module$exports$closure_test_require_module=function') !== -1);
-          done();
-        });
-    });
-
-    it('Expected Error Message', function(done) {
-      this.timeout(30000);
-      var files =  ['test_files/special/closure_error.js'];
-      var options = {
-        dependency_mode: 'STRICT',
-        entry_point: 'closure_test_error'
-      };
-      closureCompiler.localCompile(files, options, null,
-        function(errors, warnings, files, content) {
-          assert(errors);
-          assert(!warnings);
-          assert(!content);
-          done();
-        });
-    });
-
-    it('Expected Warning Message', function(done) {
-      this.timeout(30000);
-      var files =  ['test_files/special/closure_warning.js'];
-      var options = {
-        dependency_mode: 'STRICT',
-        entry_point: 'closure_test_warning'
-      };
-      closureCompiler.localCompile(files, options, null,
-        function(errors, warnings, files, content) {
-          assert(!errors);
-          assert(warnings);
-          assert(content);
-          done();
-        });
-    });
-
-    it('Automatic @export handling', function(done) {
+    it('Let', function(done) {
       this.timeout(40000);
-      var files =  ['test_files/special/closure_export.js'];
+      this.timeout(40000);
+      var files = glob(['test_files/closure_test_*.js']);
       var options = {
         dependency_mode: 'STRICT',
-        generate_exports: true,
-        entry_point: 'closure_test_export'
-      };
-      closureCompiler.localCompile(files, options, null,
-        function(errors, warnings, files, content) {
-          assert(!errors);
-          assert(!warnings);
-          assert(content);
-          assert(content.indexOf(
-            'goog.exportSymbol("closure_test_export"') !== -1);
-          assert(content.indexOf(
-            'goog.exportProperty(closure_test_export.prototype,"visible"'
-            ) !== -1);
-          assert(content.indexOf(
-            'goog.exportProperty(closure_test_export.prototype,"invisible'
-            ) === -1);
-          done();
-        });
-    });
-
-    describe('ECMA Script 6', function() {
-      it('Const', function(done) {
-        this.timeout(40000);
-        var files = glob(['test_files/closure_test_*.js']);
-        var options = {
-          dependency_mode: 'STRICT',
-          entry_point: 'closure_test_ecma6_const',
-          language_in: 'ECMASCRIPT6',
-          language_out: 'ES5_STRICT'
-        };
-        closureCompiler.localCompile(files, options, null,
-          function(errors, warnings, files, content) {
-            assert(!errors);
-            assert(!warnings);
-            assert(content);
-            done();
-          });
-      });
-      it('Let', function(done) {
-        this.timeout(40000);
-        this.timeout(40000);
-        var files = glob(['test_files/closure_test_*.js']);
-        var options = {
-          dependency_mode: 'STRICT',
-          entry_point: 'closure_test_ecma6_let',
-          language_in: 'ECMASCRIPT6',
-          language_out: 'ES5_STRICT'
-        };
-        closureCompiler.localCompile(files, options, null,
-          function(errors, warnings, files, content) {
-            assert(!errors);
-            assert(!warnings);
-            assert(content);
-            done();
-          });
-      });
-      it('No ECMA Script 6', function(done) {
-        this.timeout(40000);
-        var files = [
-          'test_files/closure_test_1.js',
-          'test_files/closure_test_2.js',
-          'test_files/closure_test_no_ecma6.js'
-        ];
-        var options = {
-          dependency_mode: 'STRICT',
-          entry_point: 'closure_test_no_ecma6'
-        };
-        closureCompiler.localCompile(files, options, null,
-          function(errors, warnings, files, content) {
-            assert(!errors);
-            assert(!warnings);
-            assert(content);
-            done();
-          });
-      });
-    });
-
-    it('Closure Library', function(done) {
-      if (!largeMemoryTest) {
-        return done();
-      }
-      this.timeout(140000);
-      var files =  ['test_files/closure_library_test.js'];
-      var options = {
-        dependency_mode: 'STRICT',
-        entry_point: 'closure_library_test',
-        use_closure_library: true
+        entry_point: 'closure_test_ecma6_let',
+        language_in: 'ECMASCRIPT6',
+        language_out: 'ES5_STRICT'
       };
       closureCompiler.localCompile(files, options, null,
         function(errors, warnings, files, content) {
@@ -291,40 +247,16 @@ describe('Closure Compiler::', function() {
           done();
         });
     });
-/*
-    it('Closure Library UI', function(done) {
-      if (!largeMemoryTest) {
-        return done();
-      }
-      this.timeout(140000);
-      var files =  ['test_files/closure_library_ui_test.js'];
-      var options = {
-        dependency_mode: 'STRICT',
-        entry_point: 'closure_library_ui_test',
-        use_closure_library: true
-      };
-      closureCompiler.localCompile(files, options, null,
-        function(errors, warnings, files, content) {
-          assert(!errors);
-          assert(!warnings);
-          assert(content);
-          done();
-        });
-    });*/
-
-    it('Soy file', function(done) {
-      if (!largeMemoryTest) {
-        return done();
-      }
-      this.timeout(140000);
-      var files =  [
-        'test_files/special/closure_soy_test.js',
-        'test_files/special/closure_soy_test.soy.js'
+    it('No ECMA Script 6', function(done) {
+      this.timeout(40000);
+      var files = [
+        'test_files/closure_test_1.js',
+        'test_files/closure_test_2.js',
+        'test_files/closure_test_no_ecma6.js'
       ];
       var options = {
         dependency_mode: 'STRICT',
-        entry_point: 'closure_test_soy_file',
-        use_closure_templates: true
+        entry_point: 'closure_test_no_ecma6'
       };
       closureCompiler.localCompile(files, options, null,
         function(errors, warnings, files, content) {
@@ -334,162 +266,89 @@ describe('Closure Compiler::', function() {
           done();
         });
     });
-
-    it('Create Source Map', function(done) {
-      this.timeout(40000);
-      var files =  ['test_files/special/closure_export.js'];
-      var options = {
-        dependency_mode: 'STRICT',
-        compilation_level: 'ADVANCED',
-        generate_exports: true,
-        entry_point: 'closure_test_export',
-        create_source_map: path.join(testDirectory, 'source_maps',
-          'closure_test_source_map.map')
-      };
-      closureCompiler.localCompile(files, options, null,
-        function(errors, warnings, files, content) {
-          assert(!errors);
-          assert(!warnings);
-          assert(content);
-          done();
-        });
-    });
-
   });
 
-
-  // Remote compiler tests
-  describe('Remote Compiler:', function() {
-
-    if (onlineStatus) {
-
-      it('Single file', function(done) {
-        this.timeout(25000);
-        var files = ['test_files/closure_test_1.js'];
-        closureCompiler.remoteCompile(files, null, null,
-          function(errors, warnings, file, content) {
-            assert(!errors);
-            assert(!warnings);
-            assert.equal(content,
-              'var closure_test_1=function(){return"_CLOSURE_TEST_1"};\n');
-            done();
-          });
-      });
-
-      it('Two files', function(done) {
-        this.timeout(25000);
-        var files = [
-          'test_files/closure_test_1.js',
-          'test_files/closure_test_2.js'
-        ];
-        closureCompiler.remoteCompile(files, null, null,
-          function(errors, warnings, file, content) {
-            assert(!errors);
-            assert(!warnings);
-            assert.equal(content,
-              'var closure_test_1=function(){return"_CLOSURE_TEST_1"};' +
-              'var closure_test_2=function(){return closure_test_1()+' +
-              '"_CLOSURE_TEST_2"};\n');
-            done();
-          });
-      });
-
-      it('Expected Error Message', function(done) {
-        this.timeout(30000);
-        var files =  ['test_files/special/closure_error.js'];
-        var options = {};
-        closureCompiler.remoteCompile(files, options, null,
-          function(errors, warnings, files, content) {
-            assert(errors);
-            assert(!warnings);
-            assert(!content);
-            done();
-          });
-      });
-
-      it('Expected Warning Message', function(done) {
-        this.timeout(30000);
-        var files =  ['test_files/special/closure_warning.js'];
-        var options = {};
-        closureCompiler.remoteCompile(files, options, null,
-          function(errors, warnings, files, content) {
-            assert(!errors);
-            assert(warnings);
-            assert(content);
-            done();
-          });
-      });
-
-      it('Closure Library', function(done) {
-        if (!largeMemoryTest) {
-          return done();
-        }
-        this.timeout(25000);
-        var files =  ['test_files/closure_library_test.js'];
-        var options = {
-          use_closure_library: true
-        };
-        closureCompiler.remoteCompile(files, options, null,
-          function(errors, warnings, files, content) {
-            assert(!errors);
-            assert(!warnings);
-            assert(content);
-            done();
-          });
-      });
-
-      it('Soy file', function(done) {
-        this.timeout(25000);
-        var files =  [
-          'test_files/special/closure_soy_test.js',
-          'test_files/special/closure_soy_test.soy.js'
-        ];
-        var options = {
-          use_closure_templates: true
-        };
-        closureCompiler.remoteCompile(files, options, null,
-          function(errors, warnings, files, content) {
-            assert(!errors);
-            assert(!warnings);
-            assert(content);
-            done();
-          });
-      });
-
-      it('Unsupported Closure entry point', function(done) {
-        this.timeout(25000);
-        var files = glob(['test_files/closure_test_*.js']);
-        var options = {
-          entry_point: 'closure_test_group'
-        };
-        closureCompiler.remoteCompile(files, options, null,
-          function(errors, warnings, files, content) {
-            assert(errors);
-            assert(!warnings);
-            assert(!content);
-            done();
-          });
-      });
-
-      it('Unsupported @export handling', function(done) {
-        this.timeout(40000);
-        var files =  ['test_files/special/closure_export.js'];
-        var options = {
-          generate_exports: true
-        };
-        closureCompiler.remoteCompile(files, options, null,
-          function(errors, warnings, files, content) {
-            assert(errors);
-            assert(!warnings);
-            assert(!content);
-            done();
-          });
-      });
-
-    } else {
-      console.warn('Skipping online tests...');
+  it('Closure Library', function(done) {
+    if (!largeMemoryTest) {
+      return done();
     }
+    this.timeout(140000);
+    var files =  ['test_files/closure_library_test.js'];
+    var options = {
+      dependency_mode: 'STRICT',
+      entry_point: 'closure_library_test',
+      use_closure_library: true
+    };
+    closureCompiler.localCompile(files, options, null,
+      function(errors, warnings, files, content) {
+        assert(!errors);
+        assert(!warnings);
+        assert(content);
+        done();
+      });
+  });
+/*
+  it('Closure Library UI', function(done) {
+    if (!largeMemoryTest) {
+      return done();
+    }
+    this.timeout(140000);
+    var files =  ['test_files/closure_library_ui_test.js'];
+    var options = {
+      dependency_mode: 'STRICT',
+      entry_point: 'closure_library_ui_test',
+      use_closure_library: true
+    };
+    closureCompiler.localCompile(files, options, null,
+      function(errors, warnings, files, content) {
+        assert(!errors);
+        assert(!warnings);
+        assert(content);
+        done();
+      });
+  });*/
 
+  it('Soy file', function(done) {
+    if (!largeMemoryTest) {
+      return done();
+    }
+    this.timeout(140000);
+    var files =  [
+      'test_files/special/closure_soy_test.js',
+      'test_files/special/closure_soy_test.soy.js'
+    ];
+    var options = {
+      dependency_mode: 'STRICT',
+      entry_point: 'closure_test_soy_file',
+      use_closure_templates: true
+    };
+    closureCompiler.localCompile(files, options, null,
+      function(errors, warnings, files, content) {
+        assert(!errors);
+        assert(!warnings);
+        assert(content);
+        done();
+      });
+  });
+
+  it('Create Source Map', function(done) {
+    this.timeout(40000);
+    var files =  ['test_files/special/closure_export.js'];
+    var options = {
+      dependency_mode: 'STRICT',
+      compilation_level: 'ADVANCED',
+      generate_exports: true,
+      entry_point: 'closure_test_export',
+      create_source_map: path.join(testDirectory, 'source_maps',
+        'closure_test_source_map.map')
+    };
+    closureCompiler.localCompile(files, options, null,
+      function(errors, warnings, files, content) {
+        assert(!errors);
+        assert(!warnings);
+        assert(content);
+        done();
+      });
   });
 
 });

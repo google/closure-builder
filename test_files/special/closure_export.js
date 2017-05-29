@@ -4,7 +4,6 @@
 goog.provide('closure_test_export');
 
 
-
 /**
  * @constructor
  * @final

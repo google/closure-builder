@@ -4,7 +4,6 @@
 goog.provide('closure_test_extern');
 
 
-
 closure_test_extern = function() {
   return global_extern;
 };

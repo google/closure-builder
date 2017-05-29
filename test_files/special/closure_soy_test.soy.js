@@ -14,7 +14,6 @@ goog.require('soydata');
 goog.require('goog.asserts');
 
 
-
 /**
  * @param {{
  *    body: string,
