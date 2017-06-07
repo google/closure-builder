@@ -338,30 +338,27 @@ BuildCompilers.compileRollupFile = function(file, out,
 /**
  * @param {!string} file
  * @param {string=} output
- * @param {function=} opt_callback
- * @param {BuildConfig=} opt_config
+ * @param {function=} callback
+ * @param {BuildConfig=} config
  */
-BuildCompilers.convertMarkdownFile = function(file, out, opt_callback,
-    opt_config) {
-  console.log(opt_config);
+BuildCompilers.convertMarkdownFile = function(file, out, callback, config) {
   var markdown = fs.readFileSync(file, 'utf8');
   var content = marked(markdown);
   var destFile = path.join(out,
     pathTools.getPathFile(file).replace('.md', '.html'));
   log.debug('Convert markdown file to', destFile, '...');
   log.trace(destFile);
-  fileTools.saveContent(destFile, content, opt_callback, opt_config);
+  fileTools.saveContent(destFile, content, callback, config);
 };
 
 
 /**
  * @param {Array} files
  * @param {string=} output
- * @param {function=} opt_callback
- * @param {BuildConfig=} opt_config
+ * @param {function=} callback
+ * @param {BuildConfig=} config
  */
-BuildCompilers.convertMarkdownFiles = function(files, out,
-    opt_callback, opt_config) {
+BuildCompilers.convertMarkdownFiles = function(files, out, callback, config) {
   var foundError = false;
   var outFiles = [];
   var errorEvent = (error, warning, file) => {
@@ -372,13 +369,13 @@ BuildCompilers.convertMarkdownFiles = function(files, out,
     }
   };
   for (var i in files) {
-    BuildCompilers.convertMarkdownFile(files[i], out, errorEvent, opt_config);
+    BuildCompilers.convertMarkdownFile(files[i], out, errorEvent, config);
     if (foundError) {
       break;
     }
   }
-  if (opt_callback) {
-    opt_callback(foundError, false, outFiles, '');
+  if (callback) {
+    callback(foundError, false, outFiles, '');
   }
 };
 
