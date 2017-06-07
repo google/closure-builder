@@ -343,6 +343,7 @@ BuildCompilers.compileRollupFile = function(file, out,
  */
 BuildCompilers.convertMarkdownFile = function(file, out, opt_callback,
     opt_config) {
+  console.log(opt_config);
   var markdown = fs.readFileSync(file, 'utf8');
   var content = marked(markdown);
   var destFile = path.join(out,

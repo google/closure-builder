@@ -37,7 +37,11 @@ TextTools.replace = function(content, replacements) {
   if (!content || !replacements) {
     return content;
   }
-  if (!Array.isArray(replacements[0])) {
+  if (Array.isArray(replacements[0])) {
+    for (let replacement of replacements) {
+      content = content.replace(replacement[0], replacement[1]);
+    }
+  } else {
     content = content.replace(replacements[0], replacements[1]);
   }
   return content;

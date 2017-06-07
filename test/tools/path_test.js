@@ -20,7 +20,7 @@
 var assert = require('assert');
 var os = require('os');
 
-var pathTools = require('../tools/path.js');
+var pathTools = require('../../tools/path.js');
 
 var fileMarkdownUnix = '/home/user/dir/file.md';
 var fileMarkdownWin = 'C:\\path\\dir\\index.md';

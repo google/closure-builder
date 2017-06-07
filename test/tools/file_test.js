@@ -20,8 +20,8 @@
 var assert = require('assert');
 var path = require('path');
 
-var pathTools = require('../tools/path.js');
-var fileTools = require('../tools/file.js');
+var pathTools = require('../../tools/path.js');
+var fileTools = require('../../tools/file.js');
 
 var testFilesPath = 'test_files/resources/';
 var testDirectory = pathTools.getTempPath('closure-builder-test');

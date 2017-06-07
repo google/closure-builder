@@ -1,7 +1,7 @@
 /**
- * @fileoverview Closure Builder Test - File tools
+ * @fileoverview Closure Builder Test - Text tools
  *
- * @license Copyright 2016 Google Inc. All Rights Reserved.
+ * @license Copyright 2017 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,22 +19,18 @@
  */
 var assert = require('assert');
 
-var memoryTools = require('../tools/memory.js');
+var textTools = require('../../tools/text.js');
 
 
-describe('memoryTools', function() {
+describe('textTools', function() {
 
-  it ('getMemory', function() {
-    var memory = memoryTools.getMemory();
-    assert(memory > 16);
-  });
+  var content = 'Hello World';
 
-  it ('checkAvailableMemory', function() {
-    var largeMemory = memoryTools.checkAvailableMemory(
-      memoryTools.getMemory() + 128);
-    var smallMemory = memoryTools.checkAvailableMemory(128);
-    assert(!largeMemory);
-    assert(smallMemory);
+  it('replace', function() {
+    assert.equal(textTools.replace(content), content);
+    assert.equal(textTools.replace(content, ['Hello', 'Hallo']), 'Hallo World');
+    assert.equal(textTools.replace(content, [['H', 'W'], ['e', 'o']]),
+      'Wollo World');
   });
 
 });

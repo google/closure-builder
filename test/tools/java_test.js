@@ -19,7 +19,7 @@
  */
 var assert = require('assert');
 
-var javaTools = require('../tools/java.js');
+var javaTools = require('../../tools/java.js');
 
 
 describe('javaTools', function() {

@@ -19,11 +19,11 @@
  */
 var path = require('path');
 
-var pathTools = require('../tools/path.js');
+var pathTools = require('../../tools/path.js');
 var testDirectory = path.join(pathTools.getTempPath('closure-builder-test'),
   'remote-tools/');
 
-var remoteTools = require('../tools/remote.js');
+var remoteTools = require('../../tools/remote.js');
 var resourceUrl= 'raw.githubusercontent.com/google/closure-builder/master/' +
   'test_files/resources/';
 
