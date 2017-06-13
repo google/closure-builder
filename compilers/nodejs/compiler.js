@@ -17,11 +17,11 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var fs = require('fs');
+let fs = require('fs');
 
-var browserify = require('browserify');
+let browserify = require('browserify');
 
-var fileTools = require('../../tools/file.js');
+let fileTools = require('../../tools/file.js');
 
 
 /**
@@ -29,7 +29,7 @@ var fileTools = require('../../tools/file.js');
  * @struct
  * @final
  */
-var NodejsCompiler = function() {};
+let NodejsCompiler = function() {};
 
 
 /**
@@ -41,19 +41,19 @@ var NodejsCompiler = function() {};
  */
 NodejsCompiler.compile = function(files, opt_options, opt_target_file,
     opt_callback) {
-  var compiler = browserify(files, opt_options);
+  let compiler = browserify(files, opt_options);
 
   if (opt_target_file) {
     fileTools.mkfile(opt_target_file);
   }
 
-  var bufferEvent = (errors) => {
+  let bufferEvent = (errors) => {
     if (errors) {
       NodejsCompiler.error('Was not able to write file ' + opt_target_file +
         ':' + errors, opt_callback);
     }
   };
-  var streamEvent = fs.createWriteStream(opt_target_file);
+  let streamEvent = fs.createWriteStream(opt_target_file);
   streamEvent.on('error', (error) => {
     NodejsCompiler.error('Was not able to write file ' + opt_target_file +
       ':' + error, opt_callback);

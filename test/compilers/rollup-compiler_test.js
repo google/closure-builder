@@ -17,25 +17,24 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var assert = require('assert');
-var path = require('path');
+let assert = require('assert');
+let path = require('path');
 
-var fileTools = require('../../tools/file.js');
-var pathTools = require('../../tools/path.js');
+let fileTools = require('../../tools/file.js');
+let pathTools = require('../../tools/path.js');
 
-var rollupCompiler = require('../../compilers/rollup/compiler.js');
+let rollupCompiler = require('../../compilers/rollup/compiler.js');
 
-var testDirectory = pathTools.getTempPath('roller-compiler-test');
+let testDirectory = pathTools.getTempPath('roller-compiler-test');
 
 
 describe('Rollup Compiler::', function() {
-
   it('Single file - direct output', function(done) {
     this.timeout(25000);
-    var file = ['test_files/umd/umd-main.js'];
-    var options = {
+    let file = ['test_files/umd/umd-main.js'];
+    let options = {
       format: 'umd',
-      moduleName: 'MainDirect'
+      moduleName: 'MainDirect',
     };
     rollupCompiler.compile(file, options, null,
       (errors, warnings, file, content) => {
@@ -52,11 +51,11 @@ describe('Rollup Compiler::', function() {
 
   it('Single file - write output to file', function(done) {
     this.timeout(25000);
-    var file = ['test_files/umd/umd-main.js'];
-    var outputFile = path.join(testDirectory, 'node_test_bundle.js');
-    var options = {
+    let file = ['test_files/umd/umd-main.js'];
+    let outputFile = path.join(testDirectory, 'node_test_bundle.js');
+    let options = {
       format: 'umd',
-      moduleName: 'MainFile'
+      moduleName: 'MainFile',
     };
     rollupCompiler.compile(file, options, outputFile,
       (errors, warnings, file, content) => {
@@ -64,7 +63,7 @@ describe('Rollup Compiler::', function() {
         assert(file);
         assert(!errors);
         assert(!warnings);
-        var result = fileTools.readFile(file);
+        let result = fileTools.readFile(file);
         assert(result);
         assert(result.includes(options.moduleName));
         assert(result.includes('Hello'));
@@ -75,10 +74,10 @@ describe('Rollup Compiler::', function() {
 
   it('Expected Error Message', function(done) {
     this.timeout(25000);
-    var file = ['test_files/umd/umd-error.js'];
-    var options = {
+    let file = ['test_files/umd/umd-error.js'];
+    let options = {
       format: 'umd',
-      moduleName: 'MainError'
+      moduleName: 'MainError',
     };
     rollupCompiler.compile(file, options, null,
       (errors, warnings, file, content) => {
@@ -89,5 +88,4 @@ describe('Rollup Compiler::', function() {
         done();
       });
   });
-
 });

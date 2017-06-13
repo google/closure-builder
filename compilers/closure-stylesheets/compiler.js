@@ -17,10 +17,9 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var fileTools = require('../../tools/file.js');
-var javaTools = require('../../tools/java.js');
-var pathTools = require('../../tools/path.js');
-
+let fileTools = require('../../tools/file.js');
+let javaTools = require('../../tools/java.js');
+let pathTools = require('../../tools/path.js');
 
 
 /**
@@ -28,7 +27,7 @@ var pathTools = require('../../tools/path.js');
  * @struct
  * @final
  */
-var ClosureStylesheets = function() {};
+let ClosureStylesheets = function() {};
 
 
 /**
@@ -46,22 +45,23 @@ ClosureStylesheets.DEBUG = false;
 ClosureStylesheets.compile = function(files, opt_options, opt_target_file,
     opt_callback) {
   if (!files) {
-    return ClosureStylesheets.error('No valid files are provided!',
-      opt_callback);
+    ClosureStylesheets.error('No valid files are provided!', opt_callback);
+    return;
   }
 
   if (!javaTools.hasJava()) {
-    return ClosureStylesheets.error('Java (JRE) is needed!', opt_callback);
+    ClosureStylesheets.error('Java (JRE) is needed!', opt_callback);
+    return;
   }
 
-  var compiler = pathTools.getClosureStylesheetsCompilerJar();
-  var compilerOptions = [];
-  var options = opt_options || {};
-  var showWarnings = true;
+  let compiler = pathTools.getClosureStylesheetsCompilerJar();
+  let compilerOptions = [];
+  let options = opt_options || {};
+  let showWarnings = true;
 
   // Pre-convert custom {$prefix} tag.
   if (options.use_prefix) {
-    var targetDir = pathTools.getRandomTempPath('closure-builder-templates');
+    let targetDir = pathTools.getRandomTempPath('closure-builder-templates');
     fileTools.copySync(files, targetDir);
     fileTools.findAndReplace(
       [targetDir],
@@ -69,7 +69,7 @@ ClosureStylesheets.compile = function(files, opt_options, opt_target_file,
       options.use_prefix,
       true
     );
-    files = fileTools.getGlobFiles(targetDir +  '/**/*');
+    files = fileTools.getGlobFiles(targetDir + '/**/*');
     delete options.use_prefix;
   }
 
@@ -83,7 +83,7 @@ ClosureStylesheets.compile = function(files, opt_options, opt_target_file,
   }
 
   // Handling files
-  var dupFile = {};
+  let dupFile = {};
   for (let i = 0; i < files.length; i++) {
     if (!dupFile[files[i]]) {
       compilerOptions.push(files[i]);
@@ -91,17 +91,17 @@ ClosureStylesheets.compile = function(files, opt_options, opt_target_file,
     dupFile[files[i]] = true;
   }
 
-  var compilerEvent = (error, stdout, stderr) => {
-    var code = stdout;
-    var errorMsg = stderr || error;
-    var errors = null;
-    var warnings = null;
-    var numErrors = 0;
-    var numWarnings = 0;
+  let compilerEvent = (error, stdout, stderr) => {
+    let code = stdout;
+    let errorMsg = stderr || error;
+    let errors = null;
+    let warnings = null;
+    let numErrors = 0;
+    let numWarnings = 0;
 
     // Handling Error messages
     if (errorMsg) {
-      var parsedErrorMessage = ClosureStylesheets.parseErrorMessage(errorMsg);
+      let parsedErrorMessage = ClosureStylesheets.parseErrorMessage(errorMsg);
       numErrors = parsedErrorMessage.errors;
       numWarnings = parsedErrorMessage.warnings;
     }
@@ -130,8 +130,8 @@ ClosureStylesheets.compile = function(files, opt_options, opt_target_file,
  * @return {Object} with number of detected errors and warnings
  */
 ClosureStylesheets.parseErrorMessage = function(message) {
-  var errors = 0;
-  var warnings = 0;
+  let errors = 0;
+  let warnings = 0;
   if (message) {
     if (message.includes('INTERNAL COMPILER ERROR') ||
         message.includes('NullPointerException') ||
@@ -142,7 +142,7 @@ ClosureStylesheets.parseErrorMessage = function(message) {
     } else if (message.toLowerCase().split('exception') !== -1) {
       errors = 1;
     } else if (message.toLowerCase().includes('warning')) {
-      if (!message.includes('Java HotSpot\(TM\) Client VM warning') ||
+      if (!message.includes('Java HotSpot(TM) Client VM warning') ||
           message.toLowerCase().split('warning').length > 2) {
         warnings = message.toLowerCase().split('warning').length - 1;
       } else {
@@ -154,7 +154,7 @@ ClosureStylesheets.parseErrorMessage = function(message) {
   }
   return {
     errors: errors,
-    warnings: warnings
+    warnings: warnings,
   };
 };
 

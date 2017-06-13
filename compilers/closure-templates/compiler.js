@@ -17,12 +17,11 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var path = require('path');
+let path = require('path');
 
-var fileTools = require('../../tools/file.js');
-var javaTools = require('../../tools/java.js');
-var pathTools = require('../../tools/path.js');
-
+let fileTools = require('../../tools/file.js');
+let javaTools = require('../../tools/java.js');
+let pathTools = require('../../tools/path.js');
 
 
 /**
@@ -30,7 +29,7 @@ var pathTools = require('../../tools/path.js');
  * @struct
  * @final
  */
-var ClosureTemplates = function() {};
+let ClosureTemplates = function() {};
 
 
 /**
@@ -48,20 +47,22 @@ ClosureTemplates.DEBUG = false;
 ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
     opt_callback) {
   if (!files) {
-    return ClosureTemplates.error('No valid files are provided!', opt_callback);
+    ClosureTemplates.error('No valid files are provided!', opt_callback);
+    return;
   }
 
   if (!javaTools.hasJava()) {
-    return ClosureTemplates.error('Java (JRE) is needed!', opt_callback);
+    ClosureTemplates.error('Java (JRE) is needed!', opt_callback);
+    return;
   }
 
-  var compiler = pathTools.getClosureTemplatesCompilerJar();
-  var compilerOptions = [];
-  var i18nFunction = null;
-  var options = opt_options || {};
-  var outputFiles = [];
-  var showWarnings = true;
-  var targetDir = opt_target_dir || pathTools.getRandomTempPath(
+  let compiler = pathTools.getClosureTemplatesCompilerJar();
+  let compilerOptions = [];
+  let i18nFunction = null;
+  let options = opt_options || {};
+  let outputFiles = [];
+  let showWarnings = true;
+  let targetDir = opt_target_dir || pathTools.getRandomTempPath(
     'closure-builder-templates');
 
   // Pre-convert custom {i18n} tag.
@@ -80,7 +81,7 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
       true
     );
 
-    files = fileTools.getGlobFiles(targetDir +  '/**/*.soy');
+    files = fileTools.getGlobFiles(targetDir + '/**/*.soy');
     delete options.use_i18n;
   }
 
@@ -91,7 +92,7 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
   }
 
   // Handling files
-  var dupFile = {};
+  let dupFile = {};
   for (let i = 0; i < files.length; i++) {
     if (!dupFile[files[i]]) {
       compilerOptions.push('--srcs', files[i]);
@@ -125,16 +126,16 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
     delete options.no_warnings;
   }
 
-  var compilerEvent = (error, stdout, stderr) => {
-    var errorMsg = stderr || error || stdout;
-    var errors = null;
-    var warnings = null;
-    var numErrors = 0;
-    var numWarnings = 0;
+  let compilerEvent = (error, stdout, stderr) => {
+    let errorMsg = stderr || error || stdout;
+    let errors = null;
+    let warnings = null;
+    let numErrors = 0;
+    let numWarnings = 0;
 
     // Handling Error messages
     if (errorMsg) {
-      var parsedErrorMessage = ClosureTemplates.parseErrorMessage(errorMsg);
+      let parsedErrorMessage = ClosureTemplates.parseErrorMessage(errorMsg);
       numErrors = parsedErrorMessage.errors;
       numWarnings = parsedErrorMessage.warnings;
     }
@@ -171,8 +172,8 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
  * @return {Object} with number of detected errors and warnings
  */
 ClosureTemplates.parseErrorMessage = function(message) {
-  var errors = 0;
-  var warnings = 0;
+  let errors = 0;
+  let warnings = 0;
   if (message) {
     if (message.includes('INTERNAL COMPILER ERROR') ||
         message.includes('NullPointerException') ||
@@ -183,7 +184,7 @@ ClosureTemplates.parseErrorMessage = function(message) {
     } else if (message.toLowerCase().includes('error')) {
       errors = message.toLowerCase().split('error').length - 1;
     } else if (message.toLowerCase().includes('warning')) {
-      if (!message.includes('Java HotSpot\(TM\) Client VM warning') ||
+      if (!message.includes('Java HotSpot(TM) Client VM warning') ||
           message.toLowerCase().split('warning').length > 2) {
         warnings = message.toLowerCase().split('warning').length - 1;
       } else {
@@ -195,7 +196,7 @@ ClosureTemplates.parseErrorMessage = function(message) {
   }
   return {
     errors: errors,
-    warnings: warnings
+    warnings: warnings,
   };
 };
 

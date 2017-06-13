@@ -28,28 +28,28 @@ const glob = closureBuilder.globSupport();
  * @struct
  * @final
  */
-var config = function() {};
+let config = function() {};
 
 config.duplicate = {
   name: 'closure_test_duplicate',
   srcs: [
     'test_files/closure_test_1.js',
     'test_files/closure_test_2.js',
-    'test_files/closure_test_duplicate.js'
+    'test_files/closure_test_duplicate.js',
   ],
   deps: glob([
-    'test_files/closure_test_*.js'
+    'test_files/closure_test_*.js',
   ]),
-  out: pathTools.getTempTestPath('closure-test-1')
+  out: pathTools.getTempTestPath('closure-test-1'),
 };
 
 
 config.general1 = {
   name: 'closure_test_1',
   srcs: [
-    'test_files/closure_test_1.js'
+    'test_files/closure_test_1.js',
   ],
-  out: pathTools.getTempTestPath('closure-test-1')
+  out: pathTools.getTempTestPath('closure-test-1'),
 };
 
 
@@ -57,77 +57,77 @@ config.general2 = {
   name: 'closure_test_2',
   srcs: [
     'test_files/closure_test_1.js',
-    'test_files/closure_test_2.js'
+    'test_files/closure_test_2.js',
   ],
-  out: pathTools.getTempTestPath('closure-test-2')
+  out: pathTools.getTempTestPath('closure-test-2'),
 };
 
 
 config.group = {
   name: 'closure_test_group',
   srcs: glob([
-    'test_files/closure_test_*.js'
+    'test_files/closure_test_*.js',
   ]),
-  out: pathTools.getTempTestPath('closure-test-group')
+  out: pathTools.getTempTestPath('closure-test-group'),
 };
 
 
 config.module = {
   name: 'closure_test_require_module',
   srcs: glob([
-    'test_files/closure_test_*.js'
+    'test_files/closure_test_*.js',
   ]),
-  out: pathTools.getTempTestPath('closure-module')
+  out: pathTools.getTempTestPath('closure-module'),
 };
 
 
 config.extern = {
   name: 'closure_test_extern',
   srcs: glob([
-    'test_files/closure_test_*.js'
+    'test_files/closure_test_*.js',
   ]),
   externs: [
-    'test_files/externs.js'
+    'test_files/externs.js',
   ],
-  out: pathTools.getTempTestPath('closure-test-extern')
+  out: pathTools.getTempTestPath('closure-test-extern'),
 };
 
 
 config.error = {
   name: 'closure_test_error',
   srcs: glob([
-    'test_files/special/closure_error.js'
+    'test_files/special/closure_error.js',
   ]),
   out: pathTools.getTempTestPath('closure-error'),
-  testEnv: true
+  testEnv: true,
 };
 
 
 config.warning = {
   name: 'closure_test_warning',
   srcs: glob([
-    'test_files/special/closure_warning.js'
+    'test_files/special/closure_warning.js',
   ]),
-  out: pathTools.getTempTestPath('closure-warning')
+  out: pathTools.getTempTestPath('closure-warning'),
 };
 
 
 config.warningDisabled = {
   name: 'closure_test_warning',
   srcs: glob([
-    'test_files/special/closure_warning.js'
+    'test_files/special/closure_warning.js',
   ]),
   warn: false,
-  out: pathTools.getTempTestPath('closure-warning')
+  out: pathTools.getTempTestPath('closure-warning'),
 };
 
 
 config.export = {
   name: 'closure_test_export',
   srcs: glob([
-    'test_files/special/closure_export.js'
+    'test_files/special/closure_export.js',
   ]),
-  out: pathTools.getTempTestPath('closure-export')
+  out: pathTools.getTempTestPath('closure-export'),
 };
 
 

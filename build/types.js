@@ -19,12 +19,11 @@
  */
 
 
-
 /**
  * Enum with build types.
  * @enum {string}
  */
-var BuildType = {
+let BuildType = {
   CLOSURE: 'closure',
   CLOSURE_STYLESHEETS: 'closure stylesheets',
   CSS: 'css',
@@ -35,7 +34,7 @@ var BuildType = {
   ROLLUP: 'rollup',
   SOY: 'soy',
   SOY_CLOSURE: 'soy and closure',
-  UNKNOWN: ''
+  UNKNOWN: '',
 };
 
 

@@ -17,15 +17,15 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var path = require('path');
+let path = require('path');
 
-var fileTools = require('./tools/file.js');
-var javaTools = require('./tools/java.js');
-var packageJson = require('./package.json');
-var remoteTools = require('./tools/remote.js');
+let fileTools = require('./tools/file.js');
+let javaTools = require('./tools/java.js');
+let packageJson = require('./package.json');
+let remoteTools = require('./tools/remote.js');
 
 console.log('Configuring Closure Builder ' + packageJson.version + ' ...\n');
-var googdl = 'https://dl.google.com/';
+let googdl = 'https://dl.google.com/';
 
 
 // Google Closure Compiler
@@ -43,9 +43,9 @@ remoteTools.getZip(
 );
 
 // Google Closure Stylesheets
-var gcs = 'https://github.com/google/closure-stylesheets/releases/download/';
-var gcsVersion = 'v1.4.0';
-var gcsDoc = 'https://raw.githubusercontent.com/google/closure-stylesheets/';
+let gcs = 'https://github.com/google/closure-stylesheets/releases/download/';
+let gcsVersion = 'v1.4.0';
+let gcsDoc = 'https://raw.githubusercontent.com/google/closure-stylesheets/';
 remoteTools.getFiles(
   'Google Closure Stylesheets', [
     gcs + gcsVersion + '/closure-stylesheets.jar',
@@ -57,7 +57,7 @@ remoteTools.getFiles(
 
 // Cleanup Google Closure Library
 console.log('Optimizing Google Closure Library ...');
-var closureLibrary = path.join('.', 'third_party', 'closure-library');
+let closureLibrary = path.join('.', 'third_party', 'closure-library');
 fileTools.removeFiles(path.join(closureLibrary, '**', '*_test.js'));
 fileTools.removeFiles(path.join(closureLibrary, '**', '*_test.html'));
 fileTools.removeFiles(path.join(closureLibrary, '**', 'test_module.js'));
@@ -67,7 +67,7 @@ fileTools.removeFiles(path.join(closureLibrary, 'closure', 'goog', 'demos'));
 
 // Cleanup Google Closure Templates
 console.log('Optimizing Google Closure Templates ...');
-var closureTemplates = path.join('.', 'third_party', 'closure-templates');
+let closureTemplates = path.join('.', 'third_party', 'closure-templates');
 fileTools.removeFiles(path.join(closureTemplates, 'java'));
 fileTools.removeFiles(path.join(closureTemplates, 'python'));
 fileTools.removeFiles(path.join(closureTemplates, 'src'));

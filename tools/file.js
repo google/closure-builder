@@ -17,15 +17,15 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var fs = require('fs-extra');
-var glob = require('glob');
-var mkdirp = require('mkdirp');
-var path = require('path');
-var rimraf = require('rimraf');
-var touch = require('touch');
+let fs = require('fs-extra');
+let glob = require('glob');
+let mkdirp = require('mkdirp');
+let path = require('path');
+let rimraf = require('rimraf');
+let touch = require('touch');
 
-var textTools = require('./text.js');
-var pathTools = require('./path.js');
+let textTools = require('./text.js');
+let pathTools = require('./path.js');
 
 
 /**
@@ -34,7 +34,7 @@ var pathTools = require('./path.js');
  * @struct
  * @final
  */
-var FileTools = function() {};
+let FileTools = function() {};
 
 
 /**
@@ -74,20 +74,20 @@ FileTools.copyFile = function(src, dest, opt_callback) {
     FileTools.mkdir(dest);
   }
   if (!FileTools.access(src)) {
-    var message = 'No access to resource ' + src;
+    let message = 'No access to resource ' + src;
     console.error(message);
     if (opt_callback) {
       opt_callback(message, false);
     }
     return;
   }
-  var destFile = path.join(dest, pathTools.getFileBase(src));
+  let destFile = path.join(dest, pathTools.getFileBase(src));
   if (pathTools.isFile(dest)) {
     destFile = dest;
   }
-  var fileEvent = (error) => {
+  let fileEvent = (error) => {
     if (error) {
-      var message = 'Resource ' + src + ' failed to copy to ' + destFile;
+      let message = 'Resource ' + src + ' failed to copy to ' + destFile;
       console.error(message);
       console.error(error);
       if (opt_callback) {
@@ -109,20 +109,20 @@ FileTools.copyFile = function(src, dest, opt_callback) {
  * @param {!string} dest
  */
 FileTools.copySync = function(srcs, dest) {
-  var numFiles_ = srcs.length;
-  var fileNames_ = [];
+  let numFiles_ = srcs.length;
+  let fileNames_ = [];
   if (pathTools.isFile(dest)) {
     FileTools.mkdir(path.dirname(dest));
   } else {
     FileTools.mkdir(dest);
   }
   for (let i = numFiles_ - 1; i >= 0; i--) {
-    var destFile = path.join(dest, pathTools.getFileBase(srcs[i]));
+    let destFile = path.join(dest, pathTools.getFileBase(srcs[i]));
     if (pathTools.isFile(dest)) {
       destFile = dest;
     }
     if (fileNames_.indexOf(destFile) !== -1) {
-      var newFileName = textTools.getRandomString() + '-' +
+      let newFileName = textTools.getRandomString() + '-' +
         pathTools.getFileBase(srcs[i]);
       console.warn('Renamed duplicated filename:', srcs[i], '>', newFileName);
       destFile = path.join(dest, newFileName);
@@ -143,7 +143,7 @@ FileTools.copySync = function(srcs, dest) {
  */
 FileTools.saveContent = function(file, content, opt_callback, opt_config,
     opt_warning) {
-  var config = opt_config || false;
+  let config = opt_config || false;
   if (config) {
     if (config) {
       config.setMessage('Saving output to ' + file);
@@ -158,16 +158,16 @@ FileTools.saveContent = function(file, content, opt_callback, opt_config,
       content = content + '\n' + config.appendText;
     }
     if (config.license) {
-      var license = fs.readFileSync(config.license, 'utf8');
+      let license = fs.readFileSync(config.license, 'utf8');
       content = license + content;
     }
     if (config.banner) {
       content = config.banner + content;
     }
   }
-  var fileEvent = (error) => {
+  let fileEvent = (error) => {
     if (error) {
-      var errorMessage = 'Was not able to write file ' + file + ':' + error;
+      let errorMessage = 'Was not able to write file ' + file + ':' + error;
       if (opt_config) {
         opt_config.setMessage(errorMessage);
       }
@@ -176,7 +176,7 @@ FileTools.saveContent = function(file, content, opt_callback, opt_config,
           opt_warning);
       }
     } else {
-      var successMessage = 'Saved file ' +
+      let successMessage = 'Saved file ' +
         textTools.getTruncateText(file) + ' ( ' + content.length + ' )';
       if (config) {
         config.setMessage(successMessage);
@@ -191,12 +191,12 @@ FileTools.saveContent = function(file, content, opt_callback, opt_config,
 
 
 /**
- * @param {string|array} Files with glob syntax.
+ * @param {string|array} files Files with glob syntax.
  * @return {array}
  */
 FileTools.getGlobFiles = function(files) {
-  var fileList = [];
-  var filesToGlob = (files.constructor === String) ? [files] : files;
+  let fileList = [];
+  let filesToGlob = (files.constructor === String) ? [files] : files;
   for (let i = filesToGlob.length - 1; i >= 0; i--) {
     fileList = fileList.concat(glob.sync(filesToGlob[i]));
   }
@@ -209,7 +209,7 @@ FileTools.getGlobFiles = function(files) {
  * @return {string} Temp dir path.
  */
 FileTools.makeTempDir = function(opt_name) {
-  var tempDir = pathTools.getTempPath(opt_name);
+  let tempDir = pathTools.getTempPath(opt_name);
   FileTools.mkdir(tempDir);
   return tempDir;
 };
@@ -227,24 +227,23 @@ FileTools.findAndReplace = function(files, regex, replacement, opt_recursive) {
   }
 
   for (let i = 0; i < files.length; i++) {
-    var file = files[i];
+    let file = files[i];
     if (FileTools.isSymbolicLink(file)) {
       console.warn('Will not search in symbolic links:', file);
     } else if (FileTools.isFile(file)) {
-      var content = FileTools.readFile(file);
+      let content = FileTools.readFile(file);
       if (content) {
         FileTools.writeFile(file, content.replace(regex, replacement));
       }
     } else if (FileTools.isDirectory(file) && opt_recursive) {
-      var directoryFiles = FileTools.readDir(file);
+      let directoryFiles = FileTools.readDir(file);
       for (let i = 0; i < directoryFiles.length; i++) {
-        var directoryFile = path.join(file, directoryFiles[i]);
+        let directoryFile = path.join(file, directoryFiles[i]);
         FileTools.findAndReplace(
           directoryFile, regex, replacement, opt_recursive);
       }
     }
   }
-
 };
 
 
@@ -277,6 +276,7 @@ FileTools.writeFile = function(file, content) {
 
 /**
  * @param {!string} directory_path
+ * @return {Object}
  */
 FileTools.getDirectories = function(directory_path) {
   return fs.readdirSync(directory_path).filter((file) => {
@@ -332,7 +332,7 @@ FileTools.removeFiles = function(files, opt_callback) {
   if (opt_callback) {
     rimraf(files, {}, opt_callback);
   }
-  rimraf.sync(files,  { nosort: true, silent: false });
+  rimraf.sync(files, {nosort: true, silent: false});
 };
 
 
@@ -350,7 +350,7 @@ FileTools.mkdir = function(dir_path) {
  * @param {string} file_path
  */
 FileTools.mkfile = function(file_path) {
-  var dir_path = path.dirname(file_path);
+  let dir_path = path.dirname(file_path);
   FileTools.mkdir(dir_path);
   touch.sync(file_path);
 };

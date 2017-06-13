@@ -17,18 +17,16 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var assert = require('assert');
+let assert = require('assert');
 
-var closureStylesheets = require(
+let closureStylesheets = require(
   '../../compilers/closure-stylesheets/compiler.js');
 
 
-
 describe('Closure Stylesheets::', function() {
-
   it('Single file', function(done) {
     this.timeout(25000);
-    var files = ['test_files/test_1.gss'];
+    let files = ['test_files/test_1.gss'];
     closureStylesheets.compile(files, null, null,
       function(errors, warnings, file, code) {
         assert(!errors);
@@ -42,9 +40,9 @@ describe('Closure Stylesheets::', function() {
 
   it('Two files', function(done) {
     this.timeout(25000);
-    var files = [
+    let files = [
       'test_files/test_1.gss',
-      'test_files/test_2.gss'
+      'test_files/test_2.gss',
     ];
     closureStylesheets.compile(files, null, null,
       function(errors, warnings, file, code) {
@@ -65,9 +63,9 @@ describe('Closure Stylesheets::', function() {
 
   it('css-renaming-prefix', function(done) {
     this.timeout(25000);
-    var files = ['test_files/test_1.gss'];
-    var options = {
-      'css-renaming-prefix': 'test123312-'
+    let files = ['test_files/test_1.gss'];
+    let options = {
+      'css-renaming-prefix': 'test123312-',
     };
     closureStylesheets.compile(files, options, null,
       function(errors, warnings, file, code) {
@@ -84,9 +82,9 @@ describe('Closure Stylesheets::', function() {
 
   it('prefix', function(done) {
     this.timeout(25000);
-    var files = ['test_files/special/prefix_test.gss'];
-    var options = {
-      'use_prefix': 'test3122-'
+    let files = ['test_files/special/prefix_test.gss'];
+    let options = {
+      'use_prefix': 'test3122-',
     };
     closureStylesheets.compile(files, options, null,
       function(errors, warnings, file, code) {
@@ -103,7 +101,7 @@ describe('Closure Stylesheets::', function() {
 
   it('Expected Error Message', function(done) {
     this.timeout(25000);
-    var files = ['test_files/special/error.gss'];
+    let files = ['test_files/special/error.gss'];
     closureStylesheets.compile(files, null, null,
       function(errors, warnings, file, code) {
         assert(errors.includes('GSS constant not defined'));
@@ -112,5 +110,4 @@ describe('Closure Stylesheets::', function() {
         done();
       });
   });
-
 });

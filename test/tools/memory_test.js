@@ -17,24 +17,22 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var assert = require('assert');
+let assert = require('assert');
 
-var memoryTools = require('../../tools/memory.js');
+let memoryTools = require('../../tools/memory.js');
 
 
 describe('memoryTools', function() {
-
-  it ('getMemory', function() {
-    var memory = memoryTools.getMemory();
+  it('getMemory', function() {
+    let memory = memoryTools.getMemory();
     assert(memory > 16);
   });
 
-  it ('checkAvailableMemory', function() {
-    var largeMemory = memoryTools.checkAvailableMemory(
+  it('checkAvailableMemory', function() {
+    let largeMemory = memoryTools.checkAvailableMemory(
       memoryTools.getMemory() + 128);
-    var smallMemory = memoryTools.checkAvailableMemory(128);
+    let smallMemory = memoryTools.checkAvailableMemory(128);
     assert(!largeMemory);
     assert(smallMemory);
   });
-
 });

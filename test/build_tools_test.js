@@ -17,29 +17,25 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var assert = require('assert');
+let assert = require('assert');
 
-var buildTools = require('../build_tools');
-var fileTools = require('../tools/file.js');
+let buildTools = require('../build_tools');
+let fileTools = require('../tools/file.js');
 
-var testFilesPath = 'test_files/resources/';
+let testFilesPath = 'test_files/resources/';
 
 
 describe('buildTools', function() {
-
   describe('Files', function() {
-
     it('sortFiles', function() {
-      var files = fileTools.getGlobFiles(testFilesPath + '*');
-      var sortedFilesAll = buildTools.sortFiles(files, true);
-      var sortedFiles = buildTools.sortFiles(files);
-      var sortedFilesWithoutTest = buildTools.sortFiles(files, false, true);
+      let files = fileTools.getGlobFiles(testFilesPath + '*');
+      let sortedFilesAll = buildTools.sortFiles(files, true);
+      let sortedFiles = buildTools.sortFiles(files);
+      let sortedFilesWithoutTest = buildTools.sortFiles(files, false, true);
       assert(files.length == sortedFilesAll.length);
       assert(sortedFilesAll.length > sortedFiles.length);
       assert(sortedFiles.length > sortedFilesWithoutTest.length);
       assert(sortedFilesWithoutTest.length > 5);
     });
-
   });
-
 });

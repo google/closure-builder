@@ -17,11 +17,10 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var fs = require('fs');
-var rollup = require('rollup');
+let fs = require('fs');
+let rollup = require('rollup');
 
-var fileTools = require('../../tools/file.js');
-
+let fileTools = require('../../tools/file.js');
 
 
 /**
@@ -29,31 +28,32 @@ var fileTools = require('../../tools/file.js');
  * @struct
  * @final
  */
-var RollupCompiler = function() {};
+let RollupCompiler = function() {};
 
 
 /**
  * @param {!string|array} file
  * @param {Object=} opt_options
  * @param {string=} opt_target_file
- * @param {function=} opt_callback
+ * @param {function=} callback
  * @param {boolean=} opt_remote_service
  */
 RollupCompiler.compile = function(file, opt_options, opt_target_file,
-    opt_callback) {
+    callback) {
   if (!file) {
-    return RollupCompiler.error('No valid file is provided!', opt_callback);
+    RollupCompiler.error('No valid file is provided!', callback);
+    return;
   } else if (Array.isArray(file) && file.length > 1) {
-    return RollupCompiler.error('Please only provide on entry point file!',
-      opt_callback);
+    RollupCompiler.error('Please only provide on entry point file!', callback);
+    return;
   }
 
-  var options = opt_options || {};
-  var entryFile = Array.isArray(file) ? file[0] : file;
-  var compilerOptions = {
-    'entry': entryFile
+  let options = opt_options || {};
+  let entryFile = Array.isArray(file) ? file[0] : file;
+  let compilerOptions = {
+    'entry': entryFile,
   };
-  var bundleOptions = {};
+  let bundleOptions = {};
 
   // Handling compiler options
   if (options.plugins) {
@@ -62,21 +62,23 @@ RollupCompiler.compile = function(file, opt_options, opt_target_file,
   }
 
   // Handling options
-  for (var option in options) {
-    bundleOptions[option] = options[option];
+  for (let option in options) {
+    if (Object.prototype.hasOwnProperty.call(options, option)) {
+      bundleOptions[option] = options[option];
+    }
   }
 
   if (opt_target_file) {
     fileTools.mkfile(opt_target_file);
   }
-  var compilerError = function(error) {
-    RollupCompiler.error(error, opt_callback);
+  let compilerError = function(error) {
+    RollupCompiler.error(error, callback);
   };
-  var compilerEvent = function(bundle) {
-    var errors = null;
-    var warnings = null;
-    var code = null;
-    var result = bundle.generate(bundleOptions);
+  let compilerEvent = function(bundle) {
+    let errors = null;
+    let warnings = null;
+    let code = null;
+    let result = bundle.generate(bundleOptions);
 
     if (result) {
       code = result.code;
@@ -85,15 +87,15 @@ RollupCompiler.compile = function(file, opt_options, opt_target_file,
     if (opt_target_file) {
       fs.writeFile(opt_target_file, code, (err) => {
         if (err) {
-          RollupCompiler.error(err, opt_callback);
+          RollupCompiler.error(err, callback);
         } else {
-          if (opt_callback) {
-            opt_callback(errors, warnings, opt_target_file, code);
+          if (callback) {
+            callback(errors, warnings, opt_target_file, code);
           }
         }
       });
-    } else if (opt_callback) {
-      opt_callback(errors, warnings, opt_target_file, code);
+    } else if (callback) {
+      callback(errors, warnings, opt_target_file, code);
     }
   };
 
@@ -106,12 +108,12 @@ RollupCompiler.compile = function(file, opt_options, opt_target_file,
 
 /**
  * @param {string} msg
- * @param {function=} opt_callback
+ * @param {function=} callback
  */
-RollupCompiler.error = function(msg, opt_callback) {
+RollupCompiler.error = function(msg, callback) {
   console.error('[Rollup Compiler Error]', msg);
-  if (opt_callback) {
-    opt_callback(msg);
+  if (callback) {
+    callback(msg);
   }
 };
 

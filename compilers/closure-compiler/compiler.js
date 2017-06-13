@@ -17,13 +17,12 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var fs = require('fs-extra');
-var https = require('https');
-var querystring = require('querystring');
+let fs = require('fs-extra');
+let https = require('https');
+let querystring = require('querystring');
 
-var javaTools = require('../../tools/java.js');
-var pathTools = require('../../tools/path.js');
-
+let javaTools = require('../../tools/java.js');
+let pathTools = require('../../tools/path.js');
 
 
 /**
@@ -31,7 +30,7 @@ var pathTools = require('../../tools/path.js');
  * @struct
  * @final
  */
-var ClosureCompiler = function() {};
+let ClosureCompiler = function() {};
 
 
 /**
@@ -50,7 +49,8 @@ ClosureCompiler.DEBUG = false;
 ClosureCompiler.compile = function(files, opt_options, opt_target_file,
     opt_callback, opt_remote_service) {
   if (!files || files.length == 0) {
-    return ClosureCompiler.error('No valid files are provided!', opt_callback);
+    ClosureCompiler.error('No valid files are provided!', opt_callback);
+    return;
   }
 
   if (opt_remote_service) {
@@ -72,16 +72,18 @@ ClosureCompiler.compile = function(files, opt_options, opt_target_file,
 ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     opt_callback) {
   if (!files) {
-    return ClosureCompiler.error('No valid files are provided!', opt_callback);
+    ClosureCompiler.error('No valid files are provided!', opt_callback);
+    return;
   }
   if (!javaTools.hasJava()) {
-    return ClosureCompiler.error('Java (JRE) is needed!', opt_callback);
+    ClosureCompiler.error('Java (JRE) is needed!', opt_callback);
+    return;
   }
 
-  var compiler = pathTools.getClosureCompilerJar();
-  var compilerOptions = [];
-  var options = opt_options || {};
-  var showWarnings = true;
+  let compiler = pathTools.getClosureCompilerJar();
+  let compilerOptions = [];
+  let options = opt_options || {};
+  let showWarnings = true;
 
   // Compilation level
   if (!options.compilation_level) {
@@ -129,7 +131,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
   }
 
   // Handling files
-  var dupFile = {};
+  let dupFile = {};
   for (let i = 0; i < files.length; i++) {
     if (!dupFile[files[i]]) {
       compilerOptions.push('--js', files[i]);
@@ -161,7 +163,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
 
   // Include Closure base file
   if (options.use_closure_basefile || options.use_closure_library) {
-    var baseFile = pathTools.getClosureBaseFile();
+    let baseFile = pathTools.getClosureBaseFile();
     if (baseFile) {
       compilerOptions.push('--js', baseFile);
     }
@@ -170,13 +172,13 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
 
   // Include Closure library files
   if (options.use_closure_library) {
-    var ignoreList = [];
+    let ignoreList = [];
     if (options.use_closure_library_ui) {
       delete options.use_closure_library_ui;
     } else {
       ignoreList.push('ui');
     }
-    var closureLibraryFiles = pathTools.getClosureLibraryFiles(ignoreList);
+    let closureLibraryFiles = pathTools.getClosureLibraryFiles(ignoreList);
     for (let i = 0; i < closureLibraryFiles.length; i++) {
       compilerOptions.push('--js=' + closureLibraryFiles[i]);
     }
@@ -184,21 +186,23 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
   }
 
   // Handling options
-  for (var option in options) {
-    compilerOptions.push('--' + option, options[option]);
+  for (let option in options) {
+    if (Object.prototype.hasOwnProperty.call(options, option)) {
+      compilerOptions.push('--' + option, options[option]);
+    }
   }
 
-  var compilerEvent = (error, stdout, stderr) => {
-    var code = stdout;
-    var errorMsg = stderr || error;
-    var errors = null;
-    var warnings = null;
-    var numErrors = 0;
-    var numWarnings = 0;
+  let compilerEvent = (error, stdout, stderr) => {
+    let code = stdout;
+    let errorMsg = stderr || error;
+    let errors = null;
+    let warnings = null;
+    let numErrors = 0;
+    let numWarnings = 0;
 
     // Handling Error messages
     if (errorMsg) {
-      var parsedErrorMessage = ClosureCompiler.parseErrorMessage(errorMsg);
+      let parsedErrorMessage = ClosureCompiler.parseErrorMessage(errorMsg);
       numErrors = parsedErrorMessage.errors;
       numWarnings = parsedErrorMessage.warnings;
     }
@@ -231,35 +235,36 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
 ClosureCompiler.remoteCompile = function(files,
     opt_options, opt_target_file, opt_callback) {
   if (!files) {
-    return ClosureCompiler.error('No valid files are provided!', opt_callback);
+    ClosureCompiler.error('No valid files are provided!', opt_callback);
+    return;
   }
 
   // Handling options
-  var unsupportedOptions = {
+  let unsupportedOptions = {
     'entry_point': true,
-    'generate_exports': true
+    'generate_exports': true,
   };
-  var option;
+  let option;
   for (option in opt_options) {
     if (option in unsupportedOptions) {
-      var errorMsg = 'ERROR - ' + option + ' is unsupported by the ' +
-        'closure-compiler webservice!';
-      return ClosureCompiler.error(errorMsg, opt_callback);
+      ClosureCompiler.error('ERROR - ' + option + ' is unsupported by the ' +
+        'closure-compiler webservice!', opt_callback);
+      return;
     }
   }
 
-  var options = opt_options || {};
-  var data = {
-    'compilation_level' : 'SIMPLE_OPTIMIZATIONS',
+  let options = opt_options || {};
+  let data = {
+    'compilation_level': 'SIMPLE_OPTIMIZATIONS',
     'output_format': 'json',
     'output_info': ['compiled_code', 'warnings', 'errors', 'statistics'],
-    'js_code': []
+    'js_code': [],
   };
-  var showWarnings = true;
+  let showWarnings = true;
 
   // Closure templates
   if (options.use_closure_templates) {
-    var closureSoyUtilsFile = pathTools.getClosureSoyUtilsFile();
+    let closureSoyUtilsFile = pathTools.getClosureSoyUtilsFile();
     if (closureSoyUtilsFile) {
       data['js_code'].push(fs.readFileSync(closureSoyUtilsFile).toString());
       if (!options.use_closure_library) {
@@ -271,7 +276,7 @@ ClosureCompiler.remoteCompile = function(files,
 
   // Handling files
   for (let i = 0; i < files.length; i++) {
-    var fileContent = fs.readFileSync(files[i]).toString();
+    let fileContent = fs.readFileSync(files[i]).toString();
     if (fileContent) {
       data['js_code'].push(fileContent);
     }
@@ -279,7 +284,7 @@ ClosureCompiler.remoteCompile = function(files,
 
   // Handling externs files
   if (options.externs) {
-    var externsCode = '';
+    let externsCode = '';
     for (let i = 0; i < options.externs.length; i++) {
       externsCode += fs.readFileSync(options.externs[i]).toString();
     }
@@ -297,34 +302,36 @@ ClosureCompiler.remoteCompile = function(files,
 
   // Handling options
   for (option in options) {
-    data[option] = options[option];
+    if (Object.prototype.hasOwnProperty.call(options, option)) {
+      data[option] = options[option];
+    }
   }
 
-  var dataString = querystring.stringify(data);
-  var httpOptions = {
+  let dataString = querystring.stringify(data);
+  let httpOptions = {
     host: 'closure-compiler.appspot.com',
     path: '/compile',
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Content-Length': dataString.length
-    }
+      'Content-Length': dataString.length,
+    },
   };
 
-  var request = https.request(httpOptions, function(response) {
-    var data = '';
+  let request = https.request(httpOptions, function(response) {
+    let data = '';
     response.setEncoding('utf8');
     response.on('data', function(chunk) {
       data += chunk;
     });
     response.on('end', function() {
-      var result =  JSON.parse(data);
-      var code = result.compiledCode;
-      var errorMsg = result.errors;
-      var warningMsg = result.warnings;
-      var serverErrorMsg = result.serverErrors;
-      var errors = null;
-      var warnings = null;
+      let result = JSON.parse(data);
+      let code = result.compiledCode;
+      let errorMsg = result.errors;
+      let warningMsg = result.warnings;
+      let serverErrorMsg = result.serverErrors;
+      let errors = null;
+      let warnings = null;
       if (serverErrorMsg) {
         errors = ClosureCompiler.parseJsonError(serverErrorMsg);
         ClosureCompiler.error(errors || errorMsg);
@@ -360,12 +367,12 @@ ClosureCompiler.remoteCompile = function(files,
  * @return {!string}
  */
 ClosureCompiler.parseJsonError = function(data) {
-  var message = '';
+  let message = '';
   for (let i=0; i<data.length; i++) {
-    var msg = data[i].error || data[i].warning;
-    var type = (data[i].error) ? 'ERROR' : 'WARNING';
+    let msg = data[i].error || data[i].warning;
+    let type = (data[i].error) ? 'ERROR' : 'WARNING';
     if (data.file && data.file !== 'Input_0') {
-      message += data.file + ':' + data.lineno + ': ' +  type + ' - ' +
+      message += data.file + ':' + data.lineno + ': ' + type + ' - ' +
         msg + '\n';
     } else if (data[i].line) {
       message += type + ' - ' + msg + ' : ' + data[i].line + '\n';
@@ -382,11 +389,11 @@ ClosureCompiler.parseJsonError = function(data) {
  * @return {Object} with number of detected errors and warnings
  */
 ClosureCompiler.parseErrorMessage = function(message) {
-  var errors = 0;
-  var warnings = 0;
+  let errors = 0;
+  let warnings = 0;
   if (message && message.match) {
-    var message_reg = /([0-9]+) error\(s\), ([0-9]+) warning\(s\)/;
-    var messageInfo = message.match(message_reg);
+    let message_reg = /([0-9]+) error\(s\), ([0-9]+) warning\(s\)/;
+    let messageInfo = message.match(message_reg);
     if (messageInfo) {
       errors = messageInfo[1];
       warnings = messageInfo[2];
@@ -396,7 +403,7 @@ ClosureCompiler.parseErrorMessage = function(message) {
     } else if (message.toLowerCase().includes('error')) {
       errors = message.toLowerCase().split('error').length - 1;
     } else if (message.toLowerCase().includes('warning')) {
-      if (!message.includes('Java HotSpot\(TM\) Client VM warning') ||
+      if (!message.includes('Java HotSpot(TM) Client VM warning') ||
           message.toLowerCase().split('warning').length > 2) {
         warnings = message.toLowerCase().split('warning').length - 1;
       } else {
@@ -408,7 +415,7 @@ ClosureCompiler.parseErrorMessage = function(message) {
   }
   return {
     errors: errors,
-    warnings: warnings
+    warnings: warnings,
   };
 };
 

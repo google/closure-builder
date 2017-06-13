@@ -17,34 +17,32 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var assert = require('assert');
-var path = require('path');
+let assert = require('assert');
+let path = require('path');
 
-var fileTools = require('../../tools/file.js');
-var pathTools = require('../../tools/path.js');
+let fileTools = require('../../tools/file.js');
+let pathTools = require('../../tools/path.js');
 
-var nodejsCompiler = require('../../compilers/nodejs/compiler.js');
+let nodejsCompiler = require('../../compilers/nodejs/compiler.js');
 
-var testDirectory = pathTools.getTempPath('nodejs-compiler-test');
+let testDirectory = pathTools.getTempPath('nodejs-compiler-test');
 
 
 describe('Node.js Compiler::', function() {
-
   it('Single file', function(done) {
     this.timeout(25000);
-    var files = ['test_files/special/node_test.js'];
-    var outputFile = path.join(testDirectory, 'node_test_bundle.js');
-    var options = {};
+    let files = ['test_files/special/node_test.js'];
+    let outputFile = path.join(testDirectory, 'node_test_bundle.js');
+    let options = {};
     nodejsCompiler.compile(files, options, outputFile,
       (errors, warnings, file) => {
-        var result = fileTools.readFile(file);
+        let result = fileTools.readFile(file);
         assert(result.includes('textTools.getRandomString() + \'hello\';'));
         assert(result.includes('module.exports = getRandomString();'));
-        assert(result.includes('var TextTools = function() {};'));
+        assert(result.includes('let TextTools = function() {};'));
         assert(result.includes('TextTools.getRandomString'));
         assert(result.includes('module.exports = TextTools;'));
         done();
       });
   });
-
 });

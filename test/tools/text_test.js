@@ -17,14 +17,13 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var assert = require('assert');
+let assert = require('assert');
 
-var textTools = require('../../tools/text.js');
+let textTools = require('../../tools/text.js');
 
 
 describe('textTools', function() {
-
-  var content = 'Hello World';
+  let content = 'Hello World';
 
   it('replace', function() {
     assert.equal(textTools.replace(content), content);
@@ -32,5 +31,4 @@ describe('textTools', function() {
     assert.equal(textTools.replace(content, [['H', 'W'], ['e', 'o']]),
       'Wollo World');
   });
-
 });

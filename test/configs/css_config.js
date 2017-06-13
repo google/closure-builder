@@ -28,15 +28,15 @@ const glob = closureBuilder.globSupport();
  * @struct
  * @final
  */
-var config = function() {};
+let config = function() {};
 
 config.general = {
   name: 'css_files',
   srcs: glob([
     'test_files/*.css',
-    'test_files/*.htm'
+    'test_files/*.htm',
   ]),
-  out: pathTools.getTempTestPath('css-files')
+  out: pathTools.getTempTestPath('css-files'),
 };
 
 

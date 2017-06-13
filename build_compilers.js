@@ -17,27 +17,26 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var cleanCss = require('clean-css');
-var fs = require('fs-extra');
-var log = require('loglevel');
-var marked = require('marked');
-var path = require('path');
-var validator = require('validator');
+let CleanCss = require('clean-css');
+let fs = require('fs-extra');
+let log = require('loglevel');
+let marked = require('marked');
+let path = require('path');
+let validator = require('validator');
 
-var fileTools = require('./tools/file.js');
-var memoryTools = require('./tools/memory.js');
-var pathTools = require('./tools/path.js');
-var remoteTools = require('./tools/remote.js');
-var textTools = require('./tools/text.js');
+let fileTools = require('./tools/file.js');
+let memoryTools = require('./tools/memory.js');
+let pathTools = require('./tools/path.js');
+let remoteTools = require('./tools/remote.js');
+let textTools = require('./tools/text.js');
 
-var closureCompiler = require('./compilers/closure-compiler/compiler.js');
-var closureStylesheetsCompiler = require(
+let closureCompiler = require('./compilers/closure-compiler/compiler.js');
+let closureStylesheetsCompiler = require(
   './compilers/closure-stylesheets/compiler.js');
-var closureTemplatesCompiler = require(
+let closureTemplatesCompiler = require(
   './compilers/closure-templates/compiler.js');
-var nodejsCompiler = require('./compilers/nodejs/compiler.js');
-var rollupCompiler = require('./compilers/rollup/compiler.js');
-
+let nodejsCompiler = require('./compilers/nodejs/compiler.js');
+let rollupCompiler = require('./compilers/rollup/compiler.js');
 
 
 /**
@@ -46,7 +45,7 @@ var rollupCompiler = require('./compilers/rollup/compiler.js');
  * @struct
  * @final
  */
-var BuildCompilers = function() {};
+let BuildCompilers = function() {};
 
 
 /**
@@ -71,20 +70,20 @@ BuildCompilers.TEST_MODE = typeof global.it === 'function';
  */
 BuildCompilers.copyFile = function(src, dest, opt_callback) {
   if (!fileTools.access(src)) {
-    var message = 'No access to resource ' + src;
+    let message = 'No access to resource ' + src;
     log.error(message);
     if (opt_callback) {
       opt_callback(message, false);
     }
     return;
   }
-  var destFile = path.join(dest, pathTools.getFileBase(src));
+  let destFile = path.join(dest, pathTools.getFileBase(src));
   if (pathTools.isFile(dest)) {
     destFile = dest;
   }
-  var fileEvent = (error) => {
+  let fileEvent = (error) => {
     if (error) {
-      var message = 'Resource ' + src + ' failed to copy to ' + destFile;
+      let message = 'Resource ' + src + ' failed to copy to ' + destFile;
       log.error(message);
       if (opt_callback) {
         opt_callback(message, false, destFile);
@@ -106,24 +105,24 @@ BuildCompilers.copyFile = function(src, dest, opt_callback) {
  * @param {function=} opt_callback
  */
 BuildCompilers.copyRemoteFile = function(src, dest, opt_callback) {
-  var destFile = pathTools.getUrlFile(src);
-  var completeEvent = function(response) {
+  let destFile = pathTools.getUrlFile(src);
+  let completeEvent = function(response) {
     if (!opt_callback) {
       return;
     }
     if (response.statusCode !== 200) {
       opt_callback('Remote Resource' + src + 'failed to download with' +
-        'http status: '  + response.statusCode, false, destFile);
+        'http status: ' + response.statusCode, false, destFile);
     } else {
       opt_callback(false, false, destFile);
     }
   };
-  var errorEvent = function(error) {
+  let errorEvent = function(error) {
     if (!opt_callback) {
       return;
     }
     if (error && error.code == 'ENOTFOUND') {
-      var warnMessage = 'Resource at ' + error.hostname +
+      let warnMessage = 'Resource at ' + error.hostname +
         ' is not reachable!\n' +
         'Please make sure you are online and that the name is correct!\n' +
         '(This message could be ignored if you are working offline!)';
@@ -149,12 +148,12 @@ BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
   } else {
     fileTools.mkdir(dest);
   }
-  var errors_ = [];
-  var warnings_ = [];
-  var files_ = [];
-  var numFiles_ = srcs.length;
-  var numDone_ = 0;
-  var callback = (errors, warnings, files) => {
+  let errors_ = [];
+  let warnings_ = [];
+  let files_ = [];
+  let numFiles_ = srcs.length;
+  let numDone_ = 0;
+  let callback = (errors, warnings, files) => {
     if (errors) {
       errors_.push(errors);
     }
@@ -192,11 +191,11 @@ BuildCompilers.copyFiles = function(srcs, dest, opt_callback) {
  */
 BuildCompilers.compileSoyTemplates = function(files, out,
     opt_options, opt_callback) {
-  var options = (opt_options && opt_options.options) ?
+  let options = (opt_options && opt_options.options) ?
     opt_options.options : {};
-  var config = (opt_options && opt_options.config) ?
+  let config = (opt_options && opt_options.config) ?
     opt_options.config : false;
-  var message = 'Compiling ' + files.length + ' soy files to ' + out;
+  let message = 'Compiling ' + files.length + ' soy files to ' + out;
   if (typeof options.shouldProvideRequireSoyNamespaces === 'undefined') {
     options.shouldProvideRequireSoyNamespaces = true;
   }
@@ -218,9 +217,9 @@ BuildCompilers.compileSoyTemplates = function(files, out,
   }
 
   fileTools.mkdir(out);
-  var compilerEvent = (errors, warnings, files) => {
+  let compilerEvent = (errors, warnings, files) => {
     if (!errors) {
-      var success_message = 'Compiled ' + files.length + ' soy files to ' +
+      let success_message = 'Compiled ' + files.length + ' soy files to ' +
         textTools.getTruncateText(out);
       if (config) {
         config.setMessage(success_message);
@@ -237,15 +236,15 @@ BuildCompilers.compileSoyTemplates = function(files, out,
 
 /**
  * @param {Array} files
- * @param {string=} output
+ * @param {string=} out
  * @param {function=} opt_callback
  * @param {BuildConfig=} opt_config
  */
 BuildCompilers.compileCssFiles = function(files, out, opt_callback,
     opt_config) {
-  var compilerEvent = (errors, minified) => {
+  let compilerEvent = (errors, minified) => {
     if (errors) {
-      var errorsMessage = 'Failed for ' + out + ':' + errors;
+      let errorsMessage = 'Failed for ' + out + ':' + errors;
       BuildCompilers.errorCssCompiler(errorsMessage);
       if (opt_config) {
         opt_config.setMessage(errorsMessage);
@@ -257,7 +256,7 @@ BuildCompilers.compileCssFiles = function(files, out, opt_callback,
       fileTools.saveContent(out, minified.styles, opt_callback, opt_config);
     }
   };
-  new cleanCss().minify(files, compilerEvent);
+  new CleanCss().minify(files, compilerEvent);
 };
 
 
@@ -271,8 +270,8 @@ BuildCompilers.compileCssFiles = function(files, out, opt_callback,
  */
 BuildCompilers.compileNodeFiles = function(files, out,
     opt_options, opt_callback) {
-  var options = (opt_options && opt_options.options) ? opt_options.options : {};
-  var config = (opt_options && opt_options.config) ? opt_options.config : false;
+  let options = (opt_options && opt_options.options) ? opt_options.options : {};
+  let config = (opt_options && opt_options.config) ? opt_options.config : false;
   log.debug('Compiling', files.length, ' node files to', out, '...');
   log.trace(files);
 
@@ -282,7 +281,7 @@ BuildCompilers.compileNodeFiles = function(files, out,
     }
   }
 
-  var compilerEvent = (errors, warnings, target_file) => {
+  let compilerEvent = (errors, warnings, target_file) => {
     if (errors) {
       if (opt_callback) {
         opt_callback(errors, warnings);
@@ -312,8 +311,8 @@ BuildCompilers.compileNodeFiles = function(files, out,
  */
 BuildCompilers.compileRollupFile = function(file, out,
     opt_options, opt_callback) {
-  var options = (opt_options && opt_options.options) ? opt_options.options : {};
-  var config = (opt_options && opt_options.config) ? opt_options.config : false;
+  let options = (opt_options && opt_options.options) ? opt_options.options : {};
+  let config = (opt_options && opt_options.config) ? opt_options.config : false;
 
   if (!options.moduleName) {
     options.moduleName = config.name;
@@ -337,14 +336,14 @@ BuildCompilers.compileRollupFile = function(file, out,
 
 /**
  * @param {!string} file
- * @param {string=} output
+ * @param {string=} out
  * @param {function=} callback
  * @param {BuildConfig=} config
  */
 BuildCompilers.convertMarkdownFile = function(file, out, callback, config) {
-  var markdown = fs.readFileSync(file, 'utf8');
-  var content = marked(markdown);
-  var destFile = path.join(out,
+  let markdown = fs.readFileSync(file, 'utf8');
+  let content = marked(markdown);
+  let destFile = path.join(out,
     pathTools.getPathFile(file).replace('.md', '.html'));
   log.debug('Convert markdown file to', destFile, '...');
   log.trace(destFile);
@@ -354,22 +353,22 @@ BuildCompilers.convertMarkdownFile = function(file, out, callback, config) {
 
 /**
  * @param {Array} files
- * @param {string=} output
+ * @param {string=} out
  * @param {function=} callback
  * @param {BuildConfig=} config
  */
 BuildCompilers.convertMarkdownFiles = function(files, out, callback, config) {
-  var foundError = false;
-  var outFiles = [];
-  var errorEvent = (error, warning, file) => {
+  let foundError = false;
+  let outFiles = [];
+  let errorEvent = (error, warning, file) => {
     if (error) {
       foundError = error;
     } else if (file) {
       outFiles.push(file);
     }
   };
-  for (var i in files) {
-    BuildCompilers.convertMarkdownFile(files[i], out, errorEvent, config);
+  for (let file of files) {
+    BuildCompilers.convertMarkdownFile(file, out, errorEvent, config);
     if (foundError) {
       break;
     }
@@ -390,11 +389,11 @@ BuildCompilers.convertMarkdownFiles = function(files, out, callback, config) {
  */
 BuildCompilers.compileJsFiles = function(files, out,
     opt_options, opt_callback) {
-  var options = (opt_options && opt_options.options) ? opt_options.options : {};
-  var config = (opt_options && opt_options.config) ? opt_options.config : false;
+  let options = (opt_options && opt_options.options) ? opt_options.options : {};
+  let config = (opt_options && opt_options.config) ? opt_options.config : false;
   log.debug('Compiling', files.length, 'files to', out, '...');
   log.trace(files);
-  var useRemoteService = false;
+  let useRemoteService = false;
   if (config) {
     if (config.entryPoint) {
       options.dependency_mode = 'STRICT';
@@ -443,7 +442,7 @@ BuildCompilers.compileJsFiles = function(files, out,
       options.jscomp_error = config.jscompError;
     }
   }
-  var compilerEvent = (errors, warnings, target_file, content) => {
+  let compilerEvent = (errors, warnings, target_file, content) => {
     if (errors) {
       if (opt_callback) {
         opt_callback(errors, warnings);
@@ -471,8 +470,8 @@ BuildCompilers.compileJsFiles = function(files, out,
  */
 BuildCompilers.compileClosureStylesheetsFiles = function(files, out,
     opt_options, opt_callback) {
-  var options = (opt_options && opt_options.options) ? opt_options.options : {};
-  var config = (opt_options && opt_options.config) ? opt_options.config : false;
+  let options = (opt_options && opt_options.options) ? opt_options.options : {};
+  let config = (opt_options && opt_options.config) ? opt_options.config : false;
   log.debug('Compiling', files.length, 'files to', out, '...');
   log.trace(files);
   if (config) {
@@ -480,7 +479,7 @@ BuildCompilers.compileClosureStylesheetsFiles = function(files, out,
       options['use_prefix'] = config.prefix;
     }
   }
-  var compilerEvent = (errors, warnings, target_file, content) => {
+  let compilerEvent = (errors, warnings, target_file, content) => {
     if (errors) {
       if (opt_callback) {
         opt_callback(errors, warnings);

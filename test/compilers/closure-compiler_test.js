@@ -17,28 +17,27 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var assert = require('assert');
-var path = require('path');
+let assert = require('assert');
+let path = require('path');
 
-var fileTools = require('../../tools/file.js');
-var memoryTools = require('../../tools/memory.js');
-var pathTools = require('../../tools/path.js');
+let fileTools = require('../../tools/file.js');
+let memoryTools = require('../../tools/memory.js');
+let pathTools = require('../../tools/path.js');
 
-var closureCompiler = require('../../compilers/closure-compiler/compiler.js');
+let closureCompiler = require('../../compilers/closure-compiler/compiler.js');
 
-var glob = fileTools.getGlobFiles;
-var largeMemoryTest = memoryTools.checkAvailableMemory(600);
-var testDirectory = pathTools.getTempPath('closure-compiler-test');
+let glob = fileTools.getGlobFiles;
+let largeMemoryTest = memoryTools.checkAvailableMemory(600);
+let testDirectory = pathTools.getTempPath('closure-compiler-test');
 
 
 describe('Closure Compiler:local:', function() {
-
   it('Single file', function(done) {
     this.timeout(25000);
-    var files = ['test_files/closure_test_1.js'];
-    var options = {
+    let files = ['test_files/closure_test_1.js'];
+    let options = {
       dependency_mode: 'STRICT',
-      entry_point: 'closure_test_1'
+      entry_point: 'closure_test_1',
     };
     closureCompiler.localCompile(files, options, null,
       function(errors, warnings, file, content) {
@@ -53,13 +52,13 @@ describe('Closure Compiler:local:', function() {
 
   it('Two files', function(done) {
     this.timeout(25000);
-    var files = [
+    let files = [
       'test_files/closure_test_1.js',
-      'test_files/closure_test_2.js'
+      'test_files/closure_test_2.js',
     ];
-    var options = {
+    let options = {
       dependency_mode: 'STRICT',
-      entry_point: 'closure_test_2'
+      entry_point: 'closure_test_2',
     };
     closureCompiler.localCompile(files, options, null,
       function(errors, warnings, file, content) {
@@ -76,10 +75,10 @@ describe('Closure Compiler:local:', function() {
 
   it('Group of files', function(done) {
     this.timeout(25000);
-    var files = glob(['test_files/closure_test_*.js']);
-    var options = {
+    let files = glob(['test_files/closure_test_*.js']);
+    let options = {
       dependency_mode: 'STRICT',
-      entry_point: 'closure_test_group'
+      entry_point: 'closure_test_group',
     };
     closureCompiler.localCompile(files, options, null,
       function(errors, warnings, files, content) {
@@ -97,13 +96,13 @@ describe('Closure Compiler:local:', function() {
 
   it('Duplicate input files', function(done) {
     this.timeout(25000);
-    var files = glob([
+    let files = glob([
       'test_files/closure_test_*.js',
-      'test_files/closure_test_duplicate.js'
+      'test_files/closure_test_duplicate.js',
     ]);
-    var options = {
+    let options = {
       dependency_mode: 'STRICT',
-      entry_point: 'closure_test_duplicate'
+      entry_point: 'closure_test_duplicate',
     };
     closureCompiler.localCompile(files, options, null,
       function(errors, warnings, files, content) {
@@ -116,11 +115,11 @@ describe('Closure Compiler:local:', function() {
 
   it('Externs', function(done) {
     this.timeout(25000);
-    var files =  glob(['test_files/closure_test_*.js']);
-    var options = {
+    let files = glob(['test_files/closure_test_*.js']);
+    let options = {
       externs: ['test_files/externs.js'],
       dependency_mode: 'STRICT',
-      entry_point: 'closure_test_extern'
+      entry_point: 'closure_test_extern',
     };
     closureCompiler.localCompile(files, options, null,
       function(errors, warnings, files, content) {
@@ -135,8 +134,8 @@ describe('Closure Compiler:local:', function() {
 
   it('Module files', function(done) {
     this.timeout(30000);
-    var files =  glob(['test_files/closure_test_*.js']);
-    var options = {
+    let files = glob(['test_files/closure_test_*.js']);
+    let options = {
       dependency_mode: 'STRICT',
       entry_point: 'closure_test_require_module',
     };
@@ -156,10 +155,10 @@ describe('Closure Compiler:local:', function() {
 
   it('Expected Error Message', function(done) {
     this.timeout(30000);
-    var files =  ['test_files/special/closure_error.js'];
-    var options = {
+    let files = ['test_files/special/closure_error.js'];
+    let options = {
       dependency_mode: 'STRICT',
-      entry_point: 'closure_test_error'
+      entry_point: 'closure_test_error',
     };
     closureCompiler.localCompile(files, options, null,
       function(errors, warnings, files, content) {
@@ -172,10 +171,10 @@ describe('Closure Compiler:local:', function() {
 
   it('Expected Warning Message', function(done) {
     this.timeout(30000);
-    var files =  ['test_files/special/closure_warning.js'];
-    var options = {
+    let files = ['test_files/special/closure_warning.js'];
+    let options = {
       dependency_mode: 'STRICT',
-      entry_point: 'closure_test_warning'
+      entry_point: 'closure_test_warning',
     };
     closureCompiler.localCompile(files, options, null,
       function(errors, warnings, files, content) {
@@ -188,11 +187,11 @@ describe('Closure Compiler:local:', function() {
 
   it('Automatic @export handling', function(done) {
     this.timeout(40000);
-    var files =  ['test_files/special/closure_export.js'];
-    var options = {
+    let files = ['test_files/special/closure_export.js'];
+    let options = {
       dependency_mode: 'STRICT',
       generate_exports: true,
-      entry_point: 'closure_test_export'
+      entry_point: 'closure_test_export',
     };
     closureCompiler.localCompile(files, options, null,
       function(errors, warnings, files, content) {
@@ -214,12 +213,12 @@ describe('Closure Compiler:local:', function() {
   describe('ECMA Script 6', function() {
     it('Const', function(done) {
       this.timeout(40000);
-      var files = glob(['test_files/closure_test_*.js']);
-      var options = {
+      let files = glob(['test_files/closure_test_*.js']);
+      let options = {
         dependency_mode: 'STRICT',
         entry_point: 'closure_test_ecma6_const',
         language_in: 'ECMASCRIPT6',
-        language_out: 'ES5_STRICT'
+        language_out: 'ES5_STRICT',
       };
       closureCompiler.localCompile(files, options, null,
         function(errors, warnings, files, content) {
@@ -232,12 +231,12 @@ describe('Closure Compiler:local:', function() {
     it('Let', function(done) {
       this.timeout(40000);
       this.timeout(40000);
-      var files = glob(['test_files/closure_test_*.js']);
-      var options = {
+      let files = glob(['test_files/closure_test_*.js']);
+      let options = {
         dependency_mode: 'STRICT',
         entry_point: 'closure_test_ecma6_let',
         language_in: 'ECMASCRIPT6',
-        language_out: 'ES5_STRICT'
+        language_out: 'ES5_STRICT',
       };
       closureCompiler.localCompile(files, options, null,
         function(errors, warnings, files, content) {
@@ -249,14 +248,14 @@ describe('Closure Compiler:local:', function() {
     });
     it('No ECMA Script 6', function(done) {
       this.timeout(40000);
-      var files = [
+      let files = [
         'test_files/closure_test_1.js',
         'test_files/closure_test_2.js',
-        'test_files/closure_test_no_ecma6.js'
+        'test_files/closure_test_no_ecma6.js',
       ];
-      var options = {
+      let options = {
         dependency_mode: 'STRICT',
-        entry_point: 'closure_test_no_ecma6'
+        entry_point: 'closure_test_no_ecma6',
       };
       closureCompiler.localCompile(files, options, null,
         function(errors, warnings, files, content) {
@@ -273,11 +272,11 @@ describe('Closure Compiler:local:', function() {
       return done();
     }
     this.timeout(140000);
-    var files =  ['test_files/closure_library_test.js'];
-    var options = {
+    let files = ['test_files/closure_library_test.js'];
+    let options = {
       dependency_mode: 'STRICT',
       entry_point: 'closure_library_test',
-      use_closure_library: true
+      use_closure_library: true,
     };
     closureCompiler.localCompile(files, options, null,
       function(errors, warnings, files, content) {
@@ -313,14 +312,14 @@ describe('Closure Compiler:local:', function() {
       return done();
     }
     this.timeout(140000);
-    var files =  [
+    let files = [
       'test_files/special/closure_soy_test.js',
-      'test_files/special/closure_soy_test.soy.js'
+      'test_files/special/closure_soy_test.soy.js',
     ];
-    var options = {
+    let options = {
       dependency_mode: 'STRICT',
       entry_point: 'closure_test_soy_file',
-      use_closure_templates: true
+      use_closure_templates: true,
     };
     closureCompiler.localCompile(files, options, null,
       function(errors, warnings, files, content) {
@@ -333,14 +332,14 @@ describe('Closure Compiler:local:', function() {
 
   it('Create Source Map', function(done) {
     this.timeout(40000);
-    var files =  ['test_files/special/closure_export.js'];
-    var options = {
+    let files = ['test_files/special/closure_export.js'];
+    let options = {
       dependency_mode: 'STRICT',
       compilation_level: 'ADVANCED',
       generate_exports: true,
       entry_point: 'closure_test_export',
       create_source_map: path.join(testDirectory, 'source_maps',
-        'closure_test_source_map.map')
+        'closure_test_source_map.map'),
     };
     closureCompiler.localCompile(files, options, null,
       function(errors, warnings, files, content) {
@@ -350,5 +349,4 @@ describe('Closure Compiler:local:', function() {
         done();
       });
   });
-
 });

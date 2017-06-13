@@ -17,23 +17,22 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var assert = require('assert');
-var os = require('os');
+let assert = require('assert');
+let os = require('os');
 
-var pathTools = require('../../tools/path.js');
+let pathTools = require('../../tools/path.js');
 
-var fileMarkdownUnix = '/home/user/dir/file.md';
-var fileMarkdownWin = 'C:\\path\\dir\\index.md';
-var fileRemote = 'http://www.example.com:80/dir/subdir/file.xml?test=1&test=2';
-var fileRemoteHash = 'https://www.example.com:80/dir/subdir/file.xml#dummy';
-var fileUnix = '/home/user/dir/file.txt';
-var fileWin = 'C:\\path\\dir\\index.html';
-var pathUnix = '/home/user/dir/subdir';
-var pathWin = 'C:\\path\\dir\\subdir';
+let fileMarkdownUnix = '/home/user/dir/file.md';
+let fileMarkdownWin = 'C:\\path\\dir\\index.md';
+let fileRemote = 'http://www.example.com:80/dir/subdir/file.xml?test=1&test=2';
+let fileRemoteHash = 'https://www.example.com:80/dir/subdir/file.xml#dummy';
+let fileUnix = '/home/user/dir/file.txt';
+let fileWin = 'C:\\path\\dir\\index.html';
+let pathUnix = '/home/user/dir/subdir';
+let pathWin = 'C:\\path\\dir\\subdir';
 
 
 describe('pathTools', function() {
-
   it('getFilePath', function() {
     assert.equal(pathTools.getFilePath(pathUnix), pathUnix);
     assert.equal(pathTools.getFilePath(fileUnix), '/home/user/dir');
@@ -60,8 +59,8 @@ describe('pathTools', function() {
   });
 
   it('getRandomTempPath', function() {
-    var path1 = pathTools.getRandomTempPath();
-    var path2 = pathTools.getRandomTempPath();
+    let path1 = pathTools.getRandomTempPath();
+    let path2 = pathTools.getRandomTempPath();
     assert(path1 !== path2);
     assert(path1.indexOf(os.tmpdir()) !== -1);
     assert(path2.indexOf(os.tmpdir()) !== -1);
@@ -71,5 +70,4 @@ describe('pathTools', function() {
     assert.equal(pathTools.getUrlFile(fileRemote), 'file.xml');
     assert.equal(pathTools.getUrlFile(fileRemoteHash), 'file.xml');
   });
-
 });

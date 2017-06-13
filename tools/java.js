@@ -17,7 +17,7 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var childProcess = require('child_process');
+let childProcess = require('child_process');
 
 
 /**
@@ -26,19 +26,19 @@ var childProcess = require('child_process');
  * @struct
  * @final
  */
-var JavaTools = function() {};
+let JavaTools = function() {};
 
 
 /**
  * @type {!number};
  */
-JavaTools.maxBuffer = 10 * 1024 * 1024;  // 10MB
+JavaTools.maxBuffer = 10 * 1024 * 1024; // 10MB
 
 
 /**
  * @type {!number};
  */
-JavaTools.minBuffer = 1 * 1024 * 1024;  // 1MB
+JavaTools.minBuffer = 1 * 1024 * 1024; // 1MB
 
 
 /**
@@ -46,7 +46,7 @@ JavaTools.minBuffer = 1 * 1024 * 1024;  // 1MB
  * @return {boolean}
  */
 JavaTools.hasJava = function(opt_version_string) {
-  var version = JavaTools.getJavaVersionString(opt_version_string)
+  let version = JavaTools.getJavaVersionString(opt_version_string)
     .toLowerCase();
   if (version &&
       version.includes('java') ||
@@ -64,12 +64,12 @@ JavaTools.hasJava = function(opt_version_string) {
  */
 JavaTools.getJavaVersion = function(opt_version_string) {
   if (JavaTools.hasJava()) {
-    var version = JavaTools.getJavaVersionString(opt_version_string)
+    let version = JavaTools.getJavaVersionString(opt_version_string)
       .toLowerCase();
     if (version.includes('java version')) {
-      return version.match(/java version \"?([0-9_.-]+)\"?/)[1];
+      return version.match(/java version "?([0-9_.-]+)"?/)[1];
     } else if (version.includes('jdk version')) {
-      return version.match(/jdk version \"?([0-9_.-]+)\"?/)[1];
+      return version.match(/jdk version "?([0-9_.-]+)"?/)[1];
     } else if (version) {
       return 'unknown';
     }
@@ -86,7 +86,7 @@ JavaTools.getJavaVersionString = function(opt_version_string) {
   if (opt_version_string !== undefined) {
     return opt_version_string.toString();
   }
-  var javaString = JavaTools.execJavaSync(['-version']);
+  let javaString = JavaTools.execJavaSync(['-version']);
   if (javaString && javaString.stderr) {
     return javaString.stderr.toString();
   }
@@ -101,9 +101,9 @@ JavaTools.getJavaVersionString = function(opt_version_string) {
  * @param {string=} opt_java
  */
 JavaTools.execJava = function(args, callback, opt_java) {
-  var javaBin = opt_java || 'java';
+  let javaBin = opt_java || 'java';
   childProcess.execFile(javaBin, args, {
-    'maxBuffer': JavaTools.maxBuffer
+    'maxBuffer': JavaTools.maxBuffer,
   }, callback);
 };
 
@@ -111,11 +111,12 @@ JavaTools.execJava = function(args, callback, opt_java) {
 /**
  * @param {array} args
  * @param {string=} opt_java
+ * @return {Object}
  */
 JavaTools.execJavaSync = function(args, opt_java) {
-  var javaBin = opt_java || 'java';
+  let javaBin = opt_java || 'java';
   return childProcess.spawnSync(javaBin, args, {
-    'minBuffer': JavaTools.maxBuffer
+    'minBuffer': JavaTools.maxBuffer,
   });
 };
 
@@ -128,8 +129,8 @@ JavaTools.execJavaSync = function(args, opt_java) {
  * @param {boolean=} opt_debug
  */
 JavaTools.execJavaJar = function(jar, args, callback, opt_java, opt_debug) {
-  var javaBin = opt_java || 'java';
-  var javaFlags = ['-XX:+TieredCompilation', '-XX:TieredStopAtLevel=1'];
+  let javaBin = opt_java || 'java';
+  let javaFlags = ['-XX:+TieredCompilation', '-XX:TieredStopAtLevel=1'];
   if (process.arch.includes('64')) {
     javaFlags.push('-d64');
   }
@@ -138,7 +139,7 @@ JavaTools.execJavaJar = function(jar, args, callback, opt_java, opt_debug) {
     console.log(javaBin, javaFlags.join(' '));
   }
   childProcess.execFile(javaBin, javaFlags, {
-    'maxBuffer': JavaTools.maxBuffer }, callback);
+    'maxBuffer': JavaTools.maxBuffer}, callback);
 };
 
 

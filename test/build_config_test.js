@@ -17,55 +17,54 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var assert = require('assert');
-var closureBuilder = require('../closure-builder');
+let assert = require('assert');
+let closureBuilder = require('../closure-builder');
 
-var strucConfig = {
+let strucConfig = {
   'debug': true,
   'name': 'test1',
   'sources': [
-    'test_files/test1.js'
+    'test_files/test1.js',
   ],
   'options': {
     'soy': {},
     'closure': {},
-    'exclude_test': true
+    'exclude_test': true,
   },
-  jscomp_off: ['1', '2', '3'],
-  jscomp_warning: ['2', '3', '1'],
-  jscomp_error: ['3', '1', '1']
+  'jscomp_off': ['1', '2', '3'],
+  'jscomp_warning': ['2', '3', '1'],
+  'jscomp_error': ['3', '1', '1'],
 };
 
-var configTypeJavaScript = {
+let configTypeJavaScript = {
   'debug': true,
   'name': 'test1',
   'sources': [
-    'test_files/test1.js'
+    'test_files/test1.js',
   ],
   'options': {},
-  'type': closureBuilder.buildType.JAVASCRIPT
+  'type': closureBuilder.buildType.JAVASCRIPT,
 };
 
-var configPrefix = {
+let configPrefix = {
   'debug': true,
   'name': 'test1',
   'sources': [
-    'test_files/test1.js'
+    'test_files/test1.js',
   ],
   'prefix': 'test123',
   'options': {},
-  'type': closureBuilder.buildType.JAVASCRIPT
+  'type': closureBuilder.buildType.JAVASCRIPT,
 };
 
-var pathOutConfig = {'out': 'folder1/folder2/'};
-var fileOutConfig = {'out': 'folder1/folder2/file1.txt'};
-var emptyOutConfig = {'out': ''};
+let pathOutConfig = {'out': 'folder1/folder2/'};
+let fileOutConfig = {'out': 'folder1/folder2/file1.txt'};
+let emptyOutConfig = {'out': ''};
 
 
 describe('BuildConfig', function() {
-
   describe('Structure', function() {
-    var buildConfig = closureBuilder.getBuildConfig(strucConfig);
+    let buildConfig = closureBuilder.getBuildConfig(strucConfig);
     it('this.config', function() {
       assert.equal(buildConfig.config, strucConfig);
     });
@@ -91,34 +90,33 @@ describe('BuildConfig', function() {
       assert.equal(buildConfig.jscompError, strucConfig.jscomp_error);
     });
     it('this.prefix', function() {
-      var buildConfig = closureBuilder.getBuildConfig(configPrefix);
+      let buildConfig = closureBuilder.getBuildConfig(configPrefix);
       assert.equal(buildConfig.prefix, configPrefix.prefix);
     });
   });
 
   describe('this.type', function() {
     it('JAVASCRIPT', function() {
-      var buildConfig = closureBuilder.getBuildConfig(configTypeJavaScript);
+      let buildConfig = closureBuilder.getBuildConfig(configTypeJavaScript);
       assert.equal(buildConfig.getType(), configTypeJavaScript.type);
     });
   });
 
   describe('this.out', function() {
     it('path', function() {
-      var buildConfig = closureBuilder.getBuildConfig(pathOutConfig);
+      let buildConfig = closureBuilder.getBuildConfig(pathOutConfig);
       assert.equal(buildConfig.getOutPath(), pathOutConfig.out);
       assert(buildConfig.getOutFile());
     });
     it('file', function() {
-      var buildConfig = closureBuilder.getBuildConfig(fileOutConfig);
+      let buildConfig = closureBuilder.getBuildConfig(fileOutConfig);
       assert(buildConfig.getOutPath());
       assert.equal(buildConfig.getOutFile(), 'file1.txt');
     });
     it('empty', function() {
-      var buildConfig = closureBuilder.getBuildConfig(emptyOutConfig);
+      let buildConfig = closureBuilder.getBuildConfig(emptyOutConfig);
       assert(buildConfig.getOutPath());
       assert(buildConfig.getOutFile());
     });
   });
-
 });

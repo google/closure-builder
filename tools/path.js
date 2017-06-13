@@ -17,15 +17,14 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var fs = require('fs-extra');
-var log = require('loglevel');
-var os = require('os');
-var path = require('path');
-var pathParse = require('path-parse');
-var url = require('url');
+let fs = require('fs-extra');
+let log = require('loglevel');
+let os = require('os');
+let path = require('path');
+let pathParse = require('path-parse');
+let url = require('url');
 
-var textTools = require('./text.js');
-
+let textTools = require('./text.js');
 
 
 /**
@@ -34,24 +33,24 @@ var textTools = require('./text.js');
  * @struct
  * @final
  */
-var PathTools = function() {};
+let PathTools = function() {};
 
 
 /**
- * @param {string=} opt_name
+ * @param {string=} name
+ * @param {string=} resource
  * @return {!string}
  */
-PathTools.getResourcePath = function(opt_name, opt_resource) {
-  var resourcePath = path.join(__dirname, '..', opt_resource || 'third_party');
+PathTools.getResourcePath = function(name, resource) {
+  let resourcePath = path.join(__dirname, '..', resource || 'third_party');
   if (!PathTools.existDirectory(resourcePath)) {
     log.error('Resource path was not found at', resourcePath);
     return '';
   }
-  if (opt_name) {
-    resourcePath = path.join(resourcePath, opt_name);
+  if (name) {
+    resourcePath = path.join(resourcePath, name);
     if (!PathTools.existDirectory(resourcePath)) {
-      log.error('Resource path for', opt_name, 'was not found at',
-        resourcePath);
+      log.error('Resource path for', name, 'was not found at', resourcePath);
       return '';
     }
   }
@@ -71,8 +70,8 @@ PathTools.getClosureCompilerPath = function() {
  * @return {!string}
  */
 PathTools.getClosureCompilerJar = function() {
-  var searchPath = PathTools.getClosureCompilerPath();
-  var compilerJar = path.join(searchPath, 'compiler.jar');
+  let searchPath = PathTools.getClosureCompilerPath();
+  let compilerJar = path.join(searchPath, 'compiler.jar');
   if (!PathTools.existFile(compilerJar)) {
     compilerJar = PathTools.searchFile(
       searchPath, 'closure-compiler-v', '.jar');
@@ -98,23 +97,23 @@ PathTools.getClosureLibraryPath = function() {
  * @return {!string}
  */
 PathTools.getClosureLibraryFiles = function(opt_ignore = []) {
-  var closureLibraryFiles = path.join(PathTools.getClosureLibraryPath(),
+  let closureLibraryFiles = path.join(PathTools.getClosureLibraryPath(),
     'closure', 'goog');
   if (!PathTools.existDirectory(closureLibraryFiles)) {
     log.error('Closure library files were not found at', closureLibraryFiles);
     return [];
   }
 
-  var closureLibraryFolders = [];
-  var closureGoogFolders = PathTools.getDirectories(closureLibraryFiles);
-  closureGoogFolders.forEach(folder => {
+  let closureLibraryFolders = [];
+  let closureGoogFolders = PathTools.getDirectories(closureLibraryFiles);
+  closureGoogFolders.forEach((folder) => {
     if (opt_ignore.indexOf(folder) === -1) {
       closureLibraryFolders.push(
         path.join(closureLibraryFiles, folder, '**.js'));
     }
   });
 
-  var closureLibrary3rdParty = path.join(PathTools.getClosureLibraryPath(),
+  let closureLibrary3rdParty = path.join(PathTools.getClosureLibraryPath(),
     'third_party', 'closure', 'goog');
   if (!PathTools.existDirectory(closureLibrary3rdParty)) {
     log.warn('Closure library 3rd party files were not found at',
@@ -132,7 +131,7 @@ PathTools.getClosureLibraryFiles = function(opt_ignore = []) {
  * @return {!string}
  */
 PathTools.getClosureBaseFile = function() {
-  var baseFile = path.join(PathTools.getClosureLibraryPath(), 'closure', 'goog',
+  let baseFile = path.join(PathTools.getClosureLibraryPath(), 'closure', 'goog',
     'base.js');
   if (!PathTools.existFile(baseFile)) {
     log.error('Closure base file was not found at', baseFile);
@@ -162,8 +161,8 @@ PathTools.getClosureTemplatesCompilerPath = function() {
  * @return {!string}
  */
 PathTools.getClosureTemplatesCompilerJar = function() {
-  var searchPath = PathTools.getClosureTemplatesCompilerPath();
-  var compilerJar = path.join(searchPath, 'SoyToJsSrcCompiler.jar');
+  let searchPath = PathTools.getClosureTemplatesCompilerPath();
+  let compilerJar = path.join(searchPath, 'SoyToJsSrcCompiler.jar');
   if (!PathTools.existFile(compilerJar)) {
     compilerJar = PathTools.searchFile(
       searchPath, 'SoyToJsSrcCompiler', '.jar');
@@ -180,7 +179,7 @@ PathTools.getClosureTemplatesCompilerJar = function() {
  * @return {!string}
  */
 PathTools.getClosureSoyUtilsFile = function() {
-  var soyUtilsFile = path.join(PathTools.getClosureTemplatesPath(),
+  let soyUtilsFile = path.join(PathTools.getClosureTemplatesPath(),
     'javascript', 'soyutils_usegoog.js');
   if (!PathTools.existFile(soyUtilsFile)) {
     log.error('soyutils_usegoog.js file was not found at', soyUtilsFile);
@@ -202,8 +201,8 @@ PathTools.getClosureStylesheetsCompilerPath = function() {
  * @return {!string}
  */
 PathTools.getClosureStylesheetsCompilerJar = function() {
-  var searchPath = PathTools.getClosureStylesheetsCompilerPath();
-  var compilerJar = path.join(searchPath, 'closure-stylesheets.jar');
+  let searchPath = PathTools.getClosureStylesheetsCompilerPath();
+  let compilerJar = path.join(searchPath, 'closure-stylesheets.jar');
   if (!PathTools.existFile(compilerJar)) {
     compilerJar = PathTools.searchFile(
       searchPath, 'closure-stylesheets', '.jar');
@@ -221,7 +220,7 @@ PathTools.getClosureStylesheetsCompilerJar = function() {
  * @return {string} Temp dir path.
  */
 PathTools.getRandomTempPath = function(opt_name) {
-  var name = (opt_name || 'closure-builder') + '-' +
+  let name = (opt_name || 'closure-builder') + '-' +
     textTools.getRandomString(7);
   return PathTools.getTempPath(name);
 };
@@ -232,7 +231,7 @@ PathTools.getRandomTempPath = function(opt_name) {
  * @return {string} Temp dir path.
  */
 PathTools.getTempPath = function(opt_name) {
-  var tempPath = path.join(os.tmpdir(), opt_name || '');
+  let tempPath = path.join(os.tmpdir(), opt_name || '');
   return tempPath;
 };
 
@@ -285,6 +284,7 @@ PathTools.getFileBase = function(file) {
 
 /**
  * @param {!string} directory_path
+ * @return {!Object}
  */
 PathTools.getDirectories = function(directory_path) {
   return fs.readdirSync(directory_path).filter((file) => {
@@ -338,8 +338,8 @@ PathTools.isFile = function(file_path) {
  * @return {string} file_path
  */
 PathTools.searchFile = function(file_path, name, opt_extension) {
-  var files = fs.readdirSync(file_path);
-  var result = '';
+  let files = fs.readdirSync(file_path);
+  let result = '';
   files.forEach(function(file) {
     if (file.includes(name) &&
         (!opt_extension || file.endsWith(opt_extension))) {

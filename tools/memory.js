@@ -17,7 +17,7 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var os = require('os');
+let os = require('os');
 
 
  /**
@@ -26,7 +26,7 @@ var os = require('os');
  * @struct
  * @final
  */
-var MemoryTools = function() {};
+let MemoryTools = function() {};
 
 
 /**
@@ -43,7 +43,7 @@ MemoryTools.checkAvailableMemory = function(size) {
  * @return {!number} Available memory in megabyte.
  */
 MemoryTools.getMemory = function(opt_raw) {
-  var memory = os.freemem() / 1000000;
+  let memory = os.freemem() / 1000000;
   if (memory > 512 && process.env.C9_PROJECT) {
     memory = 384;
   }
@@ -58,7 +58,7 @@ MemoryTools.getMemory = function(opt_raw) {
  * @return {number} 90% of the available memory in megabyte and max of 1024.
  */
 MemoryTools.getSafeMemory = function() {
-  var safeMemory = Math.floor(MemoryTools.getMemory(true) * 0.9);
+  let safeMemory = Math.floor(MemoryTools.getMemory(true) * 0.9);
   if (safeMemory > 1024) {
     return 1024;
   }

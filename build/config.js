@@ -17,14 +17,14 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var path = require('path');
-var progressBar = require('progress');
+let path = require('path');
+let ProgressBar = require('progress');
 
-var pathTools = require('./../tools/path.js');
-var textTools = require('./../tools/text.js');
+let pathTools = require('./../tools/path.js');
+let textTools = require('./../tools/text.js');
 
-var BuildType = require('./types.js');
-var BuildTools = require('./../build_tools.js');
+let BuildType = require('./types.js');
+let BuildTools = require('./../build_tools.js');
 
 
 /**
@@ -35,8 +35,7 @@ var BuildTools = require('./../build_tools.js');
  * @struct
  * @final
  */
-var BuildConfig = function(config) {
-
+let BuildConfig = function(config) {
   /** @type {!object} */
   this.config = config || {};
 
@@ -68,10 +67,10 @@ var BuildConfig = function(config) {
   this.excludeTest = this.options.exclude_test || false;
 
   /** @private */
-  this.bar_ = new progressBar('\u001b[100m[:percent]\u001b[0m ' +
+  this.bar_ = new ProgressBar('\u001b[100m[:percent]\u001b[0m ' +
       '\u001b[32m' + this.name + '\u001b[0m' +
       ' :message \u001b[37m(:elapsed sec)\u001b[0m', {
-        renderThrottle: 100, total: 100 });
+        renderThrottle: 100, total: 100});
 
   /** @private */
   this.runTime_ = Date.now();
@@ -130,12 +129,12 @@ var BuildConfig = function(config) {
 
   /** @type {!object} */
   this.soyCompilerOptions = this.options.soy || {
-    shouldProvideRequireSoyNamespaces: true
+    shouldProvideRequireSoyNamespaces: true,
   };
 
   /** @type {!object} */
   this.closureCompilerOptions = this.options.closure || {
-    compilation_level: 'SIMPLE_OPTIMIZATIONS'
+    compilation_level: 'SIMPLE_OPTIMIZATIONS',
   };
 
   /** @type {!string} */
@@ -163,7 +162,7 @@ var BuildConfig = function(config) {
   this.prefix = this.config.prefix || '';
 
   // Checking requirements and make sure correct options are set.
-  var requirements = BuildTools.getBuildRequirements(this);
+  let requirements = BuildTools.getBuildRequirements(this);
 
   /** @type {boolean} */
   this.requireClosureExport = requirements.requireClosureExport;
@@ -416,8 +415,8 @@ BuildConfig.prototype.showMessages = function(show) {
  */
 BuildConfig.prototype.setMessage = function(message, opt_percent) {
   if (this.showMessages_) {
-    var messageBlock = {
-      'message': message
+    let messageBlock = {
+      'message': message,
     };
     if (opt_percent) {
       this.bar_.tick(opt_percent, messageBlock);

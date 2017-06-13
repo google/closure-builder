@@ -17,14 +17,14 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var path = require('path');
+let path = require('path');
 
-var pathTools = require('../../tools/path.js');
-var testDirectory = path.join(pathTools.getTempPath('closure-builder-test'),
+let pathTools = require('../../tools/path.js');
+let testDirectory = path.join(pathTools.getTempPath('closure-builder-test'),
   'remote-tools/');
 
-var remoteTools = require('../../tools/remote.js');
-var resourceUrl= 'raw.githubusercontent.com/google/closure-builder/master/' +
+let remoteTools = require('../../tools/remote.js');
+let resourceUrl= 'raw.githubusercontent.com/google/closure-builder/master/' +
   'test_files/resources/';
 
 remoteTools.getFile('https://' + resourceUrl + 'file.js?test=1&test=2',

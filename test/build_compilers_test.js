@@ -17,18 +17,18 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var assert = require('assert');
-var fs = require('fs-extra');
+let assert = require('assert');
+let fs = require('fs-extra');
 
-var memoryTools = require('../tools/memory.js');
+let memoryTools = require('../tools/memory.js');
 
-var closureBuilder = require('../closure-builder');
+let closureBuilder = require('../closure-builder');
 const closureCompilerConfig = require(
   '../test/configs/closure_compiler_config.js');
 const cssConfig = require('../test/configs/css_config.js');
 const rollupConfig = require('../test/configs/rollup_config.js');
 const testConfigs = require('../test/test_configs.js');
-var largeMemoryTest = memoryTools.checkAvailableMemory(600);
+let largeMemoryTest = memoryTools.checkAvailableMemory(600);
 
 describe('ClosureBuilder', function() {
   closureBuilder.showMessages(false);
@@ -50,7 +50,7 @@ describe('ClosureBuilder', function() {
       this.timeout(30000);
       closureBuilder.build(testConfigs.optionLicenseConfig,
         function(errors, warnings, files, content) {
-          var license = fs.readFileSync(testConfigs.optionLicenseConfig.license,
+          let license = fs.readFileSync(testConfigs.optionLicenseConfig.license,
             'utf8');
           assert(!errors);
           assert(content);
@@ -372,5 +372,4 @@ describe('ClosureBuilder', function() {
         });
     });
   });
-
 });

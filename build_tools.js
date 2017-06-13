@@ -17,10 +17,9 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var fs = require('fs-extra');
+let fs = require('fs-extra');
 
-var BuildType = require('./build/types.js');
-
+let BuildType = require('./build/types.js');
 
 
 /**
@@ -29,12 +28,13 @@ var BuildType = require('./build/types.js');
  * @struct
  * @final
  */
-var BuildTools = function() {};
+let BuildTools = function() {};
 
 
 /**
  * Detects the needed compiler types.
- * @param {BuildConfig} config
+ * @param {!BuildConfig} config
+ * @return {!string}
  */
 BuildTools.detectType = function(config) {
   if (config.hasSoyFiles() > 0) {
@@ -73,13 +73,13 @@ BuildTools.sortFiles = function(files, opt_all, opt_exclude_test) {
   if (!Array.isArray(files)) {
     files = [files];
   }
-  var fileList = [];
-  var knownFile = {};
+  let fileList = [];
+  let knownFile = {};
   for (let i = files.length - 1; i >= 0; i--) {
-    var file = files[i];
+    let file = files[i];
     if (file.constructor === Array) {
-      for (var i2 = file.length - 1; i2 >= 0; i2--) {
-        var subFile = file[i2];
+      for (let i2 = file.length - 1; i2 >= 0; i2--) {
+        let subFile = file[i2];
         if (!knownFile[subFile] &&
             (opt_all || subFile.indexOf('.') !== -1)) {
           fileList.push(subFile);
@@ -107,10 +107,10 @@ BuildTools.sortFiles = function(files, opt_all, opt_exclude_test) {
  * @return {Object} Build requirements
  */
 BuildTools.getBuildRequirements = function(config) {
-  var depsConfig = this.scanFiles(config.deps);
-  var srcsConfig = this.scanFiles(config.srcs, config.name);
-  var soyConfig = this.scanFiles(config.soy);
-  var mdConfig = this.scanFiles(config.markdown);
+  let depsConfig = this.scanFiles(config.deps);
+  let srcsConfig = this.scanFiles(config.srcs, config.name);
+  let soyConfig = this.scanFiles(config.soy);
+  let mdConfig = this.scanFiles(config.markdown);
 
   return {
     closureFiles: [].concat(depsConfig.closureFiles, srcsConfig.closureFiles),
@@ -131,7 +131,7 @@ BuildTools.getBuildRequirements = function(config) {
       srcsConfig.requireECMAScript6),
     requireSoyLibrary: (depsConfig.requireSoyLibrary ||
       srcsConfig.requireSoyLibrary || soyConfig.requireSoyLibrary),
-    requireSoyi18n: (soyConfig.requireSoyi18n || srcsConfig.requireSoyi18n)
+    requireSoyi18n: (soyConfig.requireSoyi18n || srcsConfig.requireSoyi18n),
   };
 };
 
@@ -147,27 +147,27 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
     files = [files];
   }
 
-  var closureFiles = [];
-  var closureStylesheetsFiles = [];
-  var cssFiles = [];
-  var entryPoint = '';
-  var jsFiles = [];
-  var markdownFiles = [];
-  var nodeFiles = [];
-  var soyFiles = [];
-  var requireClosureExport = false;
-  var requireClosureLibrary = false;
-  var requireClosureLibraryUI = false;
-  var requireECMAScript6 = false;
-  var requireSoyLibrary = false;
-  var requireSoyi18n = false;
+  let closureFiles = [];
+  let closureStylesheetsFiles = [];
+  let cssFiles = [];
+  let entryPoint = '';
+  let jsFiles = [];
+  let markdownFiles = [];
+  let nodeFiles = [];
+  let soyFiles = [];
+  let requireClosureExport = false;
+  let requireClosureLibrary = false;
+  let requireClosureLibraryUI = false;
+  let requireECMAScript6 = false;
+  let requireSoyLibrary = false;
+  let requireSoyi18n = false;
 
   for (let i = files.length - 1; i >= 0; i--) {
-    var file = files[i];
+    let file = files[i];
 
     // Handling soy files.
     if (file.endsWith('.soy')) {
-      var soyContent = fs.readFileSync(file, 'utf8');
+      let soyContent = fs.readFileSync(file, 'utf8');
       if (soyContent.includes('{i18n}') &&
           soyContent.includes('{/i18n}')) {
         requireSoyi18n = true;
@@ -177,7 +177,7 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
 
     // Handling JavaScript files.
     } else if (file.endsWith('.js')) {
-      var fileContent = fs.readFileSync(file, 'utf8');
+      let fileContent = fs.readFileSync(file, 'utf8');
       if (fileContent.includes('goog.provide(') ||
           fileContent.includes('goog.require(') ||
           fileContent.includes('goog.module(')) {
@@ -248,7 +248,7 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
     requireClosureLibraryUI: requireClosureLibraryUI,
     requireECMAScript6: requireECMAScript6,
     requireSoyLibrary: requireSoyLibrary,
-    requireSoyi18n: requireSoyi18n
+    requireSoyi18n: requireSoyi18n,
   };
 };
 
@@ -259,7 +259,7 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
  */
 BuildTools.filterTestFiles = function(files) {
   for (let i = files.length - 1; i >= 0; i--) {
-    var file = files[i];
+    let file = files[i];
     if (file.indexOf('_test.js') !== -1 ||
         file.indexOf('_testhelper.js') !== -1 ||
         file.indexOf('/demos/') !== -1 ||

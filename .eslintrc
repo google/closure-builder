@@ -1,39 +1,26 @@
-root: true
-
-rules:
-  curly:
-    - 2
-    - "multi-line"
-  indent: [2, 2, {
-        "VariableDeclarator": 2,
-        "SwitchCase": 1
-    }]
-  quotes:
-    - 2
-    - single
-  linebreak-style: [2, "unix"]
-  semi:
-    - 2
-    - always
-  comma-spacing: 2
-  keyword-spacing: 2
-  space-before-function-paren: [2, "never"]
-  no-mixed-spaces-and-tabs: 2
-  no-unused-vars: [2, {"args": "after-used", "argsIgnorePattern": "^opt_"}]
-  no-console: 0
-  no-duplicate-case: 2
-  no-fallthrough: 2
-  no-trailing-spaces: 2
-  max-len: [2, 80, 2]
-
-env:
-  browser: true
-  es6: true
-  node: true
-
-globals:
-  describe: true
-  it: true
-  goog: true
-
-extends: 'eslint:recommended'
+{
+  'root': true,
+  'extends': ['eslint:recommended', 'google'],
+  'rules': {
+    'no-unused-vars': [2, {
+      'args': 'after-used',
+      'argsIgnorePattern': '^opt_',
+      'varsIgnorePattern':'_unused$'
+    }],
+    'no-console': 0,
+    'camelcase': [0, {properties: 'never'}],
+    'new-cap': [2, {
+      'newIsCapExceptions': []
+    }],
+  },
+  'env': {
+    browser: true,
+    node: true,
+    es6: true
+  },
+  'globals': {
+    'it': true,
+    'goog': true,
+    'describe': true,
+  }
+}

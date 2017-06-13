@@ -17,23 +17,21 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var assert = require('assert');
-var path = require('path');
+let assert = require('assert');
+let path = require('path');
 
-var pathTools = require('../../tools/path.js');
-var fileTools = require('../../tools/file.js');
+let pathTools = require('../../tools/path.js');
+let fileTools = require('../../tools/file.js');
 
-var testFilesPath = 'test_files/resources/';
-var testDirectory = pathTools.getTempPath('closure-builder-test');
+let testFilesPath = 'test_files/resources/';
+let testDirectory = pathTools.getTempPath('closure-builder-test');
 
 
 describe('fileTools', function() {
-
   describe('copyFile', function() {
-
     it('Copy single file', function(done) {
-      var srcFile = path.join(testFilesPath, 'file.jpg');
-      var targetFile = testDirectory;
+      let srcFile = path.join(testFilesPath, 'file.jpg');
+      let targetFile = testDirectory;
       fileTools.copyFile(srcFile, targetFile, function() {
         assert(pathTools.existFile(srcFile));
         assert(pathTools.existFile(path.join(targetFile, 'file.jpg')));
@@ -42,8 +40,8 @@ describe('fileTools', function() {
     });
 
     it('Copy single file with different name', function(done) {
-      var srcFile = path.join(testFilesPath, 'file.jpg');
-      var targetFile = path.join(testDirectory, 'file123.jpg');
+      let srcFile = path.join(testFilesPath, 'file.jpg');
+      let targetFile = path.join(testDirectory, 'file123.jpg');
       fileTools.copyFile(srcFile, targetFile, function() {
         assert(pathTools.existFile(srcFile));
         assert(pathTools.existFile(targetFile));
@@ -52,7 +50,7 @@ describe('fileTools', function() {
     });
 
     it('Copy multiple files', function(done) {
-      var targetDir = path.join(testDirectory, 'example-files');
+      let targetDir = path.join(testDirectory, 'example-files');
       fileTools.copyFile(testFilesPath, targetDir, function() {
         assert(pathTools.existFile(
           path.join(targetDir, 'resources', 'file')));
@@ -65,16 +63,15 @@ describe('fileTools', function() {
         done();
       });
     });
-
   });
 
   describe('findAndReplace', function() {
-    var targetDir = path.join(testDirectory, 'find-and-replace');
+    let targetDir = path.join(testDirectory, 'find-and-replace');
 
     it('Find and replace single file', function(done) {
-      var testFile = path.join(testFilesPath, 'file.txt');
+      let testFile = path.join(testFilesPath, 'file.txt');
       fileTools.copyFile(testFile, targetDir, function() {
-        var targetFile = path.join(targetDir, 'file.txt');
+        let targetFile = path.join(targetDir, 'file.txt');
         fileTools.findAndReplace(targetFile, 'Hello', 'Welcome');
         assert.equal(fileTools.readFile(targetFile), 'Welcome world !');
         done();
@@ -83,7 +80,7 @@ describe('fileTools', function() {
 
     it('Find and replace multiple files', function(done) {
       fileTools.copyFile(testFilesPath, targetDir, function() {
-        var testDir = path.join(targetDir, 'resources');
+        let testDir = path.join(targetDir, 'resources');
         fileTools.findAndReplace(targetDir, 'o', 'O', true);
         assert.equal(
           fileTools.readFile(path.join(testDir, 'file.xml')), 'xml cOntent');
@@ -94,37 +91,35 @@ describe('fileTools', function() {
         done();
       });
     });
-
   });
 
   it('readFile', function() {
-    var testFile = path.join(testFilesPath, 'file.txt');
-    var content = fileTools.readFile(testFile);
+    let testFile = path.join(testFilesPath, 'file.txt');
+    let content = fileTools.readFile(testFile);
     assert.equal(content, 'Hello world !');
   });
 
   it('getDirectories', function() {
-    var folders = fileTools.getDirectories(testFilesPath);
+    let folders = fileTools.getDirectories(testFilesPath);
     assert(folders[0] == 'folder');
   });
 
   it('getGlobFiles', function() {
-    var files = fileTools.getGlobFiles(testFilesPath + '*');
+    let files = fileTools.getGlobFiles(testFilesPath + '*');
     assert(files.length >= 9);
   });
 
   it('mkfile', function() {
-    var file = path.join(testDirectory, 'tools', 'example-file');
+    let file = path.join(testDirectory, 'tools', 'example-file');
     fileTools.mkfile(file);
     assert(pathTools.existFile(file));
     assert(!pathTools.existDirectory(file));
   });
 
   it('mkdir', function() {
-    var folder = path.join(testDirectory, 'tools', 'example-folder');
+    let folder = path.join(testDirectory, 'tools', 'example-folder');
     fileTools.mkdir(folder);
     assert(!pathTools.existFile(folder));
     assert(pathTools.existDirectory(folder));
   });
-
 });

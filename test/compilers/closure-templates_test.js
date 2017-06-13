@@ -17,23 +17,21 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-var assert = require('assert');
-var fs = require('fs');
+let assert = require('assert');
+let fs = require('fs');
 
-var closureTemplates = require('../../compilers/closure-templates/compiler.js');
-
+let closureTemplates = require('../../compilers/closure-templates/compiler.js');
 
 
 describe('Closure Templates::', function() {
-
   it('Single file', function(done) {
     this.timeout(25000);
-    var files = ['test_files/soy_test_1.soy'];
+    let files = ['test_files/soy_test_1.soy'];
     closureTemplates.compile(files, null, null,
       function(errors, warnings, files) {
         assert(!errors);
         assert(!warnings);
-        var content = fs.readFileSync(files[0]).toString();
+        let content = fs.readFileSync(files[0]).toString();
         assert(content.indexOf('soy_test_1.helloName') !== -1);
         assert(content.indexOf('goog.provide(\'soy_test_1\');') === -1);
         done();
@@ -42,16 +40,16 @@ describe('Closure Templates::', function() {
 
   it('Two files', function(done) {
     this.timeout(25000);
-    var files = [
+    let files = [
       'test_files/soy_test_1.soy',
-      'test_files/soy_test_2.soy'
+      'test_files/soy_test_2.soy',
     ];
     closureTemplates.compile(files, null, null,
       function(errors, warnings, files) {
         assert(!errors);
         assert(!warnings);
-        var content1 = fs.readFileSync(files[0]).toString();
-        var content2 = fs.readFileSync(files[1]).toString();
+        let content1 = fs.readFileSync(files[0]).toString();
+        let content2 = fs.readFileSync(files[1]).toString();
         assert(content1.indexOf('soy_test_1.helloName') !== -1);
         assert(content1.indexOf('goog.provide(\'soy_test_1\');') === -1);
         assert(content2.indexOf('soy_test_2.helloName') !== -1);
@@ -63,15 +61,15 @@ describe('Closure Templates::', function() {
 
   it('shouldProvideRequireSoyNamespaces', function(done) {
     this.timeout(25000);
-    var files = ['test_files/soy_test_1.soy'];
-    var options = {
-      shouldProvideRequireSoyNamespaces: true
+    let files = ['test_files/soy_test_1.soy'];
+    let options = {
+      shouldProvideRequireSoyNamespaces: true,
     };
     closureTemplates.compile(files, options, null,
       function(errors, warnings, files) {
         assert(!errors);
         assert(!warnings);
-        var content = fs.readFileSync(files[0]).toString();
+        let content = fs.readFileSync(files[0]).toString();
         assert(content.indexOf('soy_test_1.helloName') !== -1);
         assert(content.indexOf('goog.provide(\'soy_test_1\');') !== -1);
         done();
@@ -79,19 +77,18 @@ describe('Closure Templates::', function() {
   });
 
   describe('shouldGenerateGoogMsgDefs', function() {
-
     it('bidiGlobalDir', function(done) {
       this.timeout(25000);
-      var files = ['test_files/soy_test_3.soy'];
-      var options = {
+      let files = ['test_files/soy_test_3.soy'];
+      let options = {
         shouldGenerateGoogMsgDefs: true,
-        bidiGlobalDir: 1
+        bidiGlobalDir: 1,
       };
       closureTemplates.compile(files, options, null,
         function(errors, warnings, files) {
           assert(!errors);
           assert(!warnings);
-          var content = fs.readFileSync(files[0]).toString();
+          let content = fs.readFileSync(files[0]).toString();
           assert(content.indexOf('var soy_test_3 = {}') !== -1);
           assert(content.indexOf('goog.getMsg(') !== -1);
           done();
@@ -100,17 +97,17 @@ describe('Closure Templates::', function() {
 
     it('useGoogIsRtlForBidiGlobalDir', function(done) {
       this.timeout(25000);
-      var files = ['test_files/soy_test_3.soy'];
-      var options = {
+      let files = ['test_files/soy_test_3.soy'];
+      let options = {
         shouldGenerateGoogMsgDefs: true,
         shouldProvideRequireSoyNamespaces: true,
-        useGoogIsRtlForBidiGlobalDir: true
+        useGoogIsRtlForBidiGlobalDir: true,
       };
       closureTemplates.compile(files, options, null,
         function(errors, warnings, files) {
           assert(!errors);
           assert(!warnings);
-          var content = fs.readFileSync(files[0]).toString();
+          let content = fs.readFileSync(files[0]).toString();
           assert(content.indexOf('goog.provide(\'soy_test_3\');') !== -1);
           assert(content.indexOf('goog.require(\'goog.i18n.bidi\');') !== -1);
           assert(content.indexOf('goog.getMsg(') !== -1);
@@ -121,18 +118,18 @@ describe('Closure Templates::', function() {
 
     it('googMsgsAreExternal', function(done) {
       this.timeout(25000);
-      var files = ['test_files/soy_test_3.soy'];
-      var options = {
+      let files = ['test_files/soy_test_3.soy'];
+      let options = {
         shouldGenerateGoogMsgDefs: true,
         shouldProvideRequireSoyNamespaces: true,
         googMsgsAreExternal: true,
-        useGoogIsRtlForBidiGlobalDir: true
+        useGoogIsRtlForBidiGlobalDir: true,
       };
       closureTemplates.compile(files, options, null,
         function(errors, warnings, files) {
           assert(!errors);
           assert(!warnings);
-          var content = fs.readFileSync(files[0]).toString();
+          let content = fs.readFileSync(files[0]).toString();
           assert(content.indexOf('goog.provide(\'soy_test_3\');') !== -1);
           assert(content.indexOf('goog.require(\'goog.i18n.bidi\');') !== -1);
           assert(content.indexOf('goog.getMsg(') !== -1);
@@ -143,18 +140,18 @@ describe('Closure Templates::', function() {
 
     it('googMsgsAreExternal - bidiGlobalDir', function(done) {
       this.timeout(25000);
-      var files = ['test_files/soy_test_3.soy'];
-      var options = {
+      let files = ['test_files/soy_test_3.soy'];
+      let options = {
         shouldGenerateGoogMsgDefs: true,
         shouldProvideRequireSoyNamespaces: true,
         googMsgsAreExternal: true,
-        bidiGlobalDir: 1
+        bidiGlobalDir: 1,
       };
       closureTemplates.compile(files, options, null,
         function(errors, warnings, files) {
           assert(!errors);
           assert(!warnings);
-          var content = fs.readFileSync(files[0]).toString();
+          let content = fs.readFileSync(files[0]).toString();
           assert(content.indexOf('goog.provide(\'soy_test_3\');') !== -1);
           assert(content.indexOf('goog.require(\'goog.i18n.bidi\');') === -1);
           assert(content.indexOf('goog.getMsg(') !== -1);
@@ -162,21 +159,20 @@ describe('Closure Templates::', function() {
           done();
         });
     });
-
   });
 
 
   it('Custom i18n function', function(done) {
     this.timeout(25000);
-    var files = ['test_files/soy_test_3.soy'];
-    var options = {
-      i18n: 'i18nTest'
+    let files = ['test_files/soy_test_3.soy'];
+    let options = {
+      i18n: 'i18nTest',
     };
     closureTemplates.compile(files, options, null,
       function(errors, warnings, files) {
         assert(!errors);
         assert(!warnings);
-        var content = fs.readFileSync(files[0]).toString();
+        let content = fs.readFileSync(files[0]).toString();
         assert(content.includes('goog.provide(\'soy_test_3\');'));
         assert(!content.includes('goog.require(\'goog.i18n.bidi\');'));
         assert(!content.includes('goog.getMsg('));

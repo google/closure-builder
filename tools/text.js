@@ -19,19 +19,19 @@
  */
 
 
-
 /**
  * File tools.
  * @constructor
  * @struct
  * @final
  */
-var TextTools = function() {};
+let TextTools = function() {};
 
 
 /**
  * @param {!string} content
  * @param {Array} replacements
+ * @return {!string}
  */
 TextTools.replace = function(content, replacements) {
   if (!content || !replacements) {
@@ -56,13 +56,13 @@ TextTools.replace = function(content, replacements) {
  * @return {!string}
  */
 TextTools.getTruncateText = function(text, opt_max_length, opt_seperator) {
-  var max_length = opt_max_length || 40;
+  let max_length = opt_max_length || 40;
   if (text.length <= max_length) {
     return text;
   }
-  var seperator = opt_seperator || '…';
-  var textFront = text.substr(0, Math.ceil(max_length/2) - seperator.length);
-  var textEnd = text.substr(text.length - Math.floor(max_length/2));
+  let seperator = opt_seperator || '…';
+  let textFront = text.substr(0, Math.ceil(max_length/2) - seperator.length);
+  let textEnd = text.substr(text.length - Math.floor(max_length/2));
   return textFront + seperator + textEnd;
 };
 
@@ -72,7 +72,7 @@ TextTools.getTruncateText = function(text, opt_max_length, opt_seperator) {
  * @return {string}
  */
 TextTools.getRandomString = function(opt_max_length) {
-  var salt = 1475236985346785342347650023;
+  let salt = 1475236985346785342347650023;
   return (Math.floor(Math.random() * salt).toString(36) +
     Math.abs(Math.floor(Math.random() * salt) ^ Date.now()).toString(36)
   ).substring(0, opt_max_length || 8);

@@ -27,14 +27,14 @@ const pathTools = require('../../tools/path.js');
  * @struct
  * @final
  */
-var config = function() {};
+let config = function() {};
 
 
 config.test_1 = {
   name: 'rollup_test_1',
   srcs: 'test_files/umd/umd-main.js',
   format: 'umd',
-  out: pathTools.getTempTestPath('rollup-test-1')
+  out: pathTools.getTempTestPath('rollup-test-1'),
 };
 
 
