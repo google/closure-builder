@@ -7,7 +7,7 @@ Closure Builder - Closure build system
 
 [![NPM](https://nodei.co/npm/closure-builder.png?downloads=true&downloadRank=true)](https://nodei.co/npm/closure-builder/)
 
-An Closure build system to easily compile Closure JavaScript files,
+A Closure build system to easily compile Closure JavaScript files,
 Closure Template files and Closure Stylesheet files without the need to
 configure anything.
 The Google Closure library will be included automatically if needed.
