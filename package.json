@@ -64,7 +64,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "browserify": "14.4.0",
-    "clean-css": "4.1.3",
+    "clean-css": "4.1.4",
     "decompress": "^4.2.0",
     "eslint-config-google": "^0.8.0",
     "follow-redirects": "1.2.3",
