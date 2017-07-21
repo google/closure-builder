@@ -71,18 +71,20 @@ RollupCompiler.compile = function(file, opt_options, opt_target_file,
   if (opt_target_file) {
     fileTools.mkfile(opt_target_file);
   }
+
+  let bundleEvent = function(bundle) {
+    bundle.generate(bundleOptions).then(
+      compilerEvent,
+      compilerError
+    );
+  };
   let compilerError = function(error) {
     RollupCompiler.error(error, callback);
   };
-  let compilerEvent = function(bundle) {
+  let compilerEvent = function(result) {
     let errors = null;
     let warnings = null;
-    let code = null;
-    let result = bundle.generate(bundleOptions);
-
-    if (result) {
-      code = result.code;
-    }
+    let code = result && result.code || null;
 
     if (opt_target_file) {
       fs.writeFile(opt_target_file, code, (err) => {
@@ -100,7 +102,7 @@ RollupCompiler.compile = function(file, opt_options, opt_target_file,
   };
 
   rollup.rollup(compilerOptions).then(
-    compilerEvent,
+    bundleEvent,
     compilerError
   );
 };
