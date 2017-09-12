@@ -16,6 +16,8 @@ jdk:
   - openjdk7
 
 env:
+  global:
+    - _JAVA_OPTIONS=""
   - NODE_VERSION=node
   - NODE_VERSION=6
   - NODE_VERSION=7
