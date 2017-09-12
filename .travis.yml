@@ -12,22 +12,21 @@ matrix:
 
 jdk:
   - oraclejdk8
-  - oraclejdk7
-  - openjdk7
+  - openjdk8
 
 env:
   - NODE_VERSION=node
-  - NODE_VERSION=6
   - NODE_VERSION=7
+  - NODE_VERSION=8
 
 matrix:
   exclude:
      - os: osx
        jdk: oraclejdk8
      - os: osx
-       jdk: oraclejdk7
+       jdk: oraclejdk8
      - os: osx
-       jdk: openjdk7
+       jdk: openjdk8
 
 install:
   - if [ $TRAVIS_OS_NAME == "darwin" ]; then
