@@ -38,7 +38,7 @@ install:
   - npm install
 
 script:
-  - export _JAVA_OPTIONS=""
+  - unset _JAVA_OPTIONS
   - nvm use $NODE_VERSION
   - npm test
 
