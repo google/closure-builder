@@ -12,7 +12,7 @@ Closure Template files and Closure Stylesheet files without the need to
 configure anything.
 The Google Closure library will be included automatically if needed.
 
-This build system could be also used for normal css, js, nodejs  and
+This build system could be also used for normal css, js, nodejs and
 static files as well.
 
 * [Installation](#installation)
@@ -87,14 +87,14 @@ These basic required options for compiling are:
 
 For copying files the required options are:
 - `name` Unique name of your build rule
-- `resources` Resource files which will be copied to the out folder
+- `resources` Resource files which will be copied to the output folder
 - `out` Output path / output file for the compiled Soy, Closure or JavaScript files
 
 #### Additional ####
 These options could be used for adding additional information.
 
 - `type` Overwrites the automatic type detection
-- `out_source_map` Stores possible source map to the given out put file
+- `out_source_map` Stores possible source map to the given output file
 - `append` Append the given text to the final output
 - `prepend` Prepend the given text to the final output
 - `replace` Replace the given text on the final output
@@ -151,7 +151,7 @@ Function Callback
 For performance reasons the tasks will be executed asynchronous whenever it
 is possible.
 
-If you need to know exactly if an tasks has finished you could add a callback
+If you need to know exactly if a tasks has finished you could add a callback
 function as well.
 
 ```javascript
@@ -372,7 +372,7 @@ closureBuilder.build({
 
 Best practise
 -------------
-For an better overview, you could split your build rules to several files.
+For a better overview, you could split your build rules to several files.
 They could be placed in an "build" folder or something like this.
 Example: https://github.com/google/coding-with-chrome/tree/master/build
 
