@@ -280,7 +280,6 @@ describe('ClosureBuilder', function() {
       closureBuilder.build(testConfigs.nodeToJsTestConfig, function(errors,
           warnings, files, content) {
         assert(!errors);
-        assert(!warnings);
         assert(content);
         done();
       });
@@ -326,7 +325,6 @@ describe('ClosureBuilder', function() {
       closureBuilder.build(testConfigs.closureLibraryUiConfig, function(errors,
           warnings, files, content) {
         assert(!errors);
-        assert(!warnings);
         assert(content);
         assert(content.indexOf('closure_library_ui_test=func') !== -1);
         assert(content.indexOf('goog.ui.Button=func') !== -1);

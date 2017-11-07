@@ -414,12 +414,12 @@ ClosureCompiler.parseErrorMessage = function(message) {
     errors = 1;
   }
   // Ignore closure library specific warnings.
-  if (warnings && 
-      warnings.includes('third_party') &&
-      warnings.includes('closure-library') &&
-      warnings.includes('closure') && 
-      warnings.includes('goog') &&
-      warnings.includes('deprecated')) {
+  if (warnings == 1 && errors == 0 &&
+      message.includes('third_party') &&
+      message.includes('closure-library') &&
+      message.includes('closure') &&
+      message.includes('goog') &&
+      message.includes('deprecated:')) {
     warnings = 0;
   }
   return {
