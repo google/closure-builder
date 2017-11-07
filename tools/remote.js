@@ -60,13 +60,13 @@ RemoteTools.getFile = function(url, dest,
         response.statusCode);
     } else {
       let file = fs.createWriteStream(destFile);
-      response.pipe(file);
       file.on('finish', function() {
-        file.close();
+        file.end();
         if (opt_complete_callback) {
           opt_complete_callback(response, file);
         }
       });
+      response.pipe(file);
       log.debug(url, 'saved as', destFile);
     }
   };
