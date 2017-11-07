@@ -34,7 +34,7 @@ describe('Rollup Compiler::', function() {
     let file = ['test_files/umd/umd-main.js'];
     let options = {
       format: 'umd',
-      moduleName: 'MainDirect',
+      name: 'MainDirect',
     };
     rollupCompiler.compile(file, options, null,
       (errors, warnings, file, content) => {
@@ -55,7 +55,7 @@ describe('Rollup Compiler::', function() {
     let outputFile = path.join(testDirectory, 'node_test_bundle.js');
     let options = {
       format: 'umd',
-      moduleName: 'MainFile',
+      name: 'MainFile',
     };
     rollupCompiler.compile(file, options, outputFile,
       (errors, warnings, file, content) => {
@@ -77,7 +77,7 @@ describe('Rollup Compiler::', function() {
     let file = ['test_files/umd/umd-error.js'];
     let options = {
       format: 'umd',
-      moduleName: 'MainError',
+      name: 'MainError',
     };
     rollupCompiler.compile(file, options, null,
       (errors, warnings, file, content) => {

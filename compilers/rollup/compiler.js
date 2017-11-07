@@ -44,14 +44,14 @@ RollupCompiler.compile = function(file, opt_options, opt_target_file,
     RollupCompiler.error('No valid file is provided!', callback);
     return;
   } else if (Array.isArray(file) && file.length > 1) {
-    RollupCompiler.error('Please only provide on entry point file!', callback);
+    RollupCompiler.error('Please only provide on input file!', callback);
     return;
   }
 
   let options = opt_options || {};
   let entryFile = Array.isArray(file) ? file[0] : file;
   let compilerOptions = {
-    'entry': entryFile,
+    'input': entryFile,
   };
   let bundleOptions = {};
 

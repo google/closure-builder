@@ -314,8 +314,8 @@ BuildCompilers.compileRollupFile = function(file, out,
   let options = (opt_options && opt_options.options) ? opt_options.options : {};
   let config = (opt_options && opt_options.config) ? opt_options.config : false;
 
-  if (!options.moduleName) {
-    options.moduleName = config.name;
+  if (!options.name) {
+    options.name = config.name;
   }
   if (!options.banner) {
     options.banner = config.banner;
