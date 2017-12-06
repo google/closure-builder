@@ -41,10 +41,6 @@ script:
   - nvm use $NODE_VERSION
   - npm test
 
-addons:
-  code_climate:
-    repo_token: 90c156a6a494992a51296ea1e1a549680b84a0864608eab3029455a9bd3b6e9d
-
 deploy:
   provider: npm
   email: Markus@Bordihn.de
