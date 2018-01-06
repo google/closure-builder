@@ -2,6 +2,7 @@
     path = third_party/closure-library
     url = https://github.com/google/closure-library.git
     ignore = dirty
+
 [submodule "third_party/closure-templates"]
     path = third_party/closure-templates
     url = https://github.com/google/closure-templates.git
