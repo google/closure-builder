@@ -7,8 +7,13 @@ os:
 osx_image: xcode8
 
 matrix:
-  allow_failures:
-    - os: osx
+  exclude:
+  - os: osx
+    jdk: oraclejdk8
+  - os: osx
+    jdk: oraclejdk8
+  - os: osx
+    jdk: openjdk8
 
 jdk:
   - oraclejdk8
@@ -20,15 +25,6 @@ env:
   - NODE_VERSION=7
   - NODE_VERSION=8
   - NODE_VERSION=9
-
-matrix:
-  exclude:
-     - os: osx
-       jdk: oraclejdk8
-     - os: osx
-       jdk: oraclejdk8
-     - os: osx
-       jdk: openjdk8
 
 install:
   - if [ $TRAVIS_OS_NAME == "darwin" ]; then
@@ -45,9 +41,9 @@ script:
 
 deploy:
   provider: npm
-  email: Markus@Bordihn.de
+  email: NPM@MarkusBordihn.de
   api_key:
-    secure: Zvhlz6Lbzj+4WgRhdCqFsWHFGUw5pAcSSmU5Xu2JRmpTCPbtpa4vOyCdp/uIUV0ntw952EyCFEbpNthPL1ypb+hsuFRbrKxf0PlqvK1W9EgxztsbyTc0O6H6uOWdjK8aJwG16PipJLWlWccEhracE3dwXZogtt8tKDgrr6zqU/AD9YuaEoUyOMLUu2u8v9JjmaSMS/3u3rM/pkLt1s0O599PWimdckRVOMfLcPvsAX8qRj75Ib+tl0RkAq942+1oPHZgECLfd0n4chH07za/E+t3whQMbGfhXWKrnfKyN72BXjNAy1QaAF3Fgeym3S/yatj7thCSQHo8DpiWwy1lHCPXb2BqATEAZY0mNr35tTuwIqhwaRg9LNaNyyNc+c3Y3RnmA0dAALOzqHdoIMzZoWONMo2/L615fkPooBYQab9aRWzPNPyvHdtOjYXu0A9TKI3Ls9SePiL9oNjP71Re86VN2rck8ONzMlzaigz0zNPp80yrzQRx3b2/fzZNNkxzmFkQAvbd+J/tYVSmSYUohVSfDC6TNVvVItVPpVumhz/v9NcPhNYudyYqJdtoUxmWnWqQ6OhGxd3P2Dw/hoU03chX7jt1IrG7DaOEtQ6vM0OVXtpwV2u7iVqCTjHs44d2S+x2iz97Tw03q8ny58N1FfjZJL4gunc3WPwaT710FFM=
+    secure: s7pAlW+SGghl5q29pAgncJml7Ef8CGcihMIxPE7bfaQ4bw3k2PgXFCVldvT6RYaCRrZZMmRxxkpqWo2wpdyHCRJW+2KhyWwl4bFncQq9h7aDZEt23nlTrmS5IQpezLM9+KHit2arBzciePtrJbzcky7aqpdnihEcB2ViDoHre8xL088EQzWsmqphqkKVE/mEEOXUQjUVKfdCn6fYQ5q1akpOFwhfxPY5PF138ACRqYyHyG78r7zBMhz4sIuRzVoep2JlyXuLzeEii32OK15NTV8In0t3pcsl1AQVPU3pQT+YCeNYWinpQFZE8YrMIbdrqqguNh4DrVqJEvebkVdUu/j7jLecWKbh9LA53FcYTOvpxnzu2RIdBkXirt7Nk9O+8a5ifcsMbiKmUP+gpTPVjOeSE7G4CJ3ANT/9qsN3XD7ymKjWyDrg/64e6abOtgLrtMgkqfSBIawzMoP7venTHGisdDeLIk+OqNTV9XMmNy58ADrh/6HbuS13vK/87d/O1oq6OenPiYU/z4hNo6USCtJ6yMfUC/6QuO2QsFX7MN7Z4x4Lx3gD0+B3/mHZbKBZwqxUfVz0T3cxxd8iKG/92ETDtmDl6SqJsWItcIyDxYcnxVUxuZmXKmOQnYNF4aOlyXGL1HkGu+4hEZnegKDIOrvuS7Y0fzvqKv5sv18m3kU=
   on:
     tags: true
     repo: google/closure-builder
