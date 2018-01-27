@@ -1,6 +1,6 @@
 {
   "name": "closure-builder",
-  "version": "2.2.34",
+  "version": "2.2.35",
   "description": "Simple Closure, Soy and JavaScript Build system",
   "engines": {
     "node": ">=6.0.0"
@@ -27,7 +27,6 @@
     "install": "npm run configure",
     "lint": "eslint .",
     "sync": "echo Syncing. Please wait ... && git pull && git submodule init && git submodule update && npm run update",
-
     "pretest": "npm run lint && npm run clean && npm run configure",
     "test": "mocha",
     "test-builds": "mocha test/build_compilers_test.js",
@@ -46,7 +45,6 @@
     "test-types": "mocha test/build_types_test.js",
     "update": "npm run clean && npm run update-deps && npm install && npm test",
     "update-deps": "npm prune && ncu -u -a &&  npm update",
-
     "predeploy": "npm test",
     "deploy": "npm version patch && git add package.json",
     "postdeploy": "git push --follow-tags"
