@@ -80,7 +80,6 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     return;
   }
 
-  let compiler = pathTools.getClosureCompilerJar();
   let compilerOptions = [];
   let options = opt_options || {};
   let showWarnings = true;
@@ -221,7 +220,11 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     }
   };
 
-  javaTools.execJavaJar(compiler, compilerOptions, compilerEvent, null,
+  javaTools.execJavaJar(
+    pathTools.getClosureCompilerJar(),
+    compilerOptions,
+    compilerEvent,
+    null,
     ClosureCompiler.DEBUG);
 };
 
