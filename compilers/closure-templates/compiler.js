@@ -162,7 +162,7 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
     }
   };
 
-  javaTools.execJavaJar(compiler, compilerOptions, compilerEvent, null,
+  javaTools.execJar(compiler, compilerOptions, compilerEvent, null,
     ClosureTemplates.DEBUG);
 };
 

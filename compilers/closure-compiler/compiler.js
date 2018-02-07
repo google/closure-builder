@@ -220,7 +220,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     }
   };
 
-  javaTools.execJavaJar(
+  javaTools.execJar(
     pathTools.getClosureCompilerJar(),
     compilerOptions,
     compilerEvent,

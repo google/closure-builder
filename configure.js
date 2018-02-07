@@ -28,23 +28,23 @@ console.log('Configuring Closure Builder ' + packageJson.version + ' ...\n');
 let googdl = 'https://dl.google.com/';
 
 
-// Google Closure Compiler
+// Download and prepare Google Closure Compiler
 remoteTools.getTarGz(
   'Google Closure Compiler',
   googdl + 'closure-compiler/compiler-latest.tar.gz',
   path.join('.', 'runtime', 'closure-compiler')
 );
 
-// Google Closure Templates Compiler
+// Download and prepare Google Closure Templates Compiler
 remoteTools.getZip(
   'Google Closure Templates Compiler',
   googdl + 'closure-templates/closure-templates-for-javascript-latest.zip',
   path.join('.', 'runtime', 'closure-templates-compiler')
 );
 
-// Google Closure Stylesheets
+// Download and prepare Google Closure Stylesheets
 let gcs = 'https://github.com/google/closure-stylesheets/releases/download/';
-let gcsVersion = 'v1.4.0';
+let gcsVersion = 'v1.5.0';
 let gcsDoc = 'https://raw.githubusercontent.com/google/closure-stylesheets/';
 remoteTools.getFiles(
   'Google Closure Stylesheets', [

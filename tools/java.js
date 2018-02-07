@@ -86,7 +86,7 @@ JavaTools.getJavaVersionString = function(opt_version_string) {
   if (opt_version_string !== undefined) {
     return opt_version_string.toString();
   }
-  let javaString = JavaTools.execJavaSync(['-version']);
+  let javaString = JavaTools.execSync(['-version']);
   if (javaString && javaString.stderr) {
     return javaString.stderr.toString();
   }
@@ -100,7 +100,7 @@ JavaTools.getJavaVersionString = function(opt_version_string) {
  * @param {function} callback
  * @param {string=} opt_java
  */
-JavaTools.execJava = function(args, callback, opt_java) {
+JavaTools.exec = function(args, callback, opt_java) {
   let javaBin = opt_java || 'java';
   childProcess.execFile(javaBin, args, {
     'maxBuffer': JavaTools.maxBuffer,
@@ -113,7 +113,7 @@ JavaTools.execJava = function(args, callback, opt_java) {
  * @param {string=} opt_java
  * @return {Object}
  */
-JavaTools.execJavaSync = function(args, opt_java) {
+JavaTools.execSync = function(args, opt_java) {
   let javaBin = opt_java || 'java';
   return childProcess.spawnSync(javaBin, args, {
     'minBuffer': JavaTools.maxBuffer,
@@ -128,7 +128,7 @@ JavaTools.execJavaSync = function(args, opt_java) {
  * @param {string=} opt_java
  * @param {boolean=} opt_debug
  */
-JavaTools.execJavaJar = function(jar, args, callback, opt_java, opt_debug) {
+JavaTools.execJar = function(jar, args, callback, opt_java, opt_debug) {
   let javaBin = opt_java || 'java';
   let javaFlags = ['-XX:+TieredCompilation', '-XX:TieredStopAtLevel=1'];
   if (process.arch.includes('64')) {

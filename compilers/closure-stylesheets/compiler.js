@@ -120,7 +120,7 @@ ClosureStylesheets.compile = function(files, opt_options, opt_target_file,
     }
   };
 
-  javaTools.execJavaJar(compiler, compilerOptions, compilerEvent, null,
+  javaTools.execJar(compiler, compilerOptions, compilerEvent, null,
     ClosureStylesheets.DEBUG);
 };
 
