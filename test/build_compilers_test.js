@@ -340,7 +340,6 @@ describe('ClosureBuilder', function() {
       if (!largeMemoryTest) {
         return done();
       }
-      this.timeout(140000);
       closureBuilder.build(testConfigs.closureLibraryConfigRemoteService,
         function(errors, warnings, files, content) {
           assert(!errors);
@@ -351,23 +350,6 @@ describe('ClosureBuilder', function() {
           assert(content.indexOf('goog.Timer=func') !== -1);
           done();
         });
-    });
-    it('Compile goog.ui', function(done) {
-      if (!largeMemoryTest) {
-        return done();
-      }
-      this.timeout(140000);
-      closureBuilder.build(testConfigs.closureLibraryUiConfigRemoteService,
-        function(errors, warnings, files, content) {
-          assert(!errors);
-          assert(!warnings);
-          assert(content);
-          assert(content.indexOf('closure_library_ui_test=func') !== -1);
-          assert(content.indexOf('goog.ui.Button=func') !== -1);
-          assert(content.indexOf('goog.ui.CharPicker=func') !== -1);
-          assert(content.indexOf('goog.ui.MenuItem=func') !== -1);
-          done();
-        });
-    });
+    }).timeout(50000);
   });
 });

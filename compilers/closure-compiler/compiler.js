@@ -17,6 +17,8 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
+let closureCompilerJs = require('google-closure-compiler-js');
+let dnsSync = require('dns-sync');
 let fs = require('fs-extra');
 let https = require('https');
 let querystring = require('querystring');
@@ -38,6 +40,11 @@ let ClosureCompiler = function() {};
  */
 ClosureCompiler.DEBUG = false;
 
+/**
+ * @type {string}
+ */
+ClosureCompiler.REMOTE_SERVICE = 'closure-compiler.appspot.com';
+
 
 /**
  * @param {!array} files
@@ -53,11 +60,17 @@ ClosureCompiler.compile = function(files, opt_options, opt_target_file,
     return;
   }
 
-  if (opt_remote_service) {
+  if (javaTools.hasJava() && !opt_remote_service) {
+    ClosureCompiler.info('Using local Java Closure compiler ...');
+    ClosureCompiler.localCompile(files, opt_options, opt_target_file,
+      opt_callback);
+  } else if (dnsSync.resolve(ClosureCompiler.REMOTE_SERVICE)) {
+    ClosureCompiler.info('Using remote Closure compiler ...');
     ClosureCompiler.remoteCompile(files, opt_options, opt_target_file,
       opt_callback);
   } else {
-    ClosureCompiler.localCompile(files, opt_options, opt_target_file,
+    ClosureCompiler.info('Using local JavaScript Closure compiler ...');
+    ClosureCompiler.localCompileJs(files, opt_options, opt_target_file,
       opt_callback);
   }
 };
@@ -235,24 +248,50 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
  * @param {string=} opt_target_file
  * @param {function=} opt_callback
  */
+ClosureCompiler.localCompileJs = function(files, opt_options, opt_target_file,
+    opt_callback) {
+  if (!files) {
+    ClosureCompiler.error('No valid files are provided!', opt_callback);
+    return;
+  }
+  closureCompilerJs();
+  console.error('Not supported yet ...');
+};
+
+
+/**
+ * @param {!string} files
+ * @param {Object=} opt_options
+ * @param {string=} opt_target_file
+ * @param {function=} opt_callback
+ */
 ClosureCompiler.remoteCompile = function(files,
     opt_options, opt_target_file, opt_callback) {
   if (!files) {
     ClosureCompiler.error('No valid files are provided!', opt_callback);
     return;
   }
+  if (!dnsSync.resolve(ClosureCompiler.REMOTE_SERVICE)) {
+    ClosureCompiler.error('No network connection to remote service!');
+    return;
+  }
 
   // Handling options
   let unsupportedOptions = {
-    'entry_point': true,
+    'entry_point': false,
     'generate_exports': true,
   };
   let option;
   for (option in opt_options) {
     if (option in unsupportedOptions) {
-      ClosureCompiler.error('ERROR - ' + option + ' is unsupported by the ' +
-        'closure-compiler webservice!', opt_callback);
-      return;
+      if (unsupportedOptions[option]) {
+        ClosureCompiler.error(option + ' is unsupported by the ' +
+          'closure-compiler webservice!', opt_callback);
+        return;
+      } else {
+        ClosureCompiler.warn(option + ' is unsupported by the ' +
+          'closure-compiler webservice!');
+      }
     }
   }
 
@@ -312,7 +351,7 @@ ClosureCompiler.remoteCompile = function(files,
 
   let dataString = querystring.stringify(data);
   let httpOptions = {
-    host: 'closure-compiler.appspot.com',
+    host: ClosureCompiler.REMOTE_SERVICE,
     path: '/compile',
     method: 'POST',
     headers: {

@@ -24,6 +24,7 @@ let buildCompilers = require('./build_compilers.js');
 let buildTools = require('./build_tools.js');
 let buildType = require('./build/types.js');
 let fileTools = require('./tools/file.js');
+let javaTools = require('./tools/java.js');
 
 
 /**
@@ -44,6 +45,9 @@ let ClosureBuilder = function() {
 
   /** @private {boolean} */
   this.testEnv_ = false;
+
+  /** @private {boolean} */
+  this.hasJava_ = javaTools.hasJava();
 };
 
 
@@ -81,6 +85,10 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
   if (build_config.enabled === false) {
     log.warn('Closure Builder config is disabled!');
     return;
+  }
+
+  if (!this.hasJava_) {
+    log.warn('Note: Closure Builder will run with an limited feature set!');
   }
 
   if (build_config.trace) {

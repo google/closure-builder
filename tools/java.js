@@ -53,7 +53,6 @@ JavaTools.hasJava = function(opt_version_string) {
       version.includes('jdk')) {
     return true;
   }
-  console.error('Unknown Java Version:', version);
   return false;
 };
 
@@ -90,7 +89,9 @@ JavaTools.getJavaVersionString = function(opt_version_string) {
   if (javaString && javaString.stderr) {
     return javaString.stderr.toString();
   }
-  console.error('Unknown Java version string', javaString);
+  if (javaString && !javaString.error) {
+    console.error('Unknown Java version string:', javaString);
+  }
   return '';
 };
 

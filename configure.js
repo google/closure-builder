@@ -77,7 +77,6 @@ console.log('Perform basic Java checks ...');
 if (javaTools.hasJava()) {
   console.log('Found global Java ...', javaTools.getJavaVersion());
 } else {
-  console.warn('\nWARNING!!!\nFound no global JRE!\n' +
-    'Please install an Java Runtime Environment (JRE), to be able to use' +
-    ' all features and compilers!\n');
+  console.warn('\nPlease install an Java Runtime Environment (JRE), ' +
+    'to be able to use all features and compilers!\n');
 }
