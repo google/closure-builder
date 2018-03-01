@@ -61,15 +61,12 @@ ClosureCompiler.compile = function(files, opt_options, opt_target_file,
   }
 
   if (javaTools.hasJava() && !opt_remote_service) {
-    ClosureCompiler.info('Using local Java Closure compiler ...');
     ClosureCompiler.localCompile(files, opt_options, opt_target_file,
       opt_callback);
   } else if (dnsSync.resolve(ClosureCompiler.REMOTE_SERVICE)) {
-    ClosureCompiler.info('Using remote Closure compiler ...');
     ClosureCompiler.remoteCompile(files, opt_options, opt_target_file,
       opt_callback);
   } else {
-    ClosureCompiler.info('Using local JavaScript Closure compiler ...');
     ClosureCompiler.localCompileJs(files, opt_options, opt_target_file,
       opt_callback);
   }

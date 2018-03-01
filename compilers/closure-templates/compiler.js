@@ -130,26 +130,26 @@ ClosureTemplates.compile = function(files, opt_options, opt_target_dir,
     let errorMsg = stderr || error || stdout;
     let errors = null;
     let warnings = null;
-    let numErrors = 0;
-    let numWarnings = 0;
+    let errorMessage = {
+      errors: 0,
+      warnings: 0,
+    };
 
     // Handling Error messages
     if (errorMsg) {
-      let parsedErrorMessage = ClosureTemplates.parseErrorMessage(errorMsg);
-      numErrors = parsedErrorMessage.errors;
-      numWarnings = parsedErrorMessage.warnings;
+      errorMessage = ClosureTemplates.parseErrorMessage(errorMsg);
     }
 
-    if (numErrors == 0 && numWarnings > 0 && showWarnings) {
+    if (errorMessage.errors == 0 && errorMessage.warnings > 0 && showWarnings) {
       warnings = errorMsg;
       ClosureTemplates.warn(warnings);
-    } else if (numErrors > 0) {
+    } else if (errorMessage.errors > 0) {
       errors = errorMsg;
       ClosureTemplates.error(errors);
       outputFiles = null;
     }
 
-    if (i18nFunction && !numErrors) {
+    if (i18nFunction && !errorMessage.errors) {
       fileTools.findAndReplace(
         outputFiles,
         /goog\.getMsg\(/g,
@@ -184,11 +184,14 @@ ClosureTemplates.parseErrorMessage = function(message) {
     } else if (message.toLowerCase().includes('error')) {
       errors = message.toLowerCase().split('error').length - 1;
     } else if (message.toLowerCase().includes('warning')) {
-      if (!message.includes('Java HotSpot(TM) Client VM warning') ||
-          message.toLowerCase().split('warning').length > 2) {
-        warnings = message.toLowerCase().split('warning').length - 1;
-      } else {
+      if (message.includes('Java HotSpot(TM) Client VM warning') &&
+          message.toLowerCase().split('warning').length == 2) {
         warnings = 0;
+      } else if (message.includes('Illegal reflective access by com.google.') &&
+          message.toLowerCase().split('warning').length == 7) {
+        warnings = 0;
+      } else {
+        warnings = message.toLowerCase().split('warning').length - 1;
       }
     } else {
       errors = 1;
