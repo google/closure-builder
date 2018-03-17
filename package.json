@@ -1,6 +1,6 @@
 {
   "name": "closure-builder",
-  "version": "2.2.38",
+  "version": "2.2.39",
   "description": "Simple Closure, Soy and JavaScript Build system",
   "engines": {
     "node": ">=6.0.0"
