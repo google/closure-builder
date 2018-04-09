@@ -8,3 +8,4 @@ tmp
 .project
 .c9
 .DS_Store
+*.stackdump
