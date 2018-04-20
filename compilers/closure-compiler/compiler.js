@@ -51,10 +51,14 @@ ClosureCompiler.REMOTE_SERVICE = 'closure-compiler.appspot.com';
 ClosureCompiler.IGNORED_WARNINGS = [
   'Java HotSpot(TM) Client VM warning',
   'com.google.javascript.jscomp.PhaseOptimizer$NamedPass',
+  'Skipping pass ambiguateProperties',
   'Skipping pass checkAccessControls',
   'Skipping pass checkConformance',
   'Skipping pass checkTypes',
+  'Skipping pass devirtualizePrototypeMethods',
+  'Skipping pass disambiguateProperties',
   'Skipping pass inferTypes',
+  'Skipping pass inlineProperties',
   'Skipping pass resolveTypes',
 ];
 
