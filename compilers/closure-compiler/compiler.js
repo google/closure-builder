@@ -45,6 +45,19 @@ ClosureCompiler.DEBUG = false;
  */
 ClosureCompiler.REMOTE_SERVICE = 'closure-compiler.appspot.com';
 
+/**
+ * @type {!array}
+ */
+ClosureCompiler.IGNORED_WARNINGS = [
+  'Java HotSpot(TM) Client VM warning',
+  'com.google.javascript.jscomp.PhaseOptimizer$NamedPass',
+  'Skipping pass checkAccessControls',
+  'Skipping pass checkConformance',
+  'Skipping pass checkTypes',
+  'Skipping pass inferTypes',
+  'Skipping pass resolveTypes',
+];
+
 
 /**
  * @param {!array} files
@@ -442,11 +455,18 @@ ClosureCompiler.parseErrorMessage = function(message) {
     } else if (message.toLowerCase().includes('error')) {
       errors = message.toLowerCase().split('error').length - 1;
     } else if (message.toLowerCase().includes('warning')) {
-      if (!message.includes('Java HotSpot(TM) Client VM warning') ||
-          message.toLowerCase().split('warning').length > 2) {
-        warnings = message.toLowerCase().split('warning').length - 1;
-      } else {
-        warnings = 0;
+      // Parse remaining warning messages, but ignore specific warnings.
+      let warnMessages = message.split('\n');
+      for (let i = 0; i < warnMessages.length; i++) {
+        let validWarning = true;
+        for (let ignoredWarning of ClosureCompiler.IGNORED_WARNINGS) {
+          if (!warnMessages[i] || warnMessages[i].includes(ignoredWarning)) {
+            validWarning = false;
+          }
+        }
+        if (validWarning && warnMessages[i]) {
+          warnings += 1;
+        }
       }
     }
   } else if (message) {

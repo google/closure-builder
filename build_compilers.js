@@ -404,10 +404,19 @@ BuildCompilers.compileJsFiles = function(files, out,
       delete options.entry_point;
       delete options.dependency_mode;
     }
-    if (config.requireECMAScript6) {
-      options.language_in = 'ECMASCRIPT6';
-      options.language_out = 'ES5_STRICT';
+
+    // Handle different ECMASCRIPT versions
+    if (config.requireECMAScript2017) {
+      options.language_in = 'ECMASCRIPT_2017';
+      options.language_out = 'ECMASCRIPT_2017';
+    } else if (config.requireECMAScript2016) {
+      options.language_in = 'ECMASCRIPT_2016';
+      options.language_out = 'ECMASCRIPT_2016';
+    } else if (config.requireECMAScript2015 || config.requireECMAScript6) {
+      options.language_in = 'ECMASCRIPT_2015';
+      options.language_out = 'ECMASCRIPT_2015';
     }
+
     if (config.requireClosureExport) {
       options.generate_exports = true;
     }
