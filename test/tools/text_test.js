@@ -23,12 +23,25 @@ let textTools = require('../../tools/text.js');
 
 
 describe('textTools', function() {
-  let content = 'Hello World';
-
   it('replace', function() {
+    let content = 'Hello World';
     assert.equal(textTools.replace(content), content);
     assert.equal(textTools.replace(content, ['Hello', 'Hallo']), 'Hallo World');
     assert.equal(textTools.replace(content, [['H', 'W'], ['e', 'o']]),
       'Wollo World');
+  });
+
+  it('filterStrings', function() {
+    let content = '1\n2\n123\n321\n3';
+    let content2 = '1 2 123 321 3';
+    let content3 = '1 2 123 321 3\n';
+    assert.equal(textTools.filterStrings(content, ['1']), '2\n3\n');
+    assert.equal(textTools.filterStrings(content, ['2']), '1\n3\n');
+    assert.equal(textTools.filterStrings(content, ['3']), '1\n2\n');
+    assert.equal(textTools.filterStrings(content, ['1', '2', '3']), '');
+    assert.equal(textTools.filterStrings(content, ['123']), '1\n2\n321\n3\n');
+    assert.equal(textTools.filterStrings(content, ['21']), '1\n2\n123\n3\n');
+    assert.equal(textTools.filterStrings(content2, ['1']), '1 2 123 321 3');
+    assert.equal(textTools.filterStrings(content3, ['1']), '');
   });
 });

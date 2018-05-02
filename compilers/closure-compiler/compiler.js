@@ -25,6 +25,7 @@ let querystring = require('querystring');
 
 let javaTools = require('../../tools/java.js');
 let pathTools = require('../../tools/path.js');
+let textTools = require('../../tools/text.js');
 
 
 /**
@@ -228,6 +229,8 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
 
     // Handling Error messages
     if (errorMsg) {
+      errorMsg = textTools.filterStrings(errorMsg,
+        ClosureCompiler.IGNORED_WARNINGS);
       let parsedErrorMessage = ClosureCompiler.parseErrorMessage(errorMsg);
       numErrors = parsedErrorMessage.errors;
       numWarnings = parsedErrorMessage.warnings;
@@ -459,19 +462,7 @@ ClosureCompiler.parseErrorMessage = function(message) {
     } else if (message.toLowerCase().includes('error')) {
       errors = message.toLowerCase().split('error').length - 1;
     } else if (message.toLowerCase().includes('warning')) {
-      // Parse remaining warning messages, but ignore specific warnings.
-      let warnMessages = message.split('\n');
-      for (let i = 0; i < warnMessages.length; i++) {
-        let validWarning = true;
-        for (let ignoredWarning of ClosureCompiler.IGNORED_WARNINGS) {
-          if (!warnMessages[i] || warnMessages[i].includes(ignoredWarning)) {
-            validWarning = false;
-          }
-        }
-        if (validWarning && warnMessages[i]) {
-          warnings += 1;
-        }
-      }
+      warnings = message.toLowerCase().split('warning').length - 1;
     }
   } else if (message) {
     errors = 1;

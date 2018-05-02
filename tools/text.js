@@ -79,4 +79,33 @@ TextTools.getRandomString = function(opt_max_length) {
 };
 
 
+/**
+ * @param {!string} text
+ * @param {Array} filters
+ * @return {string}
+ */
+TextTools.filterStrings = function(text, filters) {
+  if (!text.includes('\n')) {
+    return text;
+  }
+  let textLines = text.split('\n');
+  let output = '';
+  for (let i = 0; i < textLines.length; i++) {
+    let ignoreLine = false;
+    let textLine = textLines[i];
+    if (textLine) {
+      for (let filter of filters) {
+        if (textLine.includes(filter)) {
+         ignoreLine = true;
+        }
+      }
+      if (!ignoreLine) {
+        output += textLine + '\n';
+      }
+    }
+  }
+  return output;
+};
+
+
 module.exports = TextTools;
