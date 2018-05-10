@@ -113,7 +113,7 @@ RollupCompiler.compile = function(file, opt_options, opt_target_file,
  * @param {function=} callback
  */
 RollupCompiler.error = function(msg, callback) {
-  console.error('[Rollup Compiler Error]', msg);
+  console.error('\x1b[1m\x1b[31m[Rollup Compiler Error]\x1b[0m', msg);
   if (callback) {
     callback(msg);
   }

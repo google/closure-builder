@@ -281,6 +281,7 @@ ClosureCompiler.localCompileJs = function(files, opt_options, opt_target_file,
  * @param {Object=} opt_options
  * @param {string=} opt_target_file
  * @param {function=} opt_callback
+ * @deprecated
  */
 ClosureCompiler.remoteCompile = function(files,
     opt_options, opt_target_file, opt_callback) {
@@ -293,9 +294,11 @@ ClosureCompiler.remoteCompile = function(files,
     return;
   }
 
-  // Handling options
+  // Handling options (true = critical / false = ignore)
   let unsupportedOptions = {
-    'entry_point': false,
+    'entry_point': true,
+    'language_in': false,
+    'language_out': false,
     'generate_exports': true,
   };
   let option;
@@ -308,6 +311,7 @@ ClosureCompiler.remoteCompile = function(files,
       } else {
         ClosureCompiler.warn(option + ' is unsupported by the ' +
           'closure-compiler webservice!');
+        delete opt_options[option];
       }
     }
   }
@@ -497,7 +501,7 @@ ClosureCompiler.info = function(msg) {
  * @param {string} msg
  */
 ClosureCompiler.warn = function(msg) {
-  console.error('[Closure Compiler Warn]', msg);
+  console.error('\x1b[1m\x1b[33m[Closure Compiler Warn]\x1b[0m', msg);
 };
 
 
@@ -506,7 +510,7 @@ ClosureCompiler.warn = function(msg) {
  * @param {function=} opt_callback
  */
 ClosureCompiler.error = function(msg, opt_callback) {
-  console.error('[Closure Compiler Error]', msg);
+  console.error('\x1b[1m\x1b[31m[Closure Compiler Error]\x1b[0m', msg);
   if (opt_callback) {
     opt_callback(msg);
   }

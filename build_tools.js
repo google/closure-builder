@@ -20,6 +20,7 @@
 let fs = require('fs-extra');
 
 let BuildType = require('./build/types.js');
+let SnifferTools = require('./tools/sniffer.js');
 
 
 /**
@@ -127,8 +128,8 @@ BuildTools.getBuildRequirements = function(config) {
       srcsConfig.requireClosureLibrary),
     requireClosureLibraryUI: (depsConfig.requireClosureLibraryUI ||
       srcsConfig.requireClosureLibraryUI),
-    requireECMAScript6: (depsConfig.requireECMAScript6 ||
-      srcsConfig.requireECMAScript6),
+    requiredECMAVersion: [depsConfig.requiredECMAVersion,
+      srcsConfig.requiredECMAVersion].sort().pop(),
     requireSoyLibrary: (depsConfig.requireSoyLibrary ||
       srcsConfig.requireSoyLibrary || soyConfig.requireSoyLibrary),
     requireSoyi18n: (soyConfig.requireSoyi18n || srcsConfig.requireSoyi18n),
@@ -154,13 +155,13 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
   let jsFiles = [];
   let markdownFiles = [];
   let nodeFiles = [];
-  let soyFiles = [];
   let requireClosureExport = false;
   let requireClosureLibrary = false;
   let requireClosureLibraryUI = false;
-  let requireECMAScript6 = false;
   let requireSoyLibrary = false;
   let requireSoyi18n = false;
+  let requiredECMAVersion = '';
+  let soyFiles = [];
 
   for (let i = files.length - 1; i >= 0; i--) {
     let file = files[i];
@@ -216,9 +217,15 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
         requireSoyLibrary = true;
       }
 
-      // ECMAScript6
-      if (/(let|const)\s+\w+\s?=/.test(fileContent)) {
-        requireECMAScript6 = true;
+      // Detecting min. ECMA Script version ?
+      let ECMAScriptVersion = SnifferTools.getECMAScriptVersion(fileContent);
+      if (ECMAScriptVersion && requiredECMAVersion) {
+        if (ECMAScriptVersion.split('_')[1] >
+            requiredECMAVersion.split('_')[1]) {
+          requiredECMAVersion = ECMAScriptVersion;
+        }
+      } else if (ECMAScriptVersion) {
+        requiredECMAVersion = ECMAScriptVersion;
       }
 
     // Handling Closure stylesheets (.gss) file.
@@ -246,7 +253,7 @@ BuildTools.scanFiles = function(files, opt_entry_point) {
     requireClosureExport: requireClosureExport,
     requireClosureLibrary: requireClosureLibrary,
     requireClosureLibraryUI: requireClosureLibraryUI,
-    requireECMAScript6: requireECMAScript6,
+    requiredECMAVersion: requiredECMAVersion,
     requireSoyLibrary: requireSoyLibrary,
     requireSoyi18n: requireSoyi18n,
   };

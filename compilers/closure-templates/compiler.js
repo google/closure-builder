@@ -218,7 +218,7 @@ ClosureTemplates.info = function(msg) {
  * @param {string} msg
  */
 ClosureTemplates.warn = function(msg) {
-  console.error('[Closure Templates Warn]', msg);
+  console.error('\x1b[1m\x1b[33m[Closure Templates Warn]\x1b[0m', msg);
 };
 
 
@@ -227,7 +227,7 @@ ClosureTemplates.warn = function(msg) {
  * @param {function=} opt_callback
  */
 ClosureTemplates.error = function(msg, opt_callback) {
-  console.error('[Closure Templates Error]', msg);
+  console.error('\x1b[1m\x1b[31m[Closure Templates Error]\x1b[0m', msg);
   if (opt_callback) {
     opt_callback(msg);
   }

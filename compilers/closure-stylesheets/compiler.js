@@ -176,7 +176,7 @@ ClosureStylesheets.info = function(msg) {
  * @param {string} msg
  */
 ClosureStylesheets.warn = function(msg) {
-  console.error('[Closure Stylesheets Warn]', msg);
+  console.error('\x1b[1m\x1b[33m[Closure Stylesheets Warn]\x1b[0m', msg);
 };
 
 
@@ -185,7 +185,7 @@ ClosureStylesheets.warn = function(msg) {
  * @param {function=} opt_callback
  */
 ClosureStylesheets.error = function(msg, opt_callback) {
-  console.error('[Closure Stylesheets Error]', msg);
+  console.error('\x1b[1m\x1b[31m[Closure Stylesheets Error]\x1b[0m', msg);
   if (opt_callback) {
     opt_callback(msg);
   }

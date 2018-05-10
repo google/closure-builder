@@ -173,8 +173,8 @@ let BuildConfig = function(config) {
   /** @type {boolean} */
   this.requireClosureLibraryUI = requirements.requireClosureLibraryUI;
 
-  /** @type {boolean} */
-  this.requireECMAScript6 = requirements.requireECMAScript6;
+  /** @type {string} */
+  this.requiredECMAVersion = requirements.requiredECMAVersion;
 
   /** @type {boolean} */
   this.requireSoyLibrary = requirements.requireSoyLibrary;

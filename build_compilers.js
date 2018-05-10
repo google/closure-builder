@@ -406,15 +406,12 @@ BuildCompilers.compileJsFiles = function(files, out,
     }
 
     // Handle different ECMASCRIPT versions
-    if (config.requireECMAScript2017) {
+    if (config.requiredECMAVersion) {
+      options.language_in = config.requiredECMAVersion;
+      options.language_out = config.requiredECMAVersion;
+    } else {
       options.language_in = 'ECMASCRIPT_2017';
       options.language_out = 'ECMASCRIPT_2017';
-    } else if (config.requireECMAScript2016) {
-      options.language_in = 'ECMASCRIPT_2016';
-      options.language_out = 'ECMASCRIPT_2016';
-    } else if (config.requireECMAScript2015 || config.requireECMAScript6) {
-      options.language_in = 'ECMASCRIPT_2015';
-      options.language_out = 'ECMASCRIPT_2015';
     }
 
     if (config.requireClosureExport) {

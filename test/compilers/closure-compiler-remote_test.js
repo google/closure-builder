@@ -34,10 +34,13 @@ describe('Closure Compiler:remote:', function() {
     let files = ['test_files/closure_test_1.js'];
     closureCompiler.remoteCompile(files, null, null,
       function(errors, warnings, file, content) {
-        assert(!errors);
-        assert(!warnings);
-        assert.equal(content,
-          'var closure_test_1=function(){return"_CLOSURE_TEST_1"};\n');
+        if (!errors ||
+            !errors.includes('ERROR - Too many compiles performed recently.')) {
+          assert(!errors);
+          assert(!warnings);
+          assert.equal(content,
+            'var closure_test_1=function(){return"_CLOSURE_TEST_1"};\n');
+        }
         done();
       });
   });
@@ -50,12 +53,15 @@ describe('Closure Compiler:remote:', function() {
     ];
     closureCompiler.remoteCompile(files, null, null,
       function(errors, warnings, file, content) {
-        assert(!errors);
-        assert(!warnings);
-        assert.equal(content,
-          'var closure_test_1=function(){return"_CLOSURE_TEST_1"};' +
-          'var closure_test_2=function(){return closure_test_1()+' +
-          '"_CLOSURE_TEST_2"};\n');
+        if (!errors ||
+            !errors.includes('ERROR - Too many compiles performed recently.')) {
+          assert(!errors);
+          assert(!warnings);
+          assert.equal(content,
+            'var closure_test_1=function(){return"_CLOSURE_TEST_1"};' +
+            'var closure_test_2=function(){return closure_test_1()+' +
+            '"_CLOSURE_TEST_2"};\n');
+        }
         done();
       });
   });
@@ -66,9 +72,12 @@ describe('Closure Compiler:remote:', function() {
     let options = {};
     closureCompiler.remoteCompile(files, options, null,
       function(errors, warnings, files, content) {
-        assert(errors);
-        assert(!warnings);
-        assert(!content);
+        if (!errors ||
+            !errors.includes('ERROR - Too many compiles performed recently.')) {
+          assert(errors);
+          assert(!warnings);
+          assert(!content);
+        }
         done();
       });
   });
@@ -79,9 +88,12 @@ describe('Closure Compiler:remote:', function() {
     let options = {};
     closureCompiler.remoteCompile(files, options, null,
       function(errors, warnings, files, content) {
-        assert(!errors);
-        assert(warnings);
-        assert(content);
+        if (!errors ||
+            !errors.includes('ERROR - Too many compiles performed recently.')) {
+          assert(!errors);
+          assert(warnings);
+          assert(content);
+        }
         done();
       });
   });
@@ -97,9 +109,12 @@ describe('Closure Compiler:remote:', function() {
     };
     closureCompiler.remoteCompile(files, options, null,
       function(errors, warnings, files, content) {
-        assert(!errors);
-        assert(!warnings);
-        assert(content);
+        if (!errors ||
+            !errors.includes('ERROR - Too many compiles performed recently.')) {
+          assert(!errors);
+          assert(!warnings);
+          assert(content);
+        }
         done();
       });
   });
@@ -115,9 +130,12 @@ describe('Closure Compiler:remote:', function() {
     };
     closureCompiler.remoteCompile(files, options, null,
       function(errors, warnings, files, content) {
-        assert(!errors);
-        assert(!warnings);
-        assert(content);
+        if (!errors ||
+            !errors.includes('ERROR - Too many compiles performed recently.')) {
+          assert(!errors);
+          assert(!warnings);
+          assert(content);
+        }
         done();
       });
   });
@@ -130,9 +148,12 @@ describe('Closure Compiler:remote:', function() {
     };
     closureCompiler.remoteCompile(files, options, null,
       function(errors, warnings, files, content) {
-        assert(errors);
-        assert(!warnings);
-        assert(!content);
+        if (!errors ||
+            !errors.includes('ERROR - Too many compiles performed recently.')) {
+          assert(errors);
+          assert(!warnings);
+          assert(!content);
+        }
         done();
       });
   });
@@ -145,9 +166,12 @@ describe('Closure Compiler:remote:', function() {
     };
     closureCompiler.remoteCompile(files, options, null,
       function(errors, warnings, files, content) {
-        assert(errors);
-        assert(!warnings);
-        assert(!content);
+        if (!errors ||
+            !errors.includes('ERROR - Too many compiles performed recently.')) {
+          assert(errors);
+          assert(!warnings);
+          assert(!content);
+        }
         done();
       });
   });

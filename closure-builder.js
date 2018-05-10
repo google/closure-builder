@@ -122,14 +122,14 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
       opt_callback(errors, warnings, files, results);
     }
     if (errors) {
-      config.setMessage('\u001b[93m[\u001b[31mErrors!\u001b[93m]\u001b[0m');
+      config.setMessage('\x1b[1m\x1b[93m[\x1b[31mErrors!\x1b[93m]\x1b[0m');
       if (!this.testEnv_) {
         process.exit(1);
       }
     } else if (warnings) {
-      config.setMessage('\u001b[93m[\u001b[33mWarn\u001b[93m]\u001b[0m', 100);
+      config.setMessage('\x1b[1m\x1b[93m[\x1b[33mWarn\x1b[93m]\x1b[0m', 100);
     } else {
-      config.setMessage('\u001b[93m[\u001b[32mDone\u001b[93m]\u001b[0m', 100);
+      config.setMessage('\x1b[1m\x1b[93m[\x1b[32mDone\x1b[93m]\x1b[0m', 100);
     }
   };
 
@@ -166,7 +166,7 @@ ClosureBuilder.prototype.build = function(build_config, opt_callback) {
 ClosureBuilder.prototype.showConfigInformation = function(config) {
   log.debug('Type:', config.type);
   log.debug('Closure namespace:', config.closureNamespace);
-  log.debug('Require ECMAScript6:', config.requireECMAScript6);
+  log.debug('Required ECMAVersion:', config.requiredECMAVersion);
   log.debug('Require closure export:', config.requireClosureExport);
   log.debug('Require closure library:', config.requireClosureLibrary);
   log.debug('Require soy i18n:', config.requireSoyi18n);
@@ -186,7 +186,7 @@ ClosureBuilder.prototype.showConfigInformation = function(config) {
   log.debug('Found', config.hasCssFiles(), 'css files.');
   log.trace(config.getCssFiles());
 
-  log.debug('Found', config.hasJsFiles(), 'javascript files.');
+  log.debug('Found', config.hasJsFiles(), 'JavaScript files.');
   log.trace(config.getJavaScriptFiles());
 
   log.debug('Found', config.hasMarkdownFiles(), 'markdown files.');

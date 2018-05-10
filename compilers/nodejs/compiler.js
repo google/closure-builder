@@ -81,7 +81,7 @@ NodejsCompiler.info = function(msg) {
  * @param {string} msg
  */
 NodejsCompiler.warn = function(msg) {
-  console.error('[Node.js Compiler Warn]', msg);
+  console.error('\x1b[1m\x1b[33m[Node.js Compiler Warn]\x1b[0m', msg);
 };
 
 
@@ -90,7 +90,7 @@ NodejsCompiler.warn = function(msg) {
  * @param {function=} opt_callback
  */
 NodejsCompiler.error = function(msg, opt_callback) {
-  console.error('[Node.js Compiler Error]', msg);
+  console.error('\x1b[1m\x1b[31m[Node.js Compiler Error]\x1b[0m', msg);
   if (opt_callback) {
     opt_callback(msg);
   }
