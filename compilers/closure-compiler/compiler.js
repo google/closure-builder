@@ -17,7 +17,6 @@
  *
  * @author mbordihn@google.com (Markus Bordihn)
  */
-let closureCompilerJs = require('google-closure-compiler-js');
 let dnsSync = require('dns-sync');
 let fs = require('fs-extra');
 let https = require('https');
@@ -271,7 +270,6 @@ ClosureCompiler.localCompileJs = function(files, opt_options, opt_target_file,
     ClosureCompiler.error('No valid files are provided!', opt_callback);
     return;
   }
-  closureCompilerJs();
   console.error('Not supported yet ...');
 };
 

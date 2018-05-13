@@ -45,8 +45,9 @@
     "test-text-tools": "mocha test/tools/text_test.js",
     "test-tools": "mocha test/build_tools_test.js",
     "test-types": "mocha test/build_types_test.js",
-    "update": "npm run clean && npm run update-deps && npm install && npm test",
-    "update-deps": "npm prune && ncu -u -a &&  npm update -a && npm dedupe",
+    "preupdate": "npm run clean",
+    "update": "npm install && npm update -a && npm dedupe",
+    "postupdate": "npm test",
     "predeploy": "npm test",
     "deploy": "npm version patch && git add package.json",
     "postdeploy": "git push --follow-tags"
@@ -72,7 +73,6 @@
     "follow-redirects": "^1.4.1",
     "fs-extra": "^6.0.1",
     "glob": "7.1.2",
-    "google-closure-compiler-js": "^20180402.0.0",
     "loglevel": "^1.6.1",
     "marked": "^0.3.19",
     "mkdirp": "0.5.1",
@@ -88,7 +88,6 @@
     "eslint": "^4.19.1",
     "eslint-config-google": "^0.9.1",
     "mocha": "^5.1.1",
-    "npm-check-updates": "^2.14.2",
     "nyc": "^11.7.3"
   }
 }
