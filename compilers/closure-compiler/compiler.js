@@ -214,7 +214,13 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
   // Handling options
   for (let option in options) {
     if (Object.prototype.hasOwnProperty.call(options, option)) {
-      compilerOptions.push('--' + option, options[option]);
+      if (Array.isArray(options[option])) {
+        options[option].forEach(option_val => {
+          compilerOptions.push('--' + option, option_val);
+        });
+      } else {
+        compilerOptions.push('--' + option, options[option]);
+      }
     }
   }
 
