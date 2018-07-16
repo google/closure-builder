@@ -349,4 +349,30 @@ describe('Closure Compiler:local:', function() {
         done();
       });
   });
+
+  describe('parseErrorMessage', function() {
+    it('No Errors, No warnings', function() {
+      let result = closureCompiler.parseErrorMessage();
+      assert(result.errors === 0);
+      assert(result.warnings === 0);
+    });
+
+    it('Error', function() {
+      let result = closureCompiler.parseErrorMessage('Error: ...');
+      assert(result.errors === 1);
+      assert(result.warnings === 0);
+    });
+
+    it('Warning', function() {
+      let result = closureCompiler.parseErrorMessage('Warning: ...');
+      assert(result.errors === 0);
+      assert(result.warnings === 1);
+    });
+
+    it('Compiler Error', function() {
+      let result = closureCompiler.parseErrorMessage('INTERNAL COMPILER ERROR');
+      assert(result.errors === 1);
+      assert(result.warnings === 0);
+    });
+  });
 });

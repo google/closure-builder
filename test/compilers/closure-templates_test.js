@@ -182,6 +182,44 @@ describe('Closure Templates::', function() {
       });
   });
 
+
+  describe('parseErrorMessage', function() {
+    it('No Errors, No warnings', function() {
+      let result = closureTemplates.parseErrorMessage();
+      assert(result.errors === 0);
+      assert(result.warnings === 0);
+    });
+
+    it('Error', function() {
+      let result1 = closureTemplates.parseErrorMessage(
+        'INTERNAL COMPILER ERROR');
+      let result2 = closureTemplates.parseErrorMessage('exception');
+      let result3 = closureTemplates.parseErrorMessage('Error: ...');
+      let result4 = closureTemplates.parseErrorMessage('Unknown');
+      assert(result1.errors === 1);
+      assert(result1.warnings === 0);
+      assert(result2.errors === 1);
+      assert(result2.warnings === 0);
+      assert(result3.errors === 1);
+      assert(result3.warnings === 0);
+      assert(result4.errors === 1);
+      assert(result4.warnings === 0);
+    });
+
+    it('Warning', function() {
+      let result = closureTemplates.parseErrorMessage('Warning: ...');
+      assert(result.errors === 0);
+      assert(result.warnings === 1);
+    });
+
+    it('Ignore', function() {
+      let result = closureTemplates.parseErrorMessage(
+        'Java HotSpot(TM) Client VM warning');
+      assert(result.errors === 0);
+      assert(result.warnings === 0);
+    });
+  });
+
 /*
   it('Custom i18n tags', function(done) {
     this.timeout(25000);

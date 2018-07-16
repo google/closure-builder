@@ -2,27 +2,15 @@ language: java
 
 os:
   - linux
-  - osx
 
 osx_image: xcode8
 
-matrix:
-  exclude:
-  - os: osx
-    jdk: oraclejdk8
-  - os: osx
-    jdk: oraclejdk8
-  - os: osx
-    jdk: openjdk8
-
 jdk:
-  - oraclejdk8
-  - openjdk8
+  - oraclejdk9
+  - openjdk11
 
 env:
   - NODE_VERSION=node
-  - NODE_VERSION=6
-  - NODE_VERSION=7
   - NODE_VERSION=8
   - NODE_VERSION=9
 
