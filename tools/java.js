@@ -132,9 +132,6 @@ JavaTools.execSync = function(args, opt_java) {
 JavaTools.execJar = function(jar, args, callback, opt_java, opt_debug) {
   let javaBin = opt_java || 'java';
   let javaFlags = ['-XX:+TieredCompilation', '-XX:TieredStopAtLevel=1'];
-  if (process.arch.includes('64')) {
-    javaFlags.push('-d64');
-  }
   javaFlags = javaFlags.concat(['-jar', jar]).concat(args);
   if (opt_debug) {
     console.log(javaBin, javaFlags.join(' '));
