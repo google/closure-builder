@@ -59,10 +59,19 @@ PathTools.getResourcePath = function(name, resource) {
 
 
 /**
+ * @param {string=} name
+ * @return {!string}
+ */
+PathTools.getNodeModulePath = function(name) {
+  return PathTools.getResourcePath(name, 'node_modules');
+};
+
+
+/**
  * @return {!string}
  */
 PathTools.getClosureCompilerPath = function() {
-  return PathTools.getResourcePath('closure-compiler', 'runtime');
+  return PathTools.getNodeModulePath('google-closure-compiler');
 };
 
 

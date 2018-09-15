@@ -1,4 +1,5 @@
 coverage
+deps.js
 grunt-closure-builder/*
 node_modules/*
 runtime/*

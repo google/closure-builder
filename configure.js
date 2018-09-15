@@ -28,13 +28,6 @@ console.log('Configuring Closure Builder ' + packageJson.version + ' ...\n');
 let googdl = 'https://dl.google.com/';
 
 
-// Download and prepare Google Closure Compiler
-remoteTools.getTarGz(
-  'Google Closure Compiler',
-  googdl + 'closure-compiler/compiler-latest.tar.gz',
-  path.join('.', 'runtime', 'closure-compiler')
-);
-
 // Download and prepare Google Closure Templates Compiler
 remoteTools.getZip(
   'Google Closure Templates Compiler',
