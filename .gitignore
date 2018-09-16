@@ -8,6 +8,8 @@ Thumbs.db
 coverage
 node_modules
 npm-debug.log
+third_party/closure-library/
+third_party/closure-templates/
 runtime
 temp
 tmp

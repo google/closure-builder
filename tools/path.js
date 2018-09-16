@@ -63,7 +63,30 @@ PathTools.getResourcePath = function(name, resource) {
  * @return {!string}
  */
 PathTools.getNodeModulePath = function(name) {
-  return PathTools.getResourcePath(name, 'node_modules');
+  let resourcePath = path.join(__dirname, '..', 'node_modules');
+  if (!PathTools.existDirectory(resourcePath)) {
+    resourcePath = path.join(__dirname, '..', '..', 'node_modules');
+  }
+  if (!PathTools.existDirectory(resourcePath)) {
+    log.error('Node module path was not found at', resourcePath);
+    return '';
+  }
+  if (name) {
+    resourcePath = path.join(resourcePath, name);
+    if (!PathTools.existDirectory(resourcePath)) {
+      resourcePath = path.join(
+        __dirname, '..', '..', 'node_modules', name);
+    }
+    if (!PathTools.existDirectory(resourcePath)) {
+      resourcePath = path.join(
+        __dirname, '..', '..', '..', 'node_modules', name);
+    }
+    if (!PathTools.existDirectory(resourcePath)) {
+      log.error('Node module for', name, 'was not found at', resourcePath);
+      return '';
+    }
+  }
+  return resourcePath;
 };
 
 
@@ -347,6 +370,10 @@ PathTools.isFile = function(file_path) {
  * @return {string} file_path
  */
 PathTools.searchFile = function(file_path, name, opt_extension) {
+  if (!PathTools.existDirectory(file_path)) {
+    log.error('Search directory was not found at', file_path);
+    return '';
+  }
   let files = fs.readdirSync(file_path);
   let result = '';
   files.forEach(function(file) {
