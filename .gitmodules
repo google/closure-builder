@@ -5,5 +5,5 @@
 
 [submodule "third_party/closure-templates"]
     path = third_party/closure-templates
-    url = https://github.com/google/closure-templates.git
+    url = https://github.com/MarkusBordihn/closure-templates
     ignore = dirty
