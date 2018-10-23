@@ -215,7 +215,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
   for (let option in options) {
     if (Object.prototype.hasOwnProperty.call(options, option)) {
       if (Array.isArray(options[option])) {
-        options[option].forEach(option_val => {
+        options[option].forEach((option_val) => {
           compilerOptions.push('--' + option, option_val);
         });
       } else {
