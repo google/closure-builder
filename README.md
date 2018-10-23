@@ -116,6 +116,20 @@ The following options are available for the closure and soy compiler:
 - `options.closure` Additional settings for the Closure compiler
 - `options.exclude_test` If true *_test.* files will be excluded
 
+```javascript
+closureBuilder.build({
+  srcs: glob([
+    'src/**/*.js',
+    'soy/**/*.soy',
+  ]),
+  options: {
+    closure: {
+      define: ['goog.DEBUG=true', 'goog.dom.ASSUME_STANDARDS_MODE=true']
+    }
+  }
+}
+```
+
 #### Closure compiler warnings ####
 To adjust the Closure compiler warnings, you could use
 `options.closure.jscomp_...` or the shortcut `jscomp_...`.
