@@ -30,7 +30,7 @@ let largeMemoryTest = memoryTools.checkAvailableMemory(600);
 
 describe('Closure Compiler:remote:', function() {
   it('Single file', function(done) {
-    this.timeout(25000);
+    this.timeout(30000);
     let files = ['test_files/closure_test_1.js'];
     closureCompiler.remoteCompile(files, null, null,
       function(errors, warnings, file, content) {
@@ -46,7 +46,7 @@ describe('Closure Compiler:remote:', function() {
   });
 
   it('Two files', function(done) {
-    this.timeout(25000);
+    this.timeout(30000);
     let files = [
       'test_files/closure_test_1.js',
       'test_files/closure_test_2.js',
@@ -102,7 +102,7 @@ describe('Closure Compiler:remote:', function() {
     if (!largeMemoryTest) {
       return done();
     }
-    this.timeout(25000);
+    this.timeout(30000);
     let files = ['test_files/closure_library_test.js'];
     let options = {
       use_closure_library: true,
@@ -120,7 +120,7 @@ describe('Closure Compiler:remote:', function() {
   });
 
   it('Soy file', function(done) {
-    this.timeout(25000);
+    this.timeout(30000);
     let files = [
       'test_files/special/closure_soy_test.js',
       'test_files/special/closure_soy_test.soy.js',
@@ -141,7 +141,7 @@ describe('Closure Compiler:remote:', function() {
   });
 
   it('Unsupported Closure entry point', function(done) {
-    this.timeout(25000);
+    this.timeout(30000);
     let files = glob(['test_files/closure_test_*.js']);
     let options = {
       entry_point: 'closure_test_group',
