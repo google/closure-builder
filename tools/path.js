@@ -94,7 +94,7 @@ PathTools.getNodeModulePath = function(name) {
  * @return {!string}
  */
 PathTools.getClosureCompilerPath = function() {
-  return PathTools.getNodeModulePath('google-closure-compiler');
+  return PathTools.getNodeModulePath('google-closure-compiler-java');
 };
 
 
