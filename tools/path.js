@@ -63,11 +63,15 @@ PathTools.getResourcePath = function(name, resource) {
  * @return {!string}
  */
 PathTools.getNodeModulePath = function(name) {
-  let resourcePath = path.join(__dirname, '..', 'node_modules');
-  if (!PathTools.existDirectory(resourcePath)) {
-    resourcePath = path.join(__dirname, '..', '..', 'node_modules');
+  let resourcePath = '';
+  for (let i = 0; i < 4; i++) {
+    let searchPath = path.join(__dirname, '../'.repeat(i), 'node_modules');
+    if (PathTools.existDirectory(searchPath)) {
+      resourcePath = searchPath;
+      break;
+    }
   }
-  if (!PathTools.existDirectory(resourcePath)) {
+  if (!resourcePath) {
     log.error('Node module path was not found at', resourcePath);
     return '';
   }
