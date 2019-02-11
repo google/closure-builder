@@ -129,12 +129,17 @@ PathTools.getClosureLibraryPath = function() {
 
 
 /**
- * @param {array=} opt_ignore
+ * @param {array=} ignore
+ * @param {string=} libraryPath
  * @return {!string}
  */
-PathTools.getClosureLibraryFiles = function(opt_ignore = []) {
-  let closureLibraryFiles = path.join(PathTools.getClosureLibraryPath(),
-    'closure', 'goog');
+PathTools.getClosureLibraryFolders = function(ignore = [],
+    libraryPath = PathTools.getClosureLibraryPath()) {
+  if (!PathTools.existDirectory(libraryPath)) {
+    log.error('Closure library path', libraryPath, 'does not exists!');
+    return [];
+  }
+  let closureLibraryFiles = path.join(libraryPath, 'closure', 'goog');
   if (!PathTools.existDirectory(closureLibraryFiles)) {
     log.error('Closure library files were not found at', closureLibraryFiles);
     return [];
@@ -143,14 +148,14 @@ PathTools.getClosureLibraryFiles = function(opt_ignore = []) {
   let closureLibraryFolders = [];
   let closureGoogFolders = PathTools.getDirectories(closureLibraryFiles);
   closureGoogFolders.forEach((folder) => {
-    if (opt_ignore.indexOf(folder) === -1) {
+    if (ignore.indexOf(folder) === -1) {
       closureLibraryFolders.push(
         path.join(closureLibraryFiles, folder, '**.js'));
     }
   });
 
-  let closureLibrary3rdParty = path.join(PathTools.getClosureLibraryPath(),
-    'third_party', 'closure', 'goog');
+  let closureLibrary3rdParty = path.join(
+    libraryPath, 'third_party', 'closure', 'goog');
   if (!PathTools.existDirectory(closureLibrary3rdParty)) {
     log.warn('Closure library 3rd party files were not found at',
       closureLibrary3rdParty);

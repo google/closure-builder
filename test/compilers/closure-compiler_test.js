@@ -267,24 +267,66 @@ describe('Closure Compiler:local:', function() {
     });
   });
 
-  it('Closure Library', function(done) {
-    if (!largeMemoryTest) {
-      return done();
-    }
-    this.timeout(140000);
-    let files = ['test_files/closure_library_test.js'];
-    let options = {
-      dependency_mode: 'STRICT',
-      entry_point: 'closure_library_test',
-      use_closure_library: true,
-    };
-    closureCompiler.localCompile(files, options, null,
-      function(errors, warnings, files, content) {
-        assert(!errors);
-        assert(!warnings);
-        assert(content);
-        done();
-      });
+  describe('Closure Library', function() {
+    it('Bundled library', function(done) {
+      if (!largeMemoryTest) {
+        return done();
+      }
+      this.timeout(140000);
+      let files = ['test_files/closure_library_test.js'];
+      let options = {
+        dependency_mode: 'STRICT',
+        entry_point: 'closure_library_test',
+        use_closure_library: true,
+      };
+      closureCompiler.localCompile(files, options, null,
+        function(errors, warnings, files, content) {
+          assert(!errors);
+          assert(!warnings);
+          assert(content);
+          done();
+        });
+    });
+
+    it('Expect Custom library error', function(done) {
+      if (!largeMemoryTest) {
+        return done();
+      }
+      this.timeout(140000);
+      let files = ['test_files/closure_library_test.js'];
+      let options = {
+        dependency_mode: 'STRICT',
+        entry_point: 'closure_library_test',
+        use_closure_library: 'not_existing_path',
+      };
+      closureCompiler.localCompile(files, options, null,
+        function(errors, warnings, files, content) {
+          assert(errors);
+          assert(!warnings);
+          assert(content === null);
+          done();
+        });
+     });
+
+    it('Custom library', function(done) {
+      if (!largeMemoryTest) {
+        return done();
+      }
+      this.timeout(140000);
+      let files = ['test_files/closure_library_test.js'];
+      let options = {
+        dependency_mode: 'STRICT',
+        entry_point: 'closure_library_test',
+        use_closure_library: 'third_party/closure-library/',
+      };
+      closureCompiler.localCompile(files, options, null,
+        function(errors, warnings, files, content) {
+          assert(!errors);
+          assert(!warnings);
+          assert(content);
+          done();
+        });
+    });
   });
 /*
   it('Closure Library UI', function(done) {

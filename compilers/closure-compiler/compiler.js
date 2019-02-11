@@ -204,9 +204,14 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     } else {
       ignoreList.push('ui');
     }
-    let closureLibraryFiles = pathTools.getClosureLibraryFiles(ignoreList);
-    for (let i = 0; i < closureLibraryFiles.length; i++) {
-      compilerOptions.push('--js=' + closureLibraryFiles[i]);
+    let closureLibraryFolder = undefined;
+    if (typeof options.use_closure_library === 'string') {
+      closureLibraryFolder = options.use_closure_library;
+    }
+    let closureLibraryFolders = pathTools.getClosureLibraryFolders(
+      ignoreList, closureLibraryFolder);
+    for (let i = 0; i < closureLibraryFolders.length; i++) {
+      compilerOptions.push('--js=' + closureLibraryFolders[i]);
     }
     delete options.use_closure_library;
   }
