@@ -187,9 +187,14 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     delete options.use_closure_templates;
   }
 
+  let closureLibraryFolder = undefined;
+  if (typeof options.use_closure_library === 'string') {
+    closureLibraryFolder = options.use_closure_library;
+  }
+
   // Include Closure base file
   if (options.use_closure_basefile || options.use_closure_library) {
-    let baseFile = pathTools.getClosureBaseFile();
+    let baseFile = pathTools.getClosureBaseFile(closureLibraryFolder);
     if (baseFile) {
       compilerOptions.push('--js', baseFile);
     }
@@ -203,10 +208,6 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
       delete options.use_closure_library_ui;
     } else {
       ignoreList.push('ui');
-    }
-    let closureLibraryFolder = undefined;
-    if (typeof options.use_closure_library === 'string') {
-      closureLibraryFolder = options.use_closure_library;
     }
     let closureLibraryFolders = pathTools.getClosureLibraryFolders(
       ignoreList, closureLibraryFolder);

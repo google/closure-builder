@@ -112,11 +112,11 @@ These options could be used for adding additional information.
 
 #### Options ####
 The following options are available for the closure and soy compiler:
-- `options.use_closure_library` If true bundled closure library will be 
-  included. If a path, the defined path will be included instead.
 - `options.exclude_test` If true *_test.* files will be excluded
 - `options.soy` Additional settings for the Soy compiler
 - `options.closure` Additional settings for the Closure compiler
+- `options.closure.use_closure_library` If true bundled closure library will be
+  included. If a path, the defined path will be included instead.
 ```javascript
 closureBuilder.build({
   srcs: glob([
