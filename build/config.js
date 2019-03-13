@@ -137,6 +137,9 @@ let BuildConfig = function(config) {
     compilation_level: 'SIMPLE_OPTIMIZATIONS',
   };
 
+  /** @type {!object} */
+  this.closureStylesheetsCompilerOptions = this.options.gss || {};
+
   /** @type {!string} */
   this.soyPath = (this.out) ? this.out : path.join(this.tempPath, 'soy');
 
