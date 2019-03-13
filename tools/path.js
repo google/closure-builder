@@ -170,9 +170,11 @@ PathTools.getClosureLibraryFolders = function(ignore = [],
 
 /**
  * @return {!string}
+ * @param {string=} libraryPath
  */
-PathTools.getClosureBaseFile = function() {
-  let baseFile = path.join(PathTools.getClosureLibraryPath(), 'closure', 'goog',
+PathTools.getClosureBaseFile = function(
+    libraryPath = PathTools.getClosureLibraryPath()) {
+  let baseFile = path.join(libraryPath, 'closure', 'goog',
     'base.js');
   if (!PathTools.existFile(baseFile)) {
     log.error('Closure base file was not found at', baseFile);
