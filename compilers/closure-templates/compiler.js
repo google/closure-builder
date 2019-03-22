@@ -185,7 +185,7 @@ ClosureTemplates.parseErrorMessage = function(message) {
       errors = message.toLowerCase().split('error').length - 1;
     } else if (message.toLowerCase().includes('warning')) {
       if (message.includes('Java HotSpot(TM) Client VM warning') &&
-          message.toLowerCase().split('warning').length == 2) {
+          message.toLowerCase().split('warning').length <= 2) {
         warnings = 0;
       } else if (message.includes('Illegal reflective access by com.google.') &&
           message.toLowerCase().split('warning').length == 7) {

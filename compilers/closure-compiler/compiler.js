@@ -471,12 +471,23 @@ ClosureCompiler.parseErrorMessage = function(message) {
       errors = messageInfo[1];
       warnings = messageInfo[2];
     } else if (message.includes('INTERNAL COMPILER ERROR') ||
-               message.includes('NullPointerException')) {
+               message.includes('NullPointerException') ||
+               message.includes('java.lang.NoSuchMethodError')) {
+      errors = 1;
+    } else if (message.toLowerCase().includes('exception')) {
       errors = 1;
     } else if (message.toLowerCase().includes('error')) {
       errors = message.toLowerCase().split('error').length - 1;
     } else if (message.toLowerCase().includes('warning')) {
-      warnings = message.toLowerCase().split('warning').length - 1;
+      if (message.includes('Java HotSpot(TM) Client VM warning') &&
+          message.toLowerCase().split('warning').length <= 2) {
+        warnings = 0;
+      } else if (message.includes('Illegal reflective access by com.google.') &&
+          message.toLowerCase().split('warning').length == 7) {
+        warnings = 0;
+      } else {
+        warnings = message.toLowerCase().split('warning').length - 1;
+      }
     }
   } else if (message) {
     errors = 1;
