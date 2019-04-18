@@ -21,13 +21,11 @@ let assert = require('assert');
 let path = require('path');
 
 let fileTools = require('../../tools/file.js');
-let memoryTools = require('../../tools/memory.js');
 let pathTools = require('../../tools/path.js');
 
 let closureCompiler = require('../../compilers/closure-compiler/compiler.js');
 
 let glob = fileTools.getGlobFiles;
-let largeMemoryTest = memoryTools.checkAvailableMemory(600);
 let testDirectory = pathTools.getTempPath('closure-compiler-test');
 
 
@@ -265,111 +263,6 @@ describe('Closure Compiler:local:', function() {
           done();
         });
     });
-  });
-
-  describe('Closure Library', function() {
-    it('Bundled library', function(done) {
-      if (!largeMemoryTest) {
-        return done();
-      }
-      this.timeout(140000);
-      let files = ['test_files/closure_library_test.js'];
-      let options = {
-        dependency_mode: 'STRICT',
-        entry_point: 'closure_library_test',
-        use_closure_library: true,
-      };
-      closureCompiler.localCompile(files, options, null,
-        function(errors, warnings, files, content) {
-          assert(!errors);
-          assert(!warnings);
-          assert(content);
-          done();
-        });
-    });
-
-    it('Expect Custom library error', function(done) {
-      if (!largeMemoryTest) {
-        return done();
-      }
-      this.timeout(140000);
-      let files = ['test_files/closure_library_test.js'];
-      let options = {
-        dependency_mode: 'STRICT',
-        entry_point: 'closure_library_test',
-        use_closure_library: 'not_existing_path',
-      };
-      closureCompiler.localCompile(files, options, null,
-        function(errors, warnings, files, content) {
-          assert(errors);
-          assert(!warnings);
-          assert(content === null);
-          done();
-        });
-     });
-
-    it('Custom library', function(done) {
-      if (!largeMemoryTest) {
-        return done();
-      }
-      this.timeout(140000);
-      let files = ['test_files/closure_library_test.js'];
-      let options = {
-        dependency_mode: 'STRICT',
-        entry_point: 'closure_library_test',
-        use_closure_library: 'third_party/closure-library/',
-      };
-      closureCompiler.localCompile(files, options, null,
-        function(errors, warnings, files, content) {
-          assert(!errors);
-          assert(!warnings);
-          assert(content);
-          done();
-        });
-    });
-  });
-/*
-  it('Closure Library UI', function(done) {
-    if (!largeMemoryTest) {
-      return done();
-    }
-    this.timeout(140000);
-    var files =  ['test_files/closure_library_ui_test.js'];
-    var options = {
-      dependency_mode: 'STRICT',
-      entry_point: 'closure_library_ui_test',
-      use_closure_library: true
-    };
-    closureCompiler.localCompile(files, options, null,
-      function(errors, warnings, files, content) {
-        assert(!errors);
-        assert(!warnings);
-        assert(content);
-        done();
-      });
-  });*/
-
-  it('Soy file', function(done) {
-    if (!largeMemoryTest) {
-      return done();
-    }
-    this.timeout(140000);
-    let files = [
-      'test_files/special/closure_soy_test.js',
-      'test_files/special/closure_soy_test.soy.js',
-    ];
-    let options = {
-      dependency_mode: 'STRICT',
-      entry_point: 'closure_test_soy_file',
-      use_closure_templates: true,
-    };
-    closureCompiler.localCompile(files, options, null,
-      function(errors, warnings, files, content) {
-        assert(!errors);
-        assert(!warnings);
-        assert(content);
-        done();
-      });
   });
 
   it('Create Source Map', function(done) {

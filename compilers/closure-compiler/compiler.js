@@ -180,6 +180,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
 
   // Closure templates
   if (options.use_closure_templates) {
+    compilerOptions.push('--js=' + pathTools.getClosureSoyChecksFile());
     compilerOptions.push('--js=' + pathTools.getClosureSoyUtilsFile());
     if (!options.use_closure_library) {
       options.use_closure_library = true;
@@ -337,6 +338,10 @@ ClosureCompiler.remoteCompile = function(files,
 
   // Closure templates
   if (options.use_closure_templates) {
+    let closureSoyChecksFile = pathTools.getClosureSoyChecksFile();
+    if (closureSoyChecksFile) {
+      data['js_code'].push(fs.readFileSync(closureSoyChecksFile).toString());
+    }
     let closureSoyUtilsFile = pathTools.getClosureSoyUtilsFile();
     if (closureSoyUtilsFile) {
       data['js_code'].push(fs.readFileSync(closureSoyUtilsFile).toString());

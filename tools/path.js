@@ -235,6 +235,20 @@ PathTools.getClosureSoyUtilsFile = function() {
 /**
  * @return {!string}
  */
+PathTools.getClosureSoyChecksFile = function() {
+  let soyChecksFile = path.join(PathTools.getClosureTemplatesPath(),
+    'javascript', 'checks.js');
+  if (!PathTools.existFile(soyChecksFile)) {
+    log.error('checks.js file was not found at', soyChecksFile);
+    return '';
+  }
+  return soyChecksFile;
+};
+
+
+/**
+ * @return {!string}
+ */
 PathTools.getClosureStylesheetsCompilerPath = function() {
   return PathTools.getResourcePath('closure-stylesheets', 'runtime');
 };

@@ -1,5 +1,5 @@
-Closure Builder - Closure build system
-======================================
+Closure Builder - Simplified Closure Build System
+==================================================
 
 [![Build status](https://travis-ci.org/google/closure-builder.svg?branch=master)](http://travis-ci.org/google/closure-builder)
 [![NPM version](https://img.shields.io/npm/v/closure-builder.svg)](https://www.npmjs.org/package/closure-builder)
