@@ -137,7 +137,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     for (let i = 0; i < options.jscomp_error.length; i++) {
       compilerOptions.push('--jscomp_error', options.jscomp_error[i]);
     }
-    delete options.jscomp_warning;
+    delete options.jscomp_error;
   }
 
   // Handling compiler off
@@ -145,7 +145,7 @@ ClosureCompiler.localCompile = function(files, opt_options, opt_target_file,
     for (let i = 0; i < options.jscomp_off.length; i++) {
       compilerOptions.push('--jscomp_off', options.jscomp_off[i]);
     }
-    delete options.jscomp_warning;
+    delete options.jscomp_off;
   }
 
   // Handling compiler warnings
