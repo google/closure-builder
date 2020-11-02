@@ -334,22 +334,4 @@ describe('ClosureBuilder', function() {
       });
     });
   });
-
-  describe('Closure library - Remote Service', function() {
-    it('Compile', function(done) {
-      if (!largeMemoryTest) {
-        return done();
-      }
-      closureBuilder.build(testConfigs.closureLibraryConfigRemoteService,
-        function(errors, warnings, files, content) {
-          assert(!errors);
-          assert(!warnings);
-          assert(content);
-          assert(content.indexOf('closure_library_test=func') !== -1);
-          assert(content.indexOf('goog.Promise=func') !== -1);
-          assert(content.indexOf('goog.Timer=func') !== -1);
-          done();
-        });
-    }).timeout(50000);
-  });
 });
