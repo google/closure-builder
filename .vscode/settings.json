@@ -1,0 +1,20 @@
+{
+    "editor.tabSize": 2,
+    "editor.rulers": [80],
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "cSpell.words": [
+      "Bordihn",
+      "ECMASCRIPT",
+      "Markus",
+      "mkfile"
+    ],
+    "cSpell.ignorePaths" : [
+      "*.yml",
+      ".vscode",
+      "node_modules"
+    ],
+  }
+  
