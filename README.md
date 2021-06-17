@@ -1,10 +1,7 @@
-Closure Builder - Simplified Closure Build System
+Closure Builder - Simplified Closure Build System (Deprecated⛔️)
 ==================================================
 
-[![Build status](https://travis-ci.org/google/closure-builder.svg?branch=master)](http://travis-ci.org/google/closure-builder)
-[![NPM version](https://img.shields.io/npm/v/closure-builder.svg)](https://www.npmjs.org/package/closure-builder)
-
-[![NPM](https://nodei.co/npm/closure-builder.png?downloads=true&downloadRank=true)](https://nodei.co/npm/closure-builder/)
+**⛔️ Package no longer updated and supported. Use at your own risk. ⛔️**
 
 A Closure build system to easily compile Closure JavaScript files,
 Closure Template files and Closure Stylesheet files without the need to
